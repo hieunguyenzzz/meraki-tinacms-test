@@ -42,13 +42,14 @@ export const loader: LoaderFunction = async ({ params }) => {
 };
 
 export default function JournalDetail() {
-  const { data, query, variables } = useTina(useLoaderData<typeof loader>());
+  const loaderData = useLoaderData<typeof loader>();
+  const tinaData = useTina(loaderData);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImages, setCurrentImages] = useState<any[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const { lang } = useLoaderData<typeof loader>();
-  const journal = data.journal;
+  const { lang } = loaderData;
+  const journal = (tinaData.data as any)?.journal || loaderData.data?.journal;
 
   const subtitle = lang === "en" ? journal.subtitle_en : journal.subtitle_vi;
 
