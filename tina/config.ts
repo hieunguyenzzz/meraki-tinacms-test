@@ -5,12 +5,14 @@ import { Testimonial } from "./collections/testimonial";
 import { Blog } from "./collections/blog";
 
 export const config = defineConfig({
-  clientId: process.env.TINA_CLIENT_ID,
+  contentApiUrlOverride: '/api/tina/gql',
+  clientId: process.env.TINA_PUBLIC_IS_LOCAL === 'true' ? null : process.env.TINA_CLIENT_ID,
   branch:
     process.env.TINA_BRANCH || // custom branch env override
     process.env.VERCEL_GIT_COMMIT_REF || // Vercel branch env
-    process.env.HEAD, // Netlify branch env
-  token: process.env.TINA_TOKEN,
+    process.env.HEAD || // Netlify branch env
+    "main", // fallback
+  token: process.env.TINA_PUBLIC_IS_LOCAL === 'true' ? null : process.env.TINA_TOKEN,
   media: {
     // If you wanted cloudinary do this
     // loadCustomStore: async () => {
