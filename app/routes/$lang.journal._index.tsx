@@ -93,21 +93,21 @@ export default function JournalIndex() {
                       {journal.node.featured_image && (
                         <img 
                           src={journal.node.featured_image} 
-                          alt={lang === "en" ? journal.node.title_en : journal.node.title_vi}
+                          alt={lang === "en" ? journal.node.subtitle_en : journal.node.subtitle_vi}
                           className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       )}
                     </div>
                     <div className="text-center">
                       <h3 className="text-xl font-medium text-gray-900 mb-2">
-                        {lang === "en" ? journal.node.title_en : journal.node.title_vi}
+                        {lang === "en" ? journal.node.subtitle_en : journal.node.subtitle_vi}
                       </h3>
                       <p className="text-gray-600">
                         {journal.node.couple_names}
                       </p>
-                      {journal.node.wedding_date && (
+                      {journal.node.wedding_details?.wedding_date && (
                         <p className="text-sm text-gray-500 mt-1">
-                          {new Date(journal.node.wedding_date).toLocaleDateString(lang === "en" ? "en-US" : "vi-VN")}
+                          {new Date(journal.node.wedding_details.wedding_date).toLocaleDateString(lang === "en" ? "en-US" : "vi-VN")}
                         </p>
                       )}
                     </div>
