@@ -77,8 +77,8 @@ export default function JournalDetail() {
   const renderContentBlock = (block: any, index: number) => {
     const blockField = tinaField(journal, `content_blocks.${index}`);
     
-    switch (block._template) {
-      case "text_image_block":
+    switch (block.__typename) {
+      case "JournalContent_blocksText_image_block":
         const heading = lang === "en" ? block.heading_en : block.heading_vi;
         const content = lang === "en" ? block.content_en : block.content_vi;
         const imageAlt = lang === "en" ? block.image_alt_en : block.image_alt_vi;
@@ -125,7 +125,7 @@ export default function JournalDetail() {
           </section>
         );
 
-      case "large_image_block":
+      case "JournalContent_blocksLarge_image_block":
         const caption = lang === "en" ? block.caption_en : block.caption_vi;
         const altText = lang === "en" ? block.alt_en : block.alt_vi;
         
@@ -151,7 +151,7 @@ export default function JournalDetail() {
           </section>
         );
 
-      case "gallery_block":
+      case "JournalContent_blocksGallery_block":
         const galleryHeading = lang === "en" ? block.heading_en : block.heading_vi;
         
         return (
@@ -193,7 +193,7 @@ export default function JournalDetail() {
           </section>
         );
 
-      case "text_block":
+      case "JournalContent_blocksText_block":
         const textHeading = lang === "en" ? block.heading_en : block.heading_vi;
         const textContent = lang === "en" ? block.content_en : block.content_vi;
         
@@ -226,7 +226,7 @@ export default function JournalDetail() {
           </section>
         );
 
-      case "location_block":
+      case "JournalContent_blocksLocation_block":
         const locationHeading = lang === "en" ? block.heading_en : block.heading_vi;
         const locationName = lang === "en" ? block.location_name_en : block.location_name_vi;
         const locationDescription = lang === "en" ? block.description_en : block.description_vi;
@@ -276,7 +276,7 @@ export default function JournalDetail() {
           </section>
         );
 
-      case "quote_block":
+      case "JournalContent_blocksQuote_block":
         const quote = lang === "en" ? block.quote_en : block.quote_vi;
         
         return (
