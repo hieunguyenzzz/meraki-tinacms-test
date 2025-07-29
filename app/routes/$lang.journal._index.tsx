@@ -10,12 +10,19 @@ export const loader: LoaderFunction = async ({ params }) => {
   }
 
   try {
-    const journalList = await client.queries.journalConnection();
+    const journalList = await client.queries.journalConnection({
+      filter: {
+        published: {
+          eq: true
+        }
+      }
+    });
     return { 
       journals: journalList.data.journalConnection.edges || [], 
       lang 
     };
   } catch (error) {
+    console.error("Error fetching journals:", error);
     return { journals: [], lang };
   }
 };
