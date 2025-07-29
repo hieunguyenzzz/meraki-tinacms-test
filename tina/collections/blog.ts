@@ -1,9 +1,9 @@
-import type { Collection } from "tinacms";
+import { Collection } from "tinacms";
 
-export const Page: Collection = {
-  label: "Page Content",
-  name: "page",
-  path: "content/page",
+export const Blog: Collection = {
+  name: "blog",
+  label: "Blog Posts",
+  path: "content/blog",
   format: "mdx",
   fields: [
     {
@@ -31,45 +31,48 @@ export const Page: Collection = {
       isBody: false,
     },
     {
+      type: "image",
+      name: "featured_image",
+      label: "Featured Image",
+    },
+    {
       type: "string",
-      name: "page_type",
-      label: "Page Type",
-      options: ["homepage", "about", "contact"],
+      name: "excerpt_en",
+      label: "Excerpt (English)",
       ui: {
-        component: "select",
+        component: "textarea",
       },
     },
     {
-      type: "object",
-      name: "hero",
-      label: "Hero Section",
-      fields: [
-        {
-          type: "string",
-          name: "title_en",
-          label: "Hero Title (English)",
-        },
-        {
-          type: "string",
-          name: "title_vi",
-          label: "Hero Title (Vietnamese)",
-        },
-        {
-          type: "string",
-          name: "subtitle_en",
-          label: "Hero Subtitle (English)",
-        },
-        {
-          type: "string",
-          name: "subtitle_vi",
-          label: "Hero Subtitle (Vietnamese)",
-        },
-        {
-          type: "image",
-          name: "background_image",
-          label: "Background Image",
-        },
-      ],
+      type: "string",
+      name: "excerpt_vi",
+      label: "Excerpt (Vietnamese)",
+      ui: {
+        component: "textarea",
+      },
+    },
+    {
+      type: "string",
+      name: "categories",
+      label: "Categories",
+      list: true,
+    },
+    {
+      type: "string",
+      name: "tags",
+      label: "Tags",
+      list: true,
+    },
+    {
+      type: "string",
+      name: "slug",
+      label: "URL Slug",
+      required: true,
+    },
+    {
+      type: "datetime",
+      name: "published_date",
+      label: "Published Date",
     },
     {
       type: "object",
@@ -111,13 +114,11 @@ export const Page: Collection = {
         },
       ],
     },
-  ],
-  ui: {
-    router: ({ document }) => {
-      if (document._sys.filename === "index") {
-        return "/";
-      }
-      return undefined;
+    {
+      type: "boolean",
+      name: "published",
+      label: "Published",
+      required: true,
     },
-  },
+  ],
 };
