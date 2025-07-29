@@ -1,18 +1,12 @@
-import { defineConfig } from "tinacms";
+import { defineConfig, LocalAuthProvider } from "tinacms";
 import { Page } from "./collections/page";
 import { Journal } from "./collections/journal";
 import { Testimonial } from "./collections/testimonial";
 import { Blog } from "./collections/blog";
 
 export const config = defineConfig({
-  //contentApiUrlOverride: '/api/tina/gql',
-  clientId: process.env.TINA_PUBLIC_IS_LOCAL === 'true' ? null : process.env.TINA_CLIENT_ID,
-  branch:
-    process.env.TINA_BRANCH || // custom branch env override
-    process.env.VERCEL_GIT_COMMIT_REF || // Vercel branch env
-    process.env.HEAD || // Netlify branch env
-    "main", // fallback
-  token: process.env.TINA_PUBLIC_IS_LOCAL === 'true' ? null : process.env.TINA_TOKEN,
+  authProvider: new LocalAuthProvider(),
+  contentApiUrlOverride: '/api/tina/gql',
   media: {
     // If you wanted cloudinary do this
     // loadCustomStore: async () => {
