@@ -32,6 +32,14 @@ export const Journal: Collection = {
       required: true,
     },
     
+    // Featured Image for Listing
+    {
+      type: "image",
+      name: "featured_image",
+      label: "Featured Image (for listing page)",
+      required: true,
+    },
+    
     // Hero Section
     {
       type: "object",
