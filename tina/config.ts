@@ -5,7 +5,7 @@ import { Testimonial } from "./collections/testimonial";
 import { Blog } from "./collections/blog";
 
 export const config = defineConfig({
-  contentApiUrlOverride: '/api/tina/gql',
+  //contentApiUrlOverride: '/api/tina/gql',
   clientId: process.env.TINA_PUBLIC_IS_LOCAL === 'true' ? null : process.env.TINA_CLIENT_ID,
   branch:
     process.env.TINA_BRANCH || // custom branch env override
