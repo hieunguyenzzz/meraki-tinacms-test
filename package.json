@@ -4,9 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "tinacms build && remix vite:build",
-    "build:full": "tinacms build --local --skip-cloud-checks && remix vite:build",
-    "build:tina-local": "tinacms build --local --skip-cloud-checks && remix vite:build",
+    "build": "tinacms build --local --skip-cloud-checks && remix vite:build",
     "dev": "tinacms dev -c \"remix vite:dev\"",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "tinacms dev -c \"remix vite:dev\"",
