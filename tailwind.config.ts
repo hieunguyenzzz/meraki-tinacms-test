@@ -1,16 +1,20 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  content: ["./app/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',
+    './app-old/**/*.{js,jsx,ts,tsx}',
+    './content/**/*.{md,mdx}',
+  ],
   darkMode: 'media',
   theme: {
     extend: {
       fontFamily: {
         sans: [
           '"Inter"',
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
+          'ui-sans-serif',
+          'system-ui',
+          'sans-serif',
           '"Apple Color Emoji"',
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
@@ -22,11 +26,11 @@ export default {
           '0%': { transform: 'translateX(-100%)' },
           '45%': { transform: 'translateX(100%)' },
           '55%': { transform: 'translateX(100%)' },
-          '100%': { transform: 'translateX(-100%)' }
-        }
+          '100%': { transform: 'translateX(-100%)' },
+        },
       },
       animation: {
-        'wave': 'wave 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite'
+        wave: 'wave 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite',
       },
       backgroundImage: {
         'footer-gradient-light': `linear-gradient(
@@ -53,8 +57,8 @@ export default {
           rgba(255, 255, 255, 0.1) 50%,
           rgba(255, 255, 255, 0) 80%,
           transparent 100%
-        )`
-      }
+        )`,
+      },
     },
   },
   plugins: [],

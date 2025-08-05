@@ -5,14 +5,11 @@ import { Testimonial } from "./collections/testimonial";
 import { Blog } from "./collections/blog";
 
 export const config = defineConfig({
-  //contentApiUrlOverride: '/api/tina/gql',
-  clientId: process.env.TINA_PUBLIC_IS_LOCAL === 'true' ? null : process.env.TINA_CLIENT_ID,
-  branch:
-    process.env.TINA_BRANCH || // custom branch env override
-    process.env.VERCEL_GIT_COMMIT_REF || // Vercel branch env
-    process.env.HEAD || // Netlify branch env
-    "main", // fallback
-  token: process.env.TINA_PUBLIC_IS_LOCAL === 'true' ? null : process.env.TINA_TOKEN,
+  // Completely disable cloud features for local development
+  clientId: null,
+  token: null,
+  branch: 'main',
+  // Use local filesystem for media
   media: {
     // If you wanted cloudinary do this
     // loadCustomStore: async () => {
@@ -21,13 +18,13 @@ export const config = defineConfig({
     // },
     // this is the config for the tina cloud media store
     tina: {
-      publicFolder: "public",
-      mediaRoot: "",
+      publicFolder: 'public',
+      mediaRoot: '',
     },
   },
   build: {
-    publicFolder: "public", // The public asset folder for your framework
-    outputFolder: "admin", // within the public folder
+    publicFolder: 'public', // The public asset folder for your framework
+    outputFolder: 'admin', // within the public folder
   },
   schema: {
     collections: [Page, Journal, Testimonial, Blog],
