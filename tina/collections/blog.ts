@@ -31,6 +31,12 @@ export const Blog: Collection = {
       isBody: false,
     },
     {
+      type: "rich-text",
+      name: "body",
+      label: "Content",
+      isBody: true,
+    },
+    {
       type: "image",
       name: "featured_image",
       label: "Featured Image",
