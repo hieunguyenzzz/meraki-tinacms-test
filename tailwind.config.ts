@@ -6,9 +6,55 @@ export default {
     './app-old/**/*.{js,jsx,ts,tsx}',
     './content/**/*.{md,mdx}',
   ],
-  darkMode: 'media',
+  darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        background: {
+          base: 'var(--color-bg-base)',
+          1: 'var(--color-bg-1)',
+          2: 'var(--color-bg-2)',
+          brand: 'var(--color-bg-brand)',
+          support1: 'var(--color-bg-support-1)',
+          support2: 'var(--color-bg-support-2)',
+        },
+        text: {
+          accent: 'var(--color-text-accent)',
+          primary: 'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          tertiary: 'var(--color-text-tertiary)',
+          disabled: 'var(--color-text-disabled)',
+        },
+        shape: {
+          accent: 'var(--color-shape-accent)',
+          primary: 'var(--color-shape-primary)',
+          secondary: 'var(--color-shape-secondary)',
+          tertiary: 'var(--color-shape-tertiary)',
+          disabled: 'var(--color-shape-disabled)',
+        },
+        line: {
+          accent: 'var(--color-line-accent)',
+          primary: 'var(--color-line-primary)',
+          secondary: 'var(--color-line-secondary)',
+          disabled: 'var(--color-line-disabled)',
+        },
+        primary: 'var(--color-shape-primary)',
+        'primary-foreground': 'var(--color-bg-base)',
+        secondary: 'var(--color-bg-1)',
+        'secondary-foreground': 'var(--color-text-primary)',
+        accent: 'var(--color-shape-accent)',
+        'accent-foreground': 'var(--color-bg-base)',
+        muted: 'var(--color-shape-tertiary)',
+        'muted-foreground': 'var(--color-text-tertiary)',
+      },
+      borderColor: {
+        DEFAULT: 'var(--color-line-secondary)',
+        accent: 'var(--color-line-accent)',
+        muted: 'var(--color-line-disabled)',
+      },
+      ringColor: {
+        DEFAULT: 'var(--color-line-accent)',
+      },
       fontFamily: {
         sans: [
           '"Inter"',
