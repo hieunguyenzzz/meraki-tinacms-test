@@ -4,6 +4,7 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
 import Header from './Header';
 import Footer from './Footer';
+import { Button } from './ui';
 
 interface HomeClientProps {
   data: any;
@@ -33,28 +34,44 @@ const defaultContent = {
 
 // Hero Section Component
 function HeroSection({ lang, page }: { lang: string; page: any }) {
-  const title = page?.hero 
-    ? t({ en: page.hero.title_en || '', vi: page.hero.title_vi || '' }, lang) || defaultContent.title
+  const title = page?.hero
+    ? t({ en: page.hero.title_en || '', vi: page.hero.title_vi || '' }, lang) ||
+      defaultContent.title
     : defaultContent.title;
-    
+
   const subtitle = page?.hero
-    ? t({ en: page.hero.subtitle_en || '', vi: page.hero.subtitle_vi || '' }, lang) || t(defaultContent.hero.subtitle, lang)
+    ? t(
+        { en: page.hero.subtitle_en || '', vi: page.hero.subtitle_vi || '' },
+        lang
+      ) || t(defaultContent.hero.subtitle, lang)
     : t(defaultContent.hero.subtitle, lang);
 
   return (
     <section className='relative h-screen flex items-center justify-center bg-gray-50'>
       <div className='text-center'>
-        <h1 
+        <h1
           className='text-5xl md:text-6xl font-light text-gray-900 mb-6'
-          data-tina-field={page?.hero ? tinaField(page.hero, lang === 'en' ? 'title_en' : 'title_vi') : undefined}>
+          data-tina-field={
+            page?.hero
+              ? tinaField(page.hero, lang === 'en' ? 'title_en' : 'title_vi')
+              : undefined
+          }>
           {title}
         </h1>
-        <p 
+        <p
           className='text-xl text-gray-600 mb-8 max-w-2xl mx-auto'
-          data-tina-field={page?.hero ? tinaField(page.hero, lang === 'en' ? 'subtitle_en' : 'subtitle_vi') : undefined}>
+          data-tina-field={
+            page?.hero
+              ? tinaField(
+                  page.hero,
+                  lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
+                )
+              : undefined
+          }>
           {subtitle}
         </p>
         <div className='space-x-4'>
+          <Button>{t({ en: 'Get Started', vi: 'Bắt đầu' }, lang)}</Button>
           <a
             href={`/${lang}/journal`}
             className='inline-block bg-gray-900 text-white px-8 py-3 rounded-md hover:bg-gray-800 transition-colors'>

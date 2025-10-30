@@ -12,6 +12,11 @@
   },
   "packageManager": "yarn@1.22.0",
   "dependencies": {
+    "@radix-ui/react-slot": "^1.0.4",
+    "@radix-ui/react-switch": "^1.0.4",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "@tinacms/datalayer": "^1.4.0",
     "next": "^14.2.0",
     "react": "^18.3.1",
@@ -19,6 +24,7 @@
     "tinacms": "^2.8.0",
     "tinacms-authjs": "^11.0.1",
     "tinacms-gitprovider-github": "^3.0.0",
+    "tailwind-merge": "^2.2.1",
     "upstash-redis-level": "^1.1.1"
   },
   "devDependencies": {
