@@ -5,6 +5,7 @@ import { useTina, tinaField } from 'tinacms/dist/react';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
 import Header from './Header';
 import Footer from './Footer';
+import JournalTemplate from './JournalTemplate';
 
 interface JournalClientProps {
   data: any;
@@ -14,45 +15,64 @@ interface JournalClientProps {
   slug: string;
 }
 
-export default function JournalClient({ data, variables, query, lang }: JournalClientProps) {
+export default function JournalClient({
+  data,
+  variables,
+  query,
+  lang,
+}: JournalClientProps) {
   const { data: tinaData } = useTina({ data, variables, query });
   const journal = tinaData.journal;
 
   // Get language-specific content
   const subtitle = lang === 'vi' ? journal.subtitle_vi : journal.subtitle_en;
 
+  // Check if this journal should use the template layout
+  const useTemplateLayout =
+    journal.template_layout &&
+    (journal.template_layout.image_top ||
+      journal.template_layout.image_main ||
+      journal.template_layout.image_sub);
+
   return (
     <div className='min-h-screen bg-white'>
       <Header lang={lang} />
 
-      {/* Hero Section */}
-      {journal.hero?.image && (
-        <div className='relative h-screen'>
-          <img
-            src={journal.hero.image}
-            alt={journal.couple_names}
-            className='w-full h-full object-cover'
-            data-tina-field={tinaField(journal.hero, 'image')}
-          />
-          <div className='absolute inset-0 bg-black/20' />
-          <div className='absolute bottom-0 left-0 right-0 p-8 text-white'>
-            <div className='max-w-4xl mx-auto'>
-              <h1
-                className='text-4xl md:text-6xl font-light mb-4'
-                data-tina-field={tinaField(journal, 'couple_names')}>
-                {journal.couple_names}
-              </h1>
-              <p
-                className='text-xl md:text-2xl font-light'
-                data-tina-field={tinaField(
-                  journal,
-                  lang === 'vi' ? 'subtitle_vi' : 'subtitle_en'
-                )}>
-                {subtitle}
-              </p>
+      {/* Use Template Layout if configured */}
+      {useTemplateLayout ? (
+        <JournalTemplate journal={journal} lang={lang} />
+      ) : (
+        <>
+          {/* Original Hero Section */}
+          {journal.hero?.image && (
+            <div className='relative h-screen'>
+              <img
+                src={journal.hero.image}
+                alt={journal.couple_names}
+                className='w-full h-full object-cover'
+                data-tina-field={tinaField(journal.hero, 'image')}
+              />
+              <div className='absolute inset-0 bg-black/20' />
+              <div className='absolute bottom-0 left-0 right-0 p-8 text-white'>
+                <div className='max-w-4xl mx-auto'>
+                  <h1
+                    className='text-4xl md:text-6xl font-light mb-4'
+                    data-tina-field={tinaField(journal, 'couple_names')}>
+                    {journal.couple_names}
+                  </h1>
+                  <p
+                    className='text-xl md:text-2xl font-light'
+                    data-tina-field={tinaField(
+                      journal,
+                      lang === 'vi' ? 'subtitle_vi' : 'subtitle_en'
+                    )}>
+                    {subtitle}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
 
       {/* Content Blocks */}
