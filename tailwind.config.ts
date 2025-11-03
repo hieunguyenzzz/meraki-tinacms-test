@@ -8,6 +8,12 @@ export default {
   ],
   darkMode: 'class',
   theme: {
+    screens: {
+      sm: '375px', // mobile
+      md: '744px', // tablet
+      lg: '1280px', // desktop
+      xl: '1728px', // large desktop
+    },
     extend: {
       colors: {
         background: {
@@ -66,6 +72,41 @@ export default {
           '"Segoe UI Symbol"',
           '"Noto Color Emoji"',
         ],
+        vocago: ['"Vocago"', 'Georgia', 'serif'],
+        'bt-beau-sans': ['"BT Beau Sans"', 'sans-serif'],
+      },
+      fontSize: {
+        // Display - Vocago Regular
+        display: ['64px', { lineHeight: '72px', fontWeight: '400' }],
+        'display-mobile': ['40px', { lineHeight: '48px', fontWeight: '400' }],
+
+        // Heading 1 - Vocago Regular
+        h1: ['52px', { lineHeight: '64px', fontWeight: '400' }],
+        'h1-mobile': ['32px', { lineHeight: '40px', fontWeight: '400' }],
+
+        // Heading 2 - BT Beau Sans Regular
+        'h2-beau': ['32px', { lineHeight: '48px', fontWeight: '400' }],
+        'h2-beau-mobile': ['20px', { lineHeight: '28px', fontWeight: '400' }],
+
+        // Heading 2 - Vocago Regular (alternative)
+        h2: ['36px', { lineHeight: '40px', fontWeight: '400' }],
+        'h2-mobile': ['24px', { lineHeight: '28px', fontWeight: '400' }],
+
+        // Heading 4 - Vocago Regular
+        h4: ['24px', { lineHeight: '32px', fontWeight: '400' }],
+        'h4-mobile': ['20px', { lineHeight: '24px', fontWeight: '400' }],
+
+        // Body Large - Vocago Regular
+        'body-lg': ['20px', { lineHeight: '28px', fontWeight: '400' }],
+        'body-lg-mobile': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+
+        // Body Medium - Vocago Regular
+        'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+        'body-md-mobile': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+
+        // Body Small - Vocago Regular
+        'body-sm': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+        'body-sm-mobile': ['12px', { lineHeight: '16px', fontWeight: '400' }],
       },
       keyframes: {
         wave: {

@@ -42,18 +42,36 @@ export default async function JournalPage({ params }: PageProps) {
         subtitle_vi
         slug
         featured_image
+        template_layout {
+          image_top
+          image_main
+          image_sub
+          main_headline_en
+          main_headline_vi
+        }
+        wedding_details {
+          nationality_label
+          nationality
+          location_label
+          location
+          venue_label
+          venue
+          guest_count
+          wedding_type_en
+          wedding_type_vi
+          wedding_date
+        }
+        testimonial {
+          heading
+          decorative_text
+          quote_en
+          quote_vi
+          author
+        }
         hero {
           image
           alt_en
           alt_vi
-        }
-        wedding_details {
-          nationality
-          guest_count
-          wedding_type_en
-          wedding_type_vi
-          venue
-          wedding_date
         }
         content_blocks {
           ... on JournalContent_blocksText_image_block {
