@@ -4,257 +4,278 @@
 
 /* Font Face Declarations */
 @font-face {
-    font-family: 'Vocago';
-    src: url('/fonts/Vocago/Vocago-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'Vocago';
+  src: url('/fonts/Vocago/Vocago-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Vocago';
-    src: url('/fonts/Vocago/Vocago-Italic.ttf') format('truetype');
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
+  font-family: 'Vocago';
+  src: url('/fonts/Vocago/Vocago-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-Italic.ttf') format('truetype');
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-Light.ttf') format('truetype');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-LightItalic.ttf') format('truetype');
-    font-weight: 300;
-    font-style: italic;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-Medium.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-MediumItalic.ttf') format('truetype');
-    font-weight: 500;
-    font-style: italic;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-BoldItalic.ttf') format('truetype');
-    font-weight: 700;
-    font-style: italic;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-ExtraBold.ttf') format('truetype');
-    font-weight: 800;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'BT Beau Sans';
-    src: url('/fonts/BS/BS-ExtraBoldItalic.ttf') format('truetype');
-    font-weight: 800;
-    font-style: italic;
-    font-display: swap;
+  font-family: 'BT Beau Sans';
+  src: url('/fonts/BS/BS-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Plus Sans';
-    src: url('/fonts/PS/PS-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'Pinyon Script';
+  src: url('/fonts/PS/PS-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 :root {
-    --color-bg-base: #fef5e3;
-    --color-bg-1: #fff1d5;
-    --color-bg-2: #838d4c;
-    --color-bg-brand: #374220;
-    --color-bg-support-1: #b6b38b;
-    --color-bg-support-2: #ae89cb;
+  --color-bg-base: #fef5e3;
+  --color-bg-1: #fff1d5;
+  --color-bg-2: #838d4c;
+  --color-bg-brand: #374220;
+  --color-bg-support-1: #b6b38b;
+  --color-bg-support-2: #ae89cb;
 
-    --color-text-accent: #838d4c;
-    --color-text-primary: #374220;
-    --color-text-secondary: #535d44;
-    --color-text-tertiary: #838978;
-    --color-text-disabled: #a6ab9d;
+  --color-text-accent: #838d4c;
+  --color-text-primary: #374220;
+  --color-text-secondary: #535d44;
+  --color-text-tertiary: #838978;
+  --color-text-disabled: #a6ab9d;
 
-    --color-shape-accent: #838d4c;
-    --color-shape-primary: #374220;
-    --color-shape-secondary: #535d44;
-    --color-shape-tertiary: #838978;
-    --color-shape-disabled: #a6ab9d;
+  --color-shape-accent: #838d4c;
+  --color-shape-primary: #374220;
+  --color-shape-secondary: #535d44;
+  --color-shape-tertiary: #838978;
+  --color-shape-disabled: #a6ab9d;
 
-    --color-line-accent: #374220;
-    --color-line-primary: #696e5e;
-    --color-line-secondary: #a6ab9d;
-    --color-line-disabled: #caccc3;
+  --color-line-accent: #374220;
+  --color-line-primary: #696e5e;
+  --color-line-secondary: #a6ab9d;
+  --color-line-disabled: #caccc3;
 
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
 }
 
 @layer base {
-    * {
-        border-color: var(--color-line-primary);
-    }
+  * {
+    border-color: var(--color-line-primary);
+  }
 
-    body {
-        min-height: 100vh;
-        background-color: var(--color-bg-base);
-        color: var(--color-text-primary);
-        -webkit-font-smoothing: antialiased;
-    }
+  body {
+    min-height: 100vh;
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 @layer components {
+  /* Display - Vocago Regular */
+  .text-display {
+    font-family: 'Vocago', Georgia, serif;
+    font-size: 64px;
+    line-height: 72px;
+    font-weight: 400;
+  }
 
-    /* Display - Vocago Regular */
+  /* Heading 1 - Vocago Regular */
+  .text-h1 {
+    font-family: 'Vocago', Georgia, serif;
+    font-size: 52px;
+    line-height: 64px;
+    font-weight: 400;
+  }
+
+  /* Heading 2 - BT Beau Sans Regular */
+  .text-h2 {
+    font-family: 'BT Beau Sans', sans-serif;
+    font-size: 32px;
+    line-height: 48px;
+    font-weight: 300;
+  }
+
+  /* Heading 3 - Vocago Regular */
+  .text-h3 {
+    font-family: 'Vocago', Georgia, serif;
+    font-size: 36px;
+    line-height: 40px;
+    font-weight: 400;
+  }
+
+  /* Heading 4 - Vocago Regular */
+  .text-h4 {
+    font-family: 'Vocago', Georgia, serif;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 400;
+  }
+
+  /* Body Large - BT Beau Sans Regular */
+  .text-body-lg {
+    font-family: 'BT Beau Sans', sans-serif;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 400;
+  }
+
+  /* Body Medium - BT Beau Sans Regular */
+  .text-body-md {
+    font-family: 'BT Beau Sans', sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;
+  }
+
+  /* Body Small - BT Beau Sans Regular */
+  .text-body-sm {
+    font-family: 'BT Beau Sans', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 300;
+  }
+
+  .text-handwriting {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 400;
+  }
+
+  /* Responsive Typography */
+  @media (max-width: 744px) {
     .text-display {
-        font-family: "Vocago", Georgia, serif;
-        font-size: 64px;
-        line-height: 72px;
-        font-weight: 400;
+      font-size: 40px;
+      line-height: 48px;
     }
 
-    /* Heading 1 - Vocago Regular */
     .text-h1 {
-        font-family: "Vocago", Georgia, serif;
-        font-size: 52px;
-        line-height: 64px;
-        font-weight: 400;
+      font-size: 32px;
+      line-height: 40px;
     }
 
-    /* Heading 2 - BT Beau Sans Regular */
-    .text-h2-beau {
-        font-family: "BT Beau Sans", sans-serif;
-        font-size: 32px;
-        line-height: 48px;
-        font-weight: 400;
-    }
-
-    /* Heading 2 - Vocago Regular */
     .text-h2 {
-        font-family: "Vocago", Georgia, serif;
-        font-size: 36px;
-        line-height: 40px;
-        font-weight: 400;
+      font-size: 20px;
+      line-height: 28px;
     }
 
-    /* Heading 4 - Vocago Regular */
+    .text-h3 {
+      font-size: 24px;
+      line-height: 28px;
+    }
+
     .text-h4 {
-        font-family: "Vocago", Georgia, serif;
-        font-size: 24px;
-        line-height: 32px;
-        font-weight: 400;
+      font-size: 20px;
+      line-height: 24px;
     }
 
-    /* Body Large - Vocago Regular */
     .text-body-lg {
-        font-family: "Vocago", Georgia, serif;
-        font-size: 20px;
-        line-height: 28px;
-        font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
     }
 
-    /* Body Medium - Vocago Regular */
     .text-body-md {
-        font-family: "Vocago", Georgia, serif;
-        font-size: 16px;
-        line-height: 24px;
-        font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
     }
 
-    /* Body Small - Vocago Regular */
     .text-body-sm {
-        font-family: "Vocago", Georgia, serif;
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 400;
+      font-size: 12px;
+      line-height: 16px;
     }
+  }
 
-    /* Responsive Typography */
-    @media (max-width: 744px) {
-        .text-display {
-            font-size: 40px;
-            line-height: 48px;
-        }
-
-        .text-h1 {
-            font-size: 32px;
-            line-height: 40px;
-        }
-
-        .text-h2-beau {
-            font-size: 20px;
-            line-height: 28px;
-        }
-
-        .text-h2 {
-            font-size: 24px;
-            line-height: 28px;
-        }
-
-        .text-h4 {
-            font-size: 20px;
-            line-height: 24px;
-        }
-
-        .text-body-lg {
-            font-size: 16px;
-            line-height: 24px;
-        }
-
-        .text-body-md {
-            font-size: 14px;
-            line-height: 20px;
-        }
-
-        .text-body-sm {
-            font-size: 12px;
-            line-height: 16px;
-        }
-    }
+  /* Background - Paper Texture */
+  .bg-paper {
+    position: relative;
+  }
+  .bg-paper:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/bg/paper.png');
+    mix-blend-mode: multiply;
+    inset: 0;
+    opacity: 0.5;
+  }
 }
