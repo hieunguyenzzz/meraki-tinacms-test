@@ -9,6 +9,28 @@ interface PageProps {
   };
 }
 
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour (ISR)
+
+export async function generateStaticParams() {
+  try {
+    const journalList = await client.queries.journalConnection();
+    const slugs: Array<{ lang: string; slug: string }> = [];
+
+    journalList.data.journalConnection.edges?.forEach((edge) => {
+      if (edge?.node?.slug) {
+        const slug = edge.node.slug;
+        slugs.push({ lang: 'en', slug }, { lang: 'vi', slug });
+      }
+    });
+
+    return slugs;
+  } catch (error) {
+    console.error('Error generating static params for journals:', error);
+    return [];
+  }
+}
+
 export async function generateMetadata({ params }: PageProps) {
   try {
     const { data } = await client.queries.journal({

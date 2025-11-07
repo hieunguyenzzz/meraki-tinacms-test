@@ -25,6 +25,17 @@ const defaultContent = {
 const t = (text: { en: string; vi: string }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour (ISR)
+
+// Pre-generate both language versions
+export function generateStaticParams() {
+  return [
+    { lang: 'en' },
+    { lang: 'vi' },
+  ];
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
 
