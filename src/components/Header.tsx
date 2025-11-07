@@ -31,7 +31,7 @@ export default function Header({ lang }: HeaderProps) {
           {/* Navigation */}
           <nav className='hidden md:block'>
             <div className='ml-10 flex items-baseline space-x-4'>
-              {navItems.map((item, index) => (
+              {navItems.map((item) => (
                 <a
                   key={item.key}
                   href={`/${lang}${item.path}`}
