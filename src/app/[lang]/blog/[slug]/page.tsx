@@ -11,6 +11,9 @@ interface Props {
   params: { lang: string; slug: string };
 }
 
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour (ISR)
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, slug } = params;
 

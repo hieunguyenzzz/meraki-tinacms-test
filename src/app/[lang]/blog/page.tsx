@@ -9,12 +9,23 @@ interface Props {
   params: { lang: string };
 }
 
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour (ISR)
+
+// Pre-generate both language versions
+export function generateStaticParams() {
+  return [
+    { lang: 'en' },
+    { lang: 'vi' },
+  ];
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
-  
+
   return {
     title: lang === 'en' ? 'Blog - Meraki Wedding Planner' : 'Blog - Meraki Wedding Planner',
-    description: lang === 'en' 
+    description: lang === 'en'
       ? 'Wedding tips, inspiration, and behind-the-scenes stories from Meraki Wedding Planner'
       : 'Mẹo cưới, cảm hứng và những câu chuyện hậu trường từ Meraki Wedding Planner',
   };
