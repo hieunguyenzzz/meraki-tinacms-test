@@ -7,6 +7,17 @@ interface Props {
   params: { lang: string };
 }
 
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour (ISR)
+
+// Pre-generate both language versions
+export function generateStaticParams() {
+  return [
+    { lang: 'en' },
+    { lang: 'vi' },
+  ];
+}
+
 export default async function JournalPage({ params }: Props) {
   const { lang } = params;
 
