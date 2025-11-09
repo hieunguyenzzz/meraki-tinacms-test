@@ -12,7 +12,7 @@ export default function Footer({ lang }: FooterProps) {
   return (
     <footer className='bg-background-base text-text-primary py-16'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='grid md:grid-cols-4 gap-12 mb-12'>
+        <div className='flex justify-between mb-12'>
           {/* Brand Column */}
           <div>
             <img src='/logo.svg' alt='Meraki' className='h-10 w-auto mb-6' />
@@ -32,7 +32,7 @@ export default function Footer({ lang }: FooterProps) {
             {/* Social Icons */}
             <div className='flex gap-4 mt-6'>
               <a
-                href='https://instagram.com/meraki'
+                href='https://www.instagram.com/meraki.wedding.planner'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='text-text-primary hover:text-text-accent transition-colors'
@@ -45,7 +45,7 @@ export default function Footer({ lang }: FooterProps) {
                 </svg>
               </a>
               <a
-                href='https://facebook.com/meraki'
+                href='https://www.facebook.com/merakiplanning'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='text-text-primary hover:text-text-accent transition-colors'
@@ -59,79 +59,79 @@ export default function Footer({ lang }: FooterProps) {
               </a>
             </div>
           </div>
+          <div className='flex gap-20'>
+            {/* Service Column */}
+            <div>
+              <h4 className='text-h3 mb-6'>
+                {t({ en: 'Service', vi: 'Dịch vụ' }, lang)}
+              </h4>
+              <ul className='space-y-3 text-body-sm text-text-secondary'>
+                <li>
+                  <a
+                    href={`/${lang}/service#city-wedding`}
+                    className='hover:text-text-primary transition-colors'>
+                    {t(
+                      { en: 'City Wedding', vi: 'Tiệc cưới trong thành phố' },
+                      lang
+                    )}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`/${lang}/service#destination-wedding`}
+                    className='hover:text-text-primary transition-colors'>
+                    {t(
+                      { en: 'Destination Wedding', vi: 'Tiệc cưới điểm đến' },
+                      lang
+                    )}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`/${lang}/journal`}
+                    className='hover:text-text-primary transition-colors'>
+                    {t(
+                      { en: 'Our Journals', vi: 'Nhật ký của chúng tôi' },
+                      lang
+                    )}
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-          {/* Service Column */}
-          <div>
-            <h4 className='text-h4 mb-6'>
-              {t({ en: 'Service', vi: 'Dịch vụ' }, lang)}
-            </h4>
-            <ul className='space-y-3 text-body-sm text-text-secondary'>
-              <li>
-                <a
-                  href={`/${lang}/service#city-wedding`}
-                  className='hover:text-text-primary transition-colors'>
-                  {t(
-                    { en: 'City Wedding', vi: 'Tiệc cưới trong thành phố' },
-                    lang
-                  )}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`/${lang}/service#destination-wedding`}
-                  className='hover:text-text-primary transition-colors'>
-                  {t(
-                    { en: 'Destination Wedding', vi: 'Tiệc cưới điểm đến' },
-                    lang
-                  )}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`/${lang}/journal`}
-                  className='hover:text-text-primary transition-colors'>
-                  {t({ en: 'Our Journals', vi: 'Nhật ký của chúng tôi' }, lang)}
-                </a>
-              </li>
-            </ul>
+            {/* Insights Column */}
+            <div>
+              <h4 className='text-h3 mb-6'>
+                {t({ en: 'Insights', vi: 'Góc nhìn' }, lang)}
+              </h4>
+              <ul className='space-y-3 text-body-sm text-text-secondary'>
+                <li>
+                  <a
+                    href={`/${lang}/blog`}
+                    className='hover:text-text-primary transition-colors'>
+                    {t({ en: 'Blogs', vi: 'Chia sẻ' }, lang)}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`/${lang}/love-notes`}
+                    className='hover:text-text-primary transition-colors'>
+                    {t({ en: 'Love Notes', vi: 'Lời tri ân' }, lang)}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`/${lang}/about-us`}
+                    className='hover:text-text-primary transition-colors'>
+                    {t({ en: 'Meet Us', vi: 'Gặp gỡ chúng tôi' }, lang)}
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
-
-          {/* Insights Column */}
-          <div>
-            <h4 className='text-h4 mb-6'>
-              {t({ en: 'Insights', vi: 'Góc nhìn' }, lang)}
-            </h4>
-            <ul className='space-y-3 text-body-sm text-text-secondary'>
-              <li>
-                <a
-                  href={`/${lang}/blog`}
-                  className='hover:text-text-primary transition-colors'>
-                  {t({ en: 'Blogs', vi: 'Chia sẻ' }, lang)}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`/${lang}/love-notes`}
-                  className='hover:text-text-primary transition-colors'>
-                  {t({ en: 'Love Notes', vi: 'Lời tri ân' }, lang)}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`/${lang}/about-us`}
-                  className='hover:text-text-primary transition-colors'>
-                  {t({ en: 'Meet Us', vi: 'Gặp gỡ chúng tôi' }, lang)}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Empty column for spacing */}
-          <div></div>
         </div>
-
         {/* Copyright */}
-        <div className='border-t border-line-secondary pt-8 text-center'>
+        <div className='pt-8 text-center'>
           <p className='text-body-sm text-text-secondary'>
             Copyright © {currentYear} Meraki Wedding Planner
           </p>
