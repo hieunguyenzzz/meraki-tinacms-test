@@ -1,3 +1,7 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+
 interface HeaderProps {
   lang: string;
 }
@@ -18,8 +22,28 @@ const t = (text: { en: string; vi: string }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
 export default function Header({ lang }: HeaderProps) {
+  const pathname = usePathname();
+
+  // Function to check if a nav item is active
+  const isActive = (itemPath: string) => {
+    // Remove language prefix from pathname
+    const pathWithoutLang = pathname.replace(`/${lang}`, '') || '/';
+
+    // For home page
+    if (itemPath === '' && pathWithoutLang === '/') {
+      return true;
+    }
+
+    // For other pages, check if current path starts with the item path
+    if (itemPath !== '' && pathWithoutLang.startsWith(itemPath)) {
+      return true;
+    }
+
+    return false;
+  };
+
   return (
-    <header className='sticky top-0 z-50 bg-background-base shadow-sm flex items-center justify-between px-6'>
+    <header className='sticky top-0 z-50 bg-background-base shadow-sm flex items-center justify-between px-6header'>
       {/* Logo */}
       <div className='flex-shrink-0'>
         <a href={`/${lang}`} className='block'>
@@ -31,14 +55,21 @@ export default function Header({ lang }: HeaderProps) {
           {/* Navigation */}
           <nav className='hidden md:block'>
             <div className='ml-10 flex items-baseline space-x-4'>
-              {navItems.map((item) => (
-                <a
-                  key={item.key}
-                  href={`/${lang}${item.path}`}
-                  className={`px-3 py-2 text-body-sm text-text-secondary transition-all hover:underline hover:-translate-y-[2px] underline-offset-4 decoration-2`}>
-                  {t({ en: item.en, vi: item.vi }, lang)}
-                </a>
-              ))}
+              {navItems.map((item) => {
+                const active = isActive(item.path);
+                return (
+                  <a
+                    key={item.key}
+                    href={`/${lang}${item.path}`}
+                    className={`px-3 py-2 text-body-sm transition-all underline-offset-4 decoration-2 ${
+                      active
+                        ? 'text-text-primary underline'
+                        : 'text-text-secondary hover:underline hover:-translate-y-[2px]'
+                    }`}>
+                    {t({ en: item.en, vi: item.vi }, lang)}
+                  </a>
+                );
+              })}
             </div>
           </nav>
 

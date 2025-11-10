@@ -15,7 +15,12 @@ export default function Footer({ lang }: FooterProps) {
         <div className='flex justify-between mb-12'>
           {/* Brand Column */}
           <div>
-            <img src='/logo.svg' alt='Meraki' className='h-10 w-auto mb-6' />
+            <img
+              src='/logo.svg'
+              alt='Meraki'
+              className='h-10 w-auto mb-6'
+              loading='lazy'
+            />
             <div className='space-y-2 text-body-sm text-text-secondary'>
               <p>
                 {t(

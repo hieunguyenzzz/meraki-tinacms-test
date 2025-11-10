@@ -1,0 +1,262 @@
+'use client';
+
+import { useTina, tinaField } from 'tinacms/dist/react';
+import { useState, useMemo } from 'react';
+import Header from './Header';
+import Footer from './Footer';
+
+interface Props {
+  data: any;
+  query: string;
+  variables: any;
+  lang: string;
+  journals: any[];
+}
+
+// Helper function for translations
+const t = (text: { en: string; vi: string }, lang: string) =>
+  lang === 'en' ? text.en : text.vi;
+
+export default function JournalListingClient({
+  data,
+  query,
+  variables,
+  lang,
+  journals,
+}: Props) {
+  const { data: tinaData } = useTina({ data, query, variables });
+  const page = tinaData.page;
+
+  // Location filter state
+  const [activeLocation, setActiveLocation] = useState<string>('All');
+
+  // Available locations (should match journal schema)
+  const locations = [
+    'All',
+    'Tà Năng',
+    'Đà Lạt',
+    'Quảng Ninh',
+    'Nha Trang',
+    'Phú Quốc',
+    'Hà Nội',
+    'Sapa',
+  ];
+
+  // Filter journals by location
+  const filteredJournals = useMemo(() => {
+    if (activeLocation === 'All') {
+      return journals;
+    }
+    return journals.filter((journal) => journal.node.location === activeLocation);
+  }, [activeLocation, journals]);
+
+  return (
+    <div className='min-h-screen bg-background-base'>
+      <Header lang={lang} />
+
+      {/* Hero Section */}
+      <section className='relative'>
+        <div className='grid md:grid-cols-2 items-stretch'>
+          {/* Left - Hero Image */}
+          <div
+            className={
+              'relative h-full overflow-hidden bg-[url(/images/journal/listing/hero-image.jpg)] bg-cover bg-center'
+            }
+            data-tina-field={tinaField(page, 'hero.background_image')}></div>
+
+          {/* Right - Hero Content */}
+          <div className='p-20 flex flex-col gap-20 justify-between bg-paper bg-background-1 items-center text-center'>
+            <h1
+              className='text-display font-vocago uppercase tracking-wider'
+              data-tina-field={tinaField(
+                page,
+                lang === 'en' ? 'title_en' : 'title_vi'
+              )}>
+              {lang === 'en' ? page.title_en : page.title_vi}
+            </h1>
+
+            {/* Featured Journal Thumbnail */}
+            {page.hero?.featured_thumbnail && (
+              <div data-tina-field={tinaField(page.hero, 'featured_thumbnail')}>
+                <img
+                  src={page.hero.featured_thumbnail}
+                  alt='Featured'
+                  className='w-[260px] h-auto object-cover'
+                  loading='lazy'
+                />
+              </div>
+            )}
+
+            <p
+              className='text-body-md text-text-secondary max-w-[500px] leading-relaxed'
+              data-tina-field={tinaField(
+                page,
+                lang === 'en' ? 'hero.description_en' : 'hero.description_vi'
+              )}>
+              {lang === 'en'
+                ? page.hero?.description_en
+                : page.hero?.description_vi}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Filter/Navigation */}
+      <section className='pt-20 pb-10'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='flex gap-6 overflow-x-auto justify-center'>
+            {locations.map((location) => (
+              <button
+                key={location}
+                onClick={() => setActiveLocation(location)}
+                className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${
+                  activeLocation === location
+                    ? 'text-text-primary bg-background-2'
+                    : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
+                }`}>
+                {location === 'All'
+                  ? t({ en: 'All', vi: 'Tất cả' }, lang)
+                  : location}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Journal Grid */}
+      <section className=''>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20'>
+          {filteredJournals.length > 0 ? (
+            <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16'>
+              {filteredJournals.map((journal: any, index: number) => {
+                // Apply translate-y to every 2nd item in each row (index 1, 4, 7, etc.)
+                const shouldTranslate = index % 3 === 1;
+
+                return (
+                  <div
+                    key={index}
+                    className={`group ${
+                      shouldTranslate ? 'md:-translate-y-16' : ''
+                    }`}>
+                    <a href={`/${lang}/journal/${journal.node.slug}`}>
+                      {/* Image Container */}
+                      <div className='relative aspect-[3/4] overflow-hidden mb-6'>
+                        {journal.node.featured_image ? (
+                          <img
+                            src={journal.node.featured_image}
+                            alt={journal.node.couple_names}
+                            className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
+                            loading='lazy'
+                          />
+                        ) : (
+                          <div className='w-full h-full bg-background-1' />
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className='text-center space-y-2'>
+                        <h3 className='text-h4 font-vocago tracking-wide'>
+                          {t(
+                            {
+                              en:
+                                journal.node.subtitle_en ||
+                                journal.node.couple_names,
+                              vi:
+                                journal.node.subtitle_vi ||
+                                journal.node.couple_names,
+                            },
+                            lang
+                          )}
+                        </h3>
+                        <p className='text-body-sm text-text-secondary'>
+                          {journal.node.couple_names}
+                        </p>
+                      </div>
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className='text-center py-16'>
+              <p className='text-body-md text-text-secondary'>
+                {activeLocation === 'All'
+                  ? t(
+                      {
+                        en: 'No wedding journals available yet. Check back soon!',
+                        vi: 'Chưa có nhật ký cưới nào. Hãy quay lại sau!',
+                      },
+                      lang
+                    )
+                  : t(
+                      {
+                        en: `No wedding journals found for ${activeLocation}.`,
+                        vi: `Không tìm thấy nhật ký cưới nào cho ${activeLocation}.`,
+                      },
+                      lang
+                    )}
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Pagination */}
+      {filteredJournals.length > 0 && (
+        <section className='py-8'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <div className='flex justify-center gap-2'>
+              <button className='w-8 h-8 flex items-center justify-center bg-background-2 text-text-primary text-body-sm'>
+                1
+              </button>
+              <button className='w-8 h-8 flex items-center justify-center hover:bg-background-1 text-text-secondary text-body-sm transition-colors'>
+                2
+              </button>
+              <button className='w-8 h-8 flex items-center justify-center hover:bg-background-1 text-text-secondary text-body-sm transition-colors'>
+                3
+              </button>
+              <button className='w-8 h-8 flex items-center justify-center hover:bg-background-1 text-text-secondary text-body-sm transition-colors'>
+                4
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Let's Connect Section */}
+      <section className='py-10 bg-background-1 bg-paper'>
+        <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6'>
+          <div className='flex items-center justify-center'>
+            <img
+              src='/images/botanical/2.svg'
+              alt='Decorative botanical element'
+              className='w-[48px] h-auto'
+            />
+          </div>
+
+          <h2 className='text-h2 font-vocago'>
+            {t({ en: "Let's Connect", vi: 'Liên hệ' }, lang)}
+          </h2>
+
+          <p className='text-body-md text-text-secondary max-w-xl mx-auto'>
+            {t(
+              {
+                en: "We're grateful to share this journey with you, side by side through every step toward your special day",
+                vi: 'Chúng tôi biết ơn được chia sẻ hành trình này cùng bạn, sát cánh qua từng bước đến ngày đặc biệt của bạn',
+              },
+              lang
+            )}
+          </p>
+
+          <a
+            href={`/${lang}/lets-connect`}
+            className='inline-block text-body-md text-text-primary hover:text-text-accent transition-colors border-b border-text-primary hover:border-text-accent'>
+            {t({ en: 'Contact Us', vi: 'Liên hệ với chúng tôi' }, lang)}
+          </a>
+        </div>
+      </section>
+
+      <Footer lang={lang} />
+    </div>
+  );
+}

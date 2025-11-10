@@ -32,6 +32,23 @@ export const Journal: Collection = {
       required: true,
     },
 
+    // Location Tag
+    {
+      type: 'string',
+      name: 'location',
+      label: 'Location',
+      required: true,
+      options: [
+        'Tà Năng',
+        'Đà Lạt',
+        'Quảng Ninh',
+        'Nha Trang',
+        'Phú Quốc',
+        'Hà Nội',
+        'Sapa',
+      ],
+    },
+
     // Featured Image for Listing
     {
       type: 'image',

@@ -69,6 +69,27 @@ export const Page: Collection = {
           name: 'background_image',
           label: 'Background Image',
         },
+        {
+          type: 'image',
+          name: 'featured_thumbnail',
+          label: 'Featured Thumbnail',
+        },
+        {
+          type: 'string',
+          name: 'description_en',
+          label: 'Hero Description (English)',
+          ui: {
+            component: 'textarea',
+          },
+        },
+        {
+          type: 'string',
+          name: 'description_vi',
+          label: 'Hero Description (Vietnamese)',
+          ui: {
+            component: 'textarea',
+          },
+        },
       ],
     },
     {
