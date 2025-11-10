@@ -51,6 +51,7 @@ export default function JournalClient({
                 alt={journal.couple_names}
                 className='w-full h-full object-cover'
                 data-tina-field={tinaField(journal.hero, 'image')}
+                loading='lazy'
               />
               <div className='absolute inset-0 bg-black/20' />
               <div className='absolute bottom-0 left-0 right-0 p-8 text-white'>
@@ -114,6 +115,7 @@ export default function JournalClient({
                           alt=''
                           className='w-full h-auto rounded-lg shadow-lg'
                           data-tina-field={tinaField(block, 'image')}
+                          loading='lazy'
                         />
                       </div>
                     </div>
@@ -152,6 +154,7 @@ export default function JournalClient({
                               alt={altText || ''}
                               className='w-full h-full object-cover hover:scale-105 transition-transform duration-300'
                               data-tina-field={tinaField(img, 'image')}
+                              loading='lazy'
                             />
                           </div>
                         );
