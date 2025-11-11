@@ -42,8 +42,16 @@ export default function Header({ lang }: HeaderProps) {
     return false;
   };
 
+  // Function to get the language-switched URL
+  const getLanguageSwitchUrl = (targetLang: string) => {
+    // Remove current language prefix from pathname
+    const pathWithoutLang = pathname.replace(`/${lang}`, '') || '/';
+    // Return new path with target language
+    return `/${targetLang}${pathWithoutLang === '/' ? '' : pathWithoutLang}`;
+  };
+
   return (
-    <header className='sticky top-0 z-50 bg-background-base shadow-sm flex items-center justify-between px-6header'>
+    <header className='sticky top-0 z-50 bg-background-base shadow-sm flex items-center justify-between px-6'>
       {/* Logo */}
       <div className='flex-shrink-0'>
         <a href={`/${lang}`} className='block'>
@@ -100,7 +108,7 @@ export default function Header({ lang }: HeaderProps) {
         {['en', 'vi'].map((l) => (
           <a
             key={l}
-            href={`/${l}`}
+            href={getLanguageSwitchUrl(l)}
             className={`px-2 py-1 text-sm rounded transition-colors ${
               lang === l
                 ? 'bg-gray-900 text-white'
