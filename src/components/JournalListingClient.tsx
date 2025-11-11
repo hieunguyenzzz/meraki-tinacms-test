@@ -1,9 +1,10 @@
 'use client';
 
 import { useTina, tinaField } from 'tinacms/dist/react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import Pagination from './Pagination';
 
 interface Props {
   data: any;
@@ -30,6 +31,10 @@ export default function JournalListingClient({
   // Location filter state
   const [activeLocation, setActiveLocation] = useState<string>('All');
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 12;
+
   // Available locations (should match journal schema)
   const locations = [
     'All',
@@ -47,8 +52,21 @@ export default function JournalListingClient({
     if (activeLocation === 'All') {
       return journals;
     }
-    return journals.filter((journal) => journal.node.location === activeLocation);
+    return journals.filter(
+      (journal) => journal.node.location === activeLocation
+    );
   }, [activeLocation, journals]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredJournals.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedJournals = filteredJournals.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeLocation]);
 
   return (
     <div className='min-h-screen bg-background-base'>
@@ -56,16 +74,16 @@ export default function JournalListingClient({
 
       {/* Hero Section */}
       <section className='relative'>
-        <div className='grid md:grid-cols-2 items-stretch'>
+        <div className='grid sm:grid-cols-1 lg:grid-cols-2 items-stretch'>
           {/* Left - Hero Image */}
           <div
             className={
-              'relative h-full overflow-hidden bg-[url(/images/journal/listing/hero-image.jpg)] bg-cover bg-center'
+              'md:h-[500px] relative lg:h-full overflow-hidden bg-[url(/images/journal/listing/hero-image.jpg)] bg-cover bg-center'
             }
             data-tina-field={tinaField(page, 'hero.background_image')}></div>
 
           {/* Right - Hero Content */}
-          <div className='p-20 flex flex-col gap-20 justify-between bg-paper bg-background-1 items-center text-center'>
+          <div className='md:w-[540px] mx-auto md:-translate-y-20 lg:translate-y-0 lg:w-full p-20 flex flex-col gap-20 justify-between bg-paper bg-background-1 items-center text-center'>
             <h1
               className='text-display font-vocago uppercase tracking-wider'
               data-tina-field={tinaField(
@@ -101,8 +119,8 @@ export default function JournalListingClient({
         </div>
       </section>
 
-      {/* Filter/Navigation */}
-      <section className='pt-20 pb-10'>
+      {/* Filter */}
+      <section className='md:py-0 lg:pt-20 lg:pb-10'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex gap-6 overflow-x-auto justify-center'>
             {locations.map((location) => (
@@ -124,19 +142,19 @@ export default function JournalListingClient({
       </section>
 
       {/* Journal Grid */}
-      <section className=''>
+      <section className='pb-10'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20'>
-          {filteredJournals.length > 0 ? (
-            <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16'>
-              {filteredJournals.map((journal: any, index: number) => {
-                // Apply translate-y to every 2nd item in each row (index 1, 4, 7, etc.)
+          {paginatedJournals.length > 0 ? (
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16'>
+              {paginatedJournals.map((journal: any, index: number) => {
+                // Apply translate-y to every 2nd item in each row on desktop only (index 1, 4, 7, etc.)
                 const shouldTranslate = index % 3 === 1;
 
                 return (
                   <div
                     key={index}
                     className={`group ${
-                      shouldTranslate ? 'md:-translate-y-16' : ''
+                      shouldTranslate ? 'lg:-translate-y-16' : ''
                     }`}>
                     <a href={`/${lang}/journal/${journal.node.slug}`}>
                       {/* Image Container */}
@@ -202,26 +220,11 @@ export default function JournalListingClient({
       </section>
 
       {/* Pagination */}
-      {filteredJournals.length > 0 && (
-        <section className='py-8'>
-          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='flex justify-center gap-2'>
-              <button className='w-8 h-8 flex items-center justify-center bg-background-2 text-text-primary text-body-sm'>
-                1
-              </button>
-              <button className='w-8 h-8 flex items-center justify-center hover:bg-background-1 text-text-secondary text-body-sm transition-colors'>
-                2
-              </button>
-              <button className='w-8 h-8 flex items-center justify-center hover:bg-background-1 text-text-secondary text-body-sm transition-colors'>
-                3
-              </button>
-              <button className='w-8 h-8 flex items-center justify-center hover:bg-background-1 text-text-secondary text-body-sm transition-colors'>
-                4
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       {/* Let's Connect Section */}
       <section className='py-10 bg-background-1 bg-paper'>

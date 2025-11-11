@@ -14,7 +14,7 @@ export default function Footer({ lang }: FooterProps) {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between mb-12'>
           {/* Brand Column */}
-          <div>
+          <div className='md:pr-20'>
             <img
               src='/logo.svg'
               alt='Meraki'
