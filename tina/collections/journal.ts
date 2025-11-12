@@ -57,6 +57,30 @@ export const Journal: Collection = {
       required: true,
     },
 
+    // Hero Section (optional - for journals not using template layout)
+    {
+      type: 'object',
+      name: 'hero',
+      label: 'Hero Section',
+      fields: [
+        {
+          type: 'image',
+          name: 'image',
+          label: 'Hero Image',
+        },
+        {
+          type: 'string',
+          name: 'alt_en',
+          label: 'Alt Text (English)',
+        },
+        {
+          type: 'string',
+          name: 'alt_vi',
+          label: 'Alt Text (Vietnamese)',
+        },
+      ],
+    },
+
     // Template Layout Fields
     {
       type: 'object',
