@@ -1,6 +1,6 @@
 # TinaCMS Self-Hosted Backend - Quick Start
 
-## ✅ Implementation Complete!
+## ✅ Implementation Complete
 
 All code and configuration files have been created. Now you need to complete the setup steps.
 
@@ -10,7 +10,7 @@ All code and configuration files have been created. Now you need to complete the
 
 ### Step 1: Create GitHub OAuth App (5 minutes)
 
-1. Visit: https://github.com/settings/developers
+1. Visit: <https://github.com/settings/developers>
 2. Click **New OAuth App**
 3. Fill in:
    - **Application name**: `Meraki TinaCMS (Dev)`
@@ -21,7 +21,7 @@ All code and configuration files have been created. Now you need to complete the
 
 ### Step 2: Create GitHub Personal Access Token (3 minutes)
 
-1. Visit: https://github.com/settings/tokens
+1. Visit: <https://github.com/settings/tokens>
 2. Click **Generate new token (classic)**
 3. Set:
    - **Note**: `TinaCMS Backend - Meraki`
@@ -58,8 +58,8 @@ docker-compose logs -f
 
 ### Step 5: Test the Setup (5 minutes)
 
-1. Open browser: http://localhost:3000
-2. Navigate to: http://localhost:3000/admin
+1. Open browser: <http://localhost:3000>
+2. Navigate to: <http://localhost:3000/admin>
 3. Click **Sign in with GitHub**
 4. Authorize the OAuth app
 5. Edit some content and save
@@ -70,19 +70,23 @@ docker-compose logs -f
 ## 📁 Files Created
 
 ### Configuration Files
+
 - ✅ `docker-compose.yml` - Docker services setup
 - ✅ `.env.local.example` - Environment variables template
 - ✅ `Dockerfile` - Multi-stage Docker build
 
 ### Backend Code
+
 - ✅ `src/app/api/auth/[...nextauth]/route.ts` - Auth.js with GitHub OAuth
 - ✅ `src/app/api/tina/[...routes]/route.ts` - TinaCMS GraphQL API
 - ✅ `tina/config.ts` - Updated for backend mode
 
 ### Database
+
 - ✅ `scripts/init-db.sql` - PostgreSQL schema initialization
 
 ### Documentation
+
 - ✅ `DATABASE_SETUP.md` - Comprehensive setup guide
 - ✅ `TINACMS_BACKEND_SPEC.md` - Technical specifications
 - ✅ `QUICKSTART.md` - This file
@@ -92,10 +96,12 @@ docker-compose logs -f
 ## 🔧 Troubleshooting
 
 ### OAuth errors?
+
 - Verify callback URL is exactly: `http://localhost:3000/api/auth/callback/github`
 - Check Client ID and Secret are correct in `.env.local`
 
 ### Database won't start?
+
 ```bash
 # Check PostgreSQL logs
 docker-compose logs postgres
@@ -105,6 +111,7 @@ docker-compose restart
 ```
 
 ### Can't commit to GitHub?
+
 - Verify Personal Access Token has `repo` scope
 - Check token isn't expired
 - Ensure GITHUB_OWNER and GITHUB_REPO are correct
@@ -114,6 +121,7 @@ docker-compose restart
 ## 📚 Full Documentation
 
 For detailed information, see:
+
 - **`DATABASE_SETUP.md`** - Complete setup, production deployment, backups
 - **`TINACMS_BACKEND_SPEC.md`** - Architecture and decisions
 
@@ -122,6 +130,7 @@ For detailed information, see:
 ## 🎯 Expected Result
 
 Once setup is complete:
+
 - ✅ Access TinaCMS admin at `/admin`
 - ✅ Sign in with GitHub OAuth
 - ✅ Edit content in bilingual (EN/VI) MDX files

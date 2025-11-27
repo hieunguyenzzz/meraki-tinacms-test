@@ -5,7 +5,8 @@ import { Testimonial } from "./collections/testimonial";
 import { Blog } from "./collections/blog";
 
 // Determine if running in local mode or self-hosted backend mode
-const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === 'true';
+// For build time, always use local mode to avoid API calls
+const isLocal = process.env.TINA_PUBLIC_IS_LOCAL !== 'false';
 
 export const config = defineConfig({
   // Self-hosted backend configuration
@@ -14,6 +15,7 @@ export const config = defineConfig({
   branch: process.env.GITHUB_BRANCH || 'main',
   
   // Git provider configuration for self-hosted mode
+  // Don't set contentApiUrlOverride for local builds
   contentApiUrlOverride: isLocal ? undefined : '/api/tina/graphql',
   
   // Media storage configuration

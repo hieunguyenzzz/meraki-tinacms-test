@@ -1,6 +1,13 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 
+// Define GitHub profile type
+interface GitHubProfile {
+  login: string;
+  email?: string;
+  name?: string;
+}
+
 // Auth.js configuration for TinaCMS backend
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,12 +23,12 @@ export const authOptions: NextAuthOptions = {
   ],
   
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ profile }) {
       // Optional: Restrict access to specific GitHub users
       const allowedUsers = process.env.ALLOWED_GITHUB_USERS?.split(',') || [];
       
       if (allowedUsers.length > 0) {
-        const githubUsername = (profile as any)?.login;
+        const githubUsername = (profile as GitHubProfile)?.login;
         if (!githubUsername || !allowedUsers.includes(githubUsername)) {
           console.warn(`Access denied for user: ${githubUsername}`);
           return false;
@@ -35,16 +42,18 @@ export const authOptions: NextAuthOptions = {
       // Persist GitHub access token for Git operations
       if (account) {
         token.accessToken = account.access_token;
-        token.githubUsername = (profile as any)?.login;
+        token.githubUsername = (profile as GitHubProfile)?.login;
       }
       return token;
     },
     
     async session({ session, token }) {
       // Make GitHub token and username available in session
-      (session as any).accessToken = token.accessToken;
-      (session as any).githubUsername = token.githubUsername;
-      return session;
+      return {
+        ...session,
+        accessToken: token.accessToken,
+        githubUsername: token.githubUsername,
+      };
     },
   },
   

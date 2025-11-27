@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
+    // Read the request body for future GraphQL implementation
+    await request.json();
     
     // Forward the GraphQL request to TinaCMS datalayer
     // This will be handled by the @tinacms/datalayer package
