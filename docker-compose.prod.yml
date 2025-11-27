@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for TinaCMS Backend
+  postgres:
+    image: postgres:16-alpine
+    container_name: meraki-tinacms-db-prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tinacms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-tinacms}
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tinacms-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tinacms} -d ${POSTGRES_DB:-tinacms}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Next.js Application with TinaCMS
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+      args:
+        - NODE_ENV=production
+    container_name: meraki-tinacms-app-prod
+    restart: always
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-tinacms}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-tinacms}
+      
+      # GitHub OAuth
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GITHUB_OWNER: ${GITHUB_OWNER:-hieunguyenzzz}
+      GITHUB_REPO: ${GITHUB_REPO:-meraki-tinacms-test}
+      GITHUB_BRANCH: ${GITHUB_BRANCH:-main}
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN}
+      
+      # Auth.js
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      
+      # TinaCMS
+      TINA_PUBLIC_IS_LOCAL: "false"
+      TINA_TOKEN: ${TINA_TOKEN}
+      
+      # Node environment
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      
+      # Optional: User allowlist
+      ALLOWED_GITHUB_USERS: ${ALLOWED_GITHUB_USERS:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - tinacms-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH:-./data/postgres}
+
+networks:
+  tinacms-network:
+    driver: bridge

@@ -5,6 +5,14 @@ export const Page: Collection = {
   name: 'page',
   path: 'content/page',
   format: 'mdx',
+  ui: {
+    router: ({ document }) => {
+      if (document._sys.filename === 'index') {
+        return '/';
+      }
+      return undefined;
+    },
+  },
   fields: [
     {
       type: 'string',
@@ -34,7 +42,7 @@ export const Page: Collection = {
       type: 'string',
       name: 'page_type',
       label: 'Page Type',
-      options: ['homepage', 'about', 'contact'],
+      options: ['homepage', 'journal-listing', 'about', 'contact'],
       ui: {
         component: 'select',
       },
@@ -95,7 +103,8 @@ export const Page: Collection = {
     {
       type: 'object',
       name: 'services_section',
-      label: 'Services Section',
+      label: 'Services Section (Homapge Only)',
+      description: 'This section is only used on homepage',
       fields: [
         {
           type: 'string',
@@ -122,6 +131,55 @@ export const Page: Collection = {
           ui: {
             component: 'textarea',
           },
+        },
+      ],
+    },
+    {
+      type: 'object',
+      name: 'lets_connect',
+      label: "Let's Connect Section (Journal Listing Only)",
+      description: 'This section is only used on journal-listing pages',
+      fields: [
+        {
+          type: 'string',
+          name: 'title_en',
+          label: 'Title (English)',
+        },
+        {
+          type: 'string',
+          name: 'title_vi',
+          label: 'Title (Vietnamese)',
+        },
+        {
+          type: 'string',
+          name: 'description_en',
+          label: 'Description (English)',
+          ui: {
+            component: 'textarea',
+          },
+        },
+        {
+          type: 'string',
+          name: 'description_vi',
+          label: 'Description (Vietnamese)',
+          ui: {
+            component: 'textarea',
+          },
+        },
+        {
+          type: 'string',
+          name: 'button_text_en',
+          label: 'Button Text (English)',
+        },
+        {
+          type: 'string',
+          name: 'button_text_vi',
+          label: 'Button Text (Vietnamese)',
+        },
+        {
+          type: 'string',
+          name: 'button_link',
+          label: 'Button Link',
         },
       ],
     },
@@ -166,12 +224,4 @@ export const Page: Collection = {
       ],
     },
   ],
-  ui: {
-    router: ({ document }) => {
-      if (document._sys.filename === 'index') {
-        return '/';
-      }
-      return undefined;
-    },
-  },
 };

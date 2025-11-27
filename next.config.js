@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  
+  // Enable standalone output for Docker production builds
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  
   async rewrites() {
     return [
       {
@@ -9,6 +13,7 @@ const nextConfig = {
       },
     ];
   },
+  
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,

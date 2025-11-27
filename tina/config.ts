@@ -4,30 +4,41 @@ import { Journal } from "./collections/journal";
 import { Testimonial } from "./collections/testimonial";
 import { Blog } from "./collections/blog";
 
+// Determine if running in local mode or self-hosted backend mode
+const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === 'true';
+
 export const config = defineConfig({
-  // Completely disable cloud features for local development
-  clientId: null,
-  token: null,
-  branch: 'main',
-  // Use local filesystem for media
+  // Self-hosted backend configuration
+  clientId: isLocal ? null : process.env.TINA_CLIENT_ID || null,
+  token: isLocal ? null : process.env.TINA_TOKEN || null,
+  branch: process.env.GITHUB_BRANCH || 'main',
+  
+  // Git provider configuration for self-hosted mode
+  contentApiUrlOverride: isLocal ? undefined : '/api/tina/graphql',
+  
+  // Media storage configuration
   media: {
-    // If you wanted cloudinary do this
-    // loadCustomStore: async () => {
-    //   const pack = await import("next-tinacms-cloudinary");
-    //   return pack.TinaCloudCloudinaryMediaStore;
-    // },
-    // this is the config for the tina cloud media store
     tina: {
       publicFolder: 'public',
-      mediaRoot: '',
+      mediaRoot: 'images',
     },
   },
+  
   build: {
-    publicFolder: 'public', // The public asset folder for your framework
-    outputFolder: 'admin', // within the public folder
+    publicFolder: 'public',
+    outputFolder: 'admin',
   },
+  
   schema: {
     collections: [Page, Journal, Testimonial, Blog],
+  },
+  
+  // Search configuration (optional, for better content search)
+  search: {
+    tina: {
+      indexerToken: process.env.TINA_SEARCH_TOKEN,
+      stopwordLanguages: ['eng', 'vie'],
+    },
   },
 });
 
