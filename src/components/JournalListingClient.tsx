@@ -5,13 +5,14 @@ import { useState, useMemo, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Pagination from './Pagination';
+import type { PageQuery, JournalConnectionEdges } from '../../tina/__generated__/types';
 
 interface Props {
-  data: any;
+  data: PageQuery;
   query: string;
-  variables: any;
+  variables: { relativePath: string };
   lang: string;
-  journals: any[];
+  journals: JournalConnectionEdges[];
 }
 
 // Helper function for translations
@@ -53,7 +54,7 @@ export default function JournalListingClient({
       return journals;
     }
     return journals.filter(
-      (journal) => journal.node.location === activeLocation
+      (journal) => journal.node?.location === activeLocation
     );
   }, [activeLocation, journals]);
 
@@ -80,7 +81,7 @@ export default function JournalListingClient({
             className={
               'md:h-[500px] relative lg:h-full overflow-hidden bg-[url(/images/journal/listing/hero-image.jpg)] bg-cover bg-center'
             }
-            data-tina-field={tinaField(page, 'hero.background_image')}></div>
+            data-tina-field={tinaField(page.hero, 'background_image')}></div>
 
           {/* Right - Hero Content */}
           <div className='md:w-[540px] mx-auto md:-translate-y-20 lg:translate-y-0 lg:w-full p-20 flex flex-col gap-20 justify-between bg-paper bg-background-1 items-center text-center'>
@@ -108,8 +109,8 @@ export default function JournalListingClient({
             <p
               className='text-body-md text-text-secondary max-w-[500px] leading-relaxed'
               data-tina-field={tinaField(
-                page,
-                lang === 'en' ? 'hero.description_en' : 'hero.description_vi'
+                page.hero,
+                lang === 'en' ? 'description_en' : 'description_vi'
               )}>
               {lang === 'en'
                 ? page.hero?.description_en
@@ -146,7 +147,7 @@ export default function JournalListingClient({
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20'>
           {paginatedJournals.length > 0 ? (
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16'>
-              {paginatedJournals.map((journal: any, index: number) => {
+              {paginatedJournals.map((journal, index: number) => {
                 // Apply translate-y to every 2nd item in each row on desktop only (index 1, 4, 7, etc.)
                 const shouldTranslate = index % 3 === 1;
 
@@ -156,10 +157,10 @@ export default function JournalListingClient({
                     className={`group ${
                       shouldTranslate ? 'lg:-translate-y-16' : ''
                     }`}>
-                    <a href={`/${lang}/journal/${journal.node.slug}`}>
+                    <a href={`/${lang}/journal/${journal.node?.slug}`}>
                       {/* Image Container */}
                       <div className='relative aspect-[3/4] overflow-hidden mb-6'>
-                        {journal.node.featured_image ? (
+                        {journal.node?.featured_image ? (
                           <img
                             src={journal.node.featured_image}
                             alt={journal.node.couple_names}
@@ -177,17 +178,17 @@ export default function JournalListingClient({
                           {t(
                             {
                               en:
-                                journal.node.subtitle_en ||
-                                journal.node.couple_names,
+                                journal.node?.subtitle_en ||
+                                journal.node?.couple_names || '',
                               vi:
-                                journal.node.subtitle_vi ||
-                                journal.node.couple_names,
+                                journal.node?.subtitle_vi ||
+                                journal.node?.couple_names || '',
                             },
                             lang
                           )}
                         </h3>
                         <p className='text-body-sm text-text-secondary'>
-                          {journal.node.couple_names}
+                          {journal.node?.couple_names}
                         </p>
                       </div>
                     </a>
@@ -227,37 +228,56 @@ export default function JournalListingClient({
       />
 
       {/* Let's Connect Section */}
-      <section className='py-10 bg-background-1 bg-paper'>
-        <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6'>
-          <div className='flex items-center justify-center'>
-            <img
-              src='/images/botanical/2.svg'
-              alt='Decorative botanical element'
-              className='w-[48px] h-auto'
-            />
+      {page.lets_connect && (
+        <section className='py-10 bg-background-1 bg-paper'>
+          <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6'>
+            <div className='flex items-center justify-center'>
+              <img
+                src='/images/botanical/2.svg'
+                alt='Decorative botanical element'
+                className='w-[48px] h-auto'
+                loading='lazy'
+              />
+            </div>
+
+            <h2
+              className='text-h2 font-vocago'
+              data-tina-field={tinaField(
+                page.lets_connect,
+                lang === 'en' ? 'title_en' : 'title_vi'
+              )}>
+              {lang === 'en'
+                ? page.lets_connect.title_en
+                : page.lets_connect.title_vi}
+            </h2>
+
+            <p
+              className='text-body-md text-text-secondary max-w-xl mx-auto'
+              data-tina-field={tinaField(
+                page.lets_connect,
+                lang === 'en' ? 'description_en' : 'description_vi'
+              )}>
+              {lang === 'en'
+                ? page.lets_connect.description_en
+                : page.lets_connect.description_vi}
+            </p>
+
+            <a
+              href={`/${lang}${
+                page.lets_connect.button_link || '/lets-connect'
+              }`}
+              className='inline-block text-body-md text-text-primary hover:text-text-accent transition-colors border-b border-text-primary hover:border-text-accent'
+              data-tina-field={tinaField(
+                page.lets_connect,
+                lang === 'en' ? 'button_text_en' : 'button_text_vi'
+              )}>
+              {lang === 'en'
+                ? page.lets_connect.button_text_en
+                : page.lets_connect.button_text_vi}
+            </a>
           </div>
-
-          <h2 className='text-h2 font-vocago'>
-            {t({ en: "Let's Connect", vi: 'Liên hệ' }, lang)}
-          </h2>
-
-          <p className='text-body-md text-text-secondary max-w-xl mx-auto'>
-            {t(
-              {
-                en: "We're grateful to share this journey with you, side by side through every step toward your special day",
-                vi: 'Chúng tôi biết ơn được chia sẻ hành trình này cùng bạn, sát cánh qua từng bước đến ngày đặc biệt của bạn',
-              },
-              lang
-            )}
-          </p>
-
-          <a
-            href={`/${lang}/lets-connect`}
-            className='inline-block text-body-md text-text-primary hover:text-text-accent transition-colors border-b border-text-primary hover:border-text-accent'>
-            {t({ en: 'Contact Us', vi: 'Liên hệ với chúng tôi' }, lang)}
-          </a>
-        </div>
-      </section>
+        </section>
+      )}
 
       <Footer lang={lang} />
     </div>

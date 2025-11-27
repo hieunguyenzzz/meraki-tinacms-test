@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for TinaCMS Backend
+  postgres:
+    image: postgres:16-alpine
+    container_name: meraki-tinacms-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tinacms
+      POSTGRES_PASSWORD: tinacms_dev_password
+      POSTGRES_DB: tinacms
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tinacms-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tinacms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application with TinaCMS
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: meraki-tinacms-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Database
+      DATABASE_URL: postgresql://tinacms:tinacms_dev_password@postgres:5432/tinacms
+      
+      # GitHub OAuth (set these in .env.local)
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      GITHUB_OWNER: hieunguyenzzz
+      GITHUB_REPO: meraki-tinacms-test
+      GITHUB_BRANCH: main
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN}
+      
+      # Auth.js
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      
+      # TinaCMS
+      TINA_PUBLIC_IS_LOCAL: "false"
+      TINA_TOKEN: ${TINA_TOKEN}
+      
+      # Node environment
+      NODE_ENV: development
+    volumes:
+      # Mount source code for hot reload in development
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - tinacms-network
+    command: yarn dev
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  tinacms-network:
+    driver: bridge
