@@ -20,13 +20,6 @@ const nextConfig = {
       fs: false,
       path: false,
     };
-    // Exclude the old app directory from compilation
-    config.module.rules.push({
-      test: /\.(js|jsx|ts|tsx)$/,
-      include: /app\/(?!.*node_modules)/,
-      exclude: [/node_modules/, /app/],
-      use: 'ignore-loader'
-    });
     return config;
   },
 };

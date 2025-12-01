@@ -4,279 +4,133 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Meraki Wedding Planner is a bilingual (English/Vietnamese) wedding photography and planning portfolio built with **Next.js 14** and **TinaCMS**. It features a wedding journal (gallery), blog, testimonials, and service pages with a custom design system and editorial workflow.
+Meraki Wedding Planner is a bilingual (English/Vietnamese) wedding photography portfolio built with **Next.js 14** (App Router), **TinaCMS** (local, file-based), and **Tailwind CSS**. Features wedding journal galleries, blog, testimonials, and service pages with a custom design system.
 
-## Development Setup & Commands
+## Commands
 
-### Essential Commands
 ```bash
-# Development server (runs Next.js + TinaCMS)
-yarn dev
-
-# Build for production
-yarn build
-
-# Start production server
-yarn start
-
-# Type checking
-yarn typecheck
-
-# Linting
-yarn lint
-
-# Run single test (not configured yet - would use Next.js testing setup)
-# Jest/Vitest not yet configured in this project
+yarn dev        # Development server (Next.js + TinaCMS at localhost:3000, admin at /admin)
+yarn build      # Production build (tinacms build --local + next build)
+yarn start      # Start production server
+yarn typecheck  # Type checking
+yarn lint       # ESLint
 ```
 
-### Package Manager
-**Yarn 1.22.0** is required (specified in `packageManager` field). Do NOT use npm or pnpm.
+**Package Manager**: Yarn 1.22.x only (enforced in package.json). Do NOT use npm or pnpm.
 
-### Environment Setup
-- Node.js >= 18.0.0 required
-- `.env` file needed for TinaCMS integration (see `.env.example`)
-- TinaCMS runs locally with file-based storage in `public/` folder
-- Development URL: `http://localhost:3000` (with TinaCMS admin at `/admin`)
-
-## Architecture & Code Structure
+## Architecture
 
 ### Tech Stack
-- **Framework**: Next.js 14 (App Router) with TypeScript 5.8
-- **CMS**: TinaCMS 2.8 (local, file-based, not cloud)
-- **Styling**: Tailwind CSS 3.4 + Radix UI primitives
-- **UI Components**: Custom Radix UI components in `src/components/ui/`
-- **Fonts**: Custom fonts (Vocago serif, BT Beau Sans, Pinyon Script handwriting)
+- Next.js 14 (App Router) + TypeScript 5.8
+- TinaCMS 2.8 (local mode, file-based storage)
+- Tailwind CSS 3.4 + Radix UI primitives
+- Custom fonts: Vocago (serif), BT Beau Sans, Pinyon Script (handwriting)
 
-### Directory Structure
+### Key Directories
+- `src/app/[lang]/` - All pages use URL-based i18n (`/en/*`, `/vi/*`)
+- `src/components/` - React components (Header, Footer, *Client.tsx for TinaCMS editing)
+- `tina/collections/` - TinaCMS schema definitions (Page, Blog, Journal, Testimonial)
+- `content/` - MDX content files organized by type
+- `public/images/` - Static assets
 
-```
-src/
-├── app/
-│   ├── page.tsx                    # Root redirect to language home
-│   ├── [lang]/
-│   │   ├── page.tsx               # Homepage (dynamic per language)
-│   │   ├── journal/               # Wedding gallery routes
-│   │   ├── blog/                  # Blog routes
-│   │   ├── about/                 # About page
-│   │   ├── service/               # Services
-│   │   ├── social-media/          # Social links
-│   │   ├── lets-connect/          # Contact
-│   │   └── love-notes/            # Additional pages
-│   └── api/tina/gql/route.ts      # TinaCMS GraphQL endpoint
-├── components/
-│   ├── Header.tsx                 # Navigation with language switcher
-│   ├── Footer.tsx                 # Footer
-│   ├── *Client.tsx                # Client components for Tina editing
-│   ├── Lightbox.tsx               # Image gallery/lightbox
-│   ├── JournalTemplate.tsx        # Special layout for journal entries
-│   └── ui/                        # Radix UI-based components
-└── lib/
-    └── utils.ts                   # Utility functions (cn() for Tailwind merging)
+### Internationalization Pattern
+All routes use `[lang]` dynamic parameter. Content fields use `*_en`/`*_vi` suffixes.
 
-tina/
-├── config.ts                      # Main TinaCMS configuration
-└── collections/
-    ├── page.ts                    # Page content type definition
-    ├── blog.ts                    # Blog post schema
-    ├── journal.ts                 # Wedding journal schema
-    └── testimonial.ts             # Client testimonial schema
-
-content/
-├── page/                          # Page content files (MDX)
-├── blog/                          # Blog posts (MDX)
-├── journal/                       # Wedding journal entries (MDX)
-└── testimonials/                  # Testimonial files (MDX)
-```
-
-### Key Architecture Patterns
-
-#### 1. Internationalization (i18n)
-- **URL-based**: All routes use `[lang]` dynamic parameter (`/en/*`, `/vi/*`)
-- **Content**: All content types have bilingual fields (e.g., `title_en`, `title_vi`)
-- **Helper function**: `t(text: {en: string; vi: string}, lang: string)` used throughout
-- **Content suffixes**: Files use `_en` and `_vi` suffixes for organization
-
-#### 2. TinaCMS Integration
-- **Local-first**: No cloud APIs used (clientId/token = null)
-- **File-based storage**: Content stored as MDX in `/content` directory
-- **Live editing**: Client components use `useTina()` hook and `tinaField()` markers
-- **Collections**: Page, Blog, Journal, Testimonial types defined in `tina/collections/`
-- **Build process**: `tinacms build --local` generates schema before Next.js build
-
-#### 3. Data Fetching Pattern
 ```typescript
-// Server-side: Fetch via TinaCMS client
-import { client } from '@/tina/__generated__/client'
-const { data } = await client.queries.page({ relativePath: 'home_en.mdx' })
+// Helper used throughout
+const t = (text: { en: string; vi: string }, lang: string) =>
+  lang === 'en' ? text.en : text.vi;
 
-// Client-side: Wrap with useTina() for live editing
-const { data } = useTina({ query, data })
+// Content file naming: home_en.mdx, home_vi.mdx
 ```
 
-#### 4. Component Pattern - Server + Client Splits
-- Pages are server components that fetch content
-- Client components (e.g., `HomeClient.tsx`) wrap content with `useTina()` and handle interactivity
-- `tinaField()` markup enables in-place editing in TinaCMS visual editor
+### Server/Client Component Pattern
+Pages are server components that fetch data, then pass to client components for TinaCMS live editing:
 
-#### 5. Responsive Design
-- **Mobile-first**: Custom breakpoints optimized for mobile experience
-  - sm: 375px, md: 744px, lg: 1280px, xl: 1728px
-- **Typography system**: Predefined responsive text classes with automatic mobile scaling
-  - See [TYPOGRAPHY_GUIDE.md](TYPOGRAPHY_GUIDE.md) for all available classes
-- **CSS variables**: Design tokens in `globals.css` for colors, typography, spacing
+```typescript
+// page.tsx (Server Component)
+import { client } from '@/tina/__generated__/client';
+const { data, query, variables } = await client.queries.page({
+  relativePath: `home_${params.lang}.mdx`
+});
+return <PageClient data={data} query={query} variables={variables} />;
 
-### Design System
+// PageClient.tsx (Client Component)
+'use client';
+import { useTina, tinaField } from 'tinacms/dist/react';
 
-#### Colors (CSS Variables)
-- **Primary text**: `#374220` (dark olive green)
-- **Secondary text**: `#535d44`, `#838978`, `#a6ab9d` (decreasing contrast)
-- **Background**: `#fef5e3` (cream), `#fff1d5` (off-white)
-- **Accents**: `#838d4c` (olive), `#ae89cb` (purple)
+export function PageClient({ data, query, variables }) {
+  const { data: tinaData } = useTina({ data, query, variables });
+  return <h1 data-tina-field={tinaField(tinaData.page, 'title')}>{tinaData.page.title}</h1>;
+}
+```
 
-#### Typography
-All classes are **responsive by default** with automatic mobile scaling at 744px breakpoint:
+### TinaCMS Data Fetching
+```typescript
+import { client } from '@/tina/__generated__/client';
+
+// Single document
+const { data } = await client.queries.journal({ relativePath: 'couple-name.mdx' });
+
+// Collection listing
+const { data } = await client.queries.journalConnection();
+```
+
+## Design System
+
+### Typography (responsive, auto-scales at 744px breakpoint)
 - `.text-display` - 64px / 40px mobile
 - `.text-h1` - 52px / 32px mobile
 - `.text-h2` - 36px / 24px mobile
-- `.text-h2-beau` - BT Beau Sans variant, 32px / 20px mobile
 - `.text-h4` - 24px / 20px mobile
-- `.text-body-lg/md/sm` - Body text with multiple sizes
-- `.font-handwriting` - Pinyon Script (decorative)
+- `.text-body-lg/md/sm` - Body text sizes
+- `.font-handwriting` - Pinyon Script decorative
 
-See [TYPOGRAPHY_GUIDE.md](TYPOGRAPHY_GUIDE.md) for detailed usage.
+### Colors (CSS Variables)
+- Primary text: `#374220` (dark olive)
+- Secondary: `#535d44`, `#838978`, `#a6ab9d`
+- Background: `#fef5e3` (cream), `#fff1d5`
+- Accents: `#838d4c` (olive), `#ae89cb` (purple)
 
-#### Journal Template
-See [JOURNAL_TEMPLATE_GUIDE.md](JOURNAL_TEMPLATE_GUIDE.md) for the wedding journal entry structure:
-- Two-column layout (40/60 split)
-- Bilingual content (EN/VI)
-- Customizable images, text, testimonials
-- All fields editable via TinaCMS
+Use CSS variable classes (`text-text-primary`, `bg-background-base`) not hardcoded hex values.
 
-## TinaCMS Content Collections Schema
+### Responsive Breakpoints
+```
+sm: 375px, md: 744px, lg: 1280px, xl: 1728px
+```
 
-### Page
-- Hero sections, services, SEO metadata
-- Supports multiple language versions via `*_en` and `*_vi` suffixes
+## Common Pitfalls
 
-### Blog
-- Rich-text content with `TinaMarkdown`
-- Featured images, excerpt, categories, tags
-- Bilingual support with publish status
-- Query: `client.queries.blogConnection()` for listings
+1. **Import tinaField correctly**: Use `'tinacms/dist/react'` not `'tinacms'`
+2. **Missing 'use client'**: Components with hooks (useTina, useState) need directive at top
+3. **Don't use @apply with custom typography classes**: Causes circular dependencies
+4. **Image lazy loading**: All images must use lazy loading
+   ```tsx
+   // Next.js Image (default lazy)
+   <Image src={image} alt={alt} width={800} height={600} unoptimized />
 
-### Journal (Wedding Entries)
-- Complex template with left/right column layout
-- Multiple image placements (detail, ceremony, portrait)
-- Bilingual text fields
-- Wedding details (date, venue, location, guest count, type)
-- Embedded testimonials
-- Query: `client.queries.journalConnection()` for gallery listings
+   // Regular img tags
+   <img src={image} alt={alt} loading="lazy" />
+   ```
+5. **GraphQL queries**: Must match exact field names from `tina/__generated__/types.ts`
+6. **Language switching**: Update both URL path and content query suffix
 
-### Testimonial
-- Client quote (bilingual), name, rating, photo
-- Featured flag for homepage display
+## Adding New Content Types
 
-## Configuration Files
+1. Create schema in `tina/collections/your-collection.ts`
+2. Import in `tina/config.ts` collections array
+3. Run `yarn build` to regenerate types
+4. Create content MDX files in `content/your-collection/`
+5. Query via generated client
 
-### `next.config.js`
-- Rewrites `/admin` route to TinaCMS UI
-- Webpack fallbacks for Node modules (fs, path)
-- Page extensions configured
+## Adding New Pages
 
-### `tailwind.config.ts`
-- Custom design tokens (colors, typography, spacing)
-- 3 custom font families imported via @font-face
-- Animation utilities (e.g., footer gradient animation)
-- Background image patterns (paper texture)
-- Responsive breakpoints
-
-### `tsconfig.json`
-- Path alias: `@/*` → `./src/*`
-- Includes `tina/` in compilation
-- ES5 target for broad compatibility
-
-### `globals.css`
-- CSS variable definitions for entire design system
-- @font-face declarations for custom fonts
-- Component utility classes (typography, backgrounds)
-- Responsive overrides for typography at `@media (max-width: 744px)`
-
-### `.eslintrc.cjs` + `.eslintrc.json`
-- Base config extends eslint:recommended + Next.js config
-- React, TypeScript, JSX-a11y, React Hooks plugins
-- Import resolver configured for TypeScript paths
-- Stricter TypeScript rules enabled
-
-## Important Development Notes
-
-### Migration Context
-This project was recently migrated from **Remix to Next.js** (see [MIGRATION.md](MIGRATION.md)):
-- Old Remix app in `app-old/` (archived for reference)
-- New app structure follows Next.js App Router conventions
-- TinaCMS integration updated for Next.js API routes
-- Some routes (journal, blog detail pages) may still need refinement
-
-### Tina Workflow
-1. Edit content via TinaCMS admin UI (`/admin`)
-2. Changes saved to MDX files in `/content`
-3. Run `yarn build` to regenerate TinaCMS schema
-4. Server-side pages import and use the generated client (`@/tina/__generated__/client`)
-
-### Adding New Pages
 1. Create folder in `src/app/[lang]/your-page/`
-2. Add `page.tsx` server component
-3. Define data structure in `tina/collections/` if new content type needed
-4. Use `useTina()` in client component for live editing
+2. Add `page.tsx` server component that fetches data
+3. Create `*Client.tsx` component with `useTina()` for live editing
+4. Create both `*_en.mdx` and `*_vi.mdx` content files
 
-### Language Handling
-- Always check `params.lang` from route params
-- Create both `*_en` and `*_vi` content files
-- Use `t()` helper: `const title = t({en: 'Title', vi: 'Tiêu đề'}, lang)`
-- Content files follow naming: `home_en.mdx`, `home_vi.mdx`
+## Project Guides
 
-## SEO & Metadata
-- Use Next.js metadata API in page components
-- Open Graph tags for social sharing in component metadata
-- Structured data (JSON-LD) not yet implemented - consider adding
-- Bilingual sitemaps/robots.txt generation recommended
-
-## Common Tasks
-
-### Running the dev server
-```bash
-yarn dev
-```
-Opens localhost:3000 with hot reload. TinaCMS admin available at `/admin`.
-
-### Building for production
-```bash
-yarn build
-yarn start
-```
-Runs TinaCMS build to generate schema, then Next.js build.
-
-### Type checking entire project
-```bash
-yarn typecheck
-```
-Catches TypeScript errors across entire codebase.
-
-### Linting code
-```bash
-yarn lint
-```
-Runs ESLint with Next.js + React + TypeScript rules.
-
-### Creating new journal entries
-1. Create MDX file in `content/journal/slug_en.mdx` and `slug_vi.mdx`
-2. Follow template structure from [JOURNAL_TEMPLATE_GUIDE.md](JOURNAL_TEMPLATE_GUIDE.md)
-3. Use TinaCMS admin to refine and publish
-4. Entries appear in `/en/journal` and `/vi/journal` automatically
-
-## Resources & Documentation
-
-- **Next.js Docs**: https://nextjs.org/docs
-- **TinaCMS Docs**: https://tina.io/docs
-- **Tailwind CSS**: https://tailwindcss.com/docs
-- **Radix UI**: https://www.radix-ui.com/docs
-- **Project Guides**: See TYPOGRAPHY_GUIDE.md, JOURNAL_TEMPLATE_GUIDE.md
+- `TYPOGRAPHY_GUIDE.md` - Full typography system documentation
+- `JOURNAL_TEMPLATE_GUIDE.md` - Wedding journal entry structure and fields

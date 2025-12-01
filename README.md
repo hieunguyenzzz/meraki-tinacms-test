@@ -1,83 +1,74 @@
-This is a [Tina CMS](https://tina.io/) starter project.
+# Meraki Wedding Planner
 
-![remix-tinacms.gif](/public/remix-tinacms.gif)
+A bilingual (English/Vietnamese) wedding photography portfolio built with [Next.js 14](https://nextjs.org/) and [TinaCMS](https://tina.io/).
 
-## Setup
+## Features
 
-- Fork this repo
-- Clone the fork to your local machine.
+- Bilingual content (EN/VI) with URL-based routing
+- Wedding journal galleries
+- Blog with rich text content
+- Client testimonials
+- Custom design system with responsive typography
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **CMS**: TinaCMS (local, file-based)
+- **Styling**: Tailwind CSS + Radix UI
+- **Language**: TypeScript
 
 ## Local Development
 
-Install the project's dependencies:
+**Requirements**: Node.js >= 18.0.0, Yarn 1.22.x
 
-```
-pnpm install
-```
+Install dependencies:
 
-Run the project locally:
-
-```
-pnpm dev
+```bash
+yarn install
 ```
 
-Open [http://localhost:5173](http://localhost:5173) with your browser to see the result.
+Run the development server:
 
-### Building the Starter Locally (Using the hosted content API)
-
-Replace the `.env.example`, with `.env`
-
+```bash
+yarn dev
 ```
-TINA_CLIENT_ID=<get this from the project you create at app.tina.io>
-TINA_TOKEN=<get this from the project you create at app.tina.io>
-TINA_BRANCH=<Specify the branch with Tina configured>
-```
+
+Open [http://localhost:3000](http://localhost:3000) to view the site. TinaCMS admin is available at [http://localhost:3000/admin](http://localhost:3000/admin).
+
+## Build & Production
 
 Build the project:
 
 ```bash
-pnpm build
+yarn build
 ```
 
-Then run the app in production mode:
+Start production server:
 
-```sh
-pnpm start
+```bash
+yarn start
 ```
 
-## Deploying the Site
+## Environment Variables
 
-This project can easily be deployed using services like [Netlify](https://www.netlify.com/) or [Vercel](https://vercel.com/). 
+Copy `.env.example` to `.env` and configure as needed. For local development, TinaCMS runs in local mode without cloud credentials.
 
-### Build settings
+For production with GitHub-based editing, configure:
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` - GitHub OAuth
+- `GITHUB_PERSONAL_ACCESS_TOKEN` - Git operations
+- `NEXTAUTH_SECRET` / `NEXTAUTH_URL` - Auth.js configuration
 
-In general, the build settings will look like so:
-![image](https://user-images.githubusercontent.com/71273009/198213418-ea141090-8f7b-4092-8260-01af128b8ef9.png)
+## Project Structure
 
-### Environment variables
+```
+src/app/[lang]/     # Pages with i18n routing (/en/*, /vi/*)
+src/components/     # React components
+tina/collections/   # TinaCMS schema definitions
+content/            # MDX content files
+```
 
-When setting up the Netlify/Vercel project, apply the `TINA_CLIENT_ID` & `TINA_TOKEN` environment variables from your [app.tina.io](https://app.tina.io) project. 
+## Documentation
 
-## Learn More
-
-To learn more about Tina, take a look at the following resources:
-
-- 📖 [Remix docs](https://remix.run/docs)
-- [Tina Docs](https://tina.io/docs)
-- [Getting starter guide](https://tina.io/docs/introduction/using-starter/)
-
-You can check out [Tina Github repository](https://github.com/tinacms/tinacms) - your feedback and contributions are welcome!
-
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `pnpm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+- [Next.js Docs](https://nextjs.org/docs)
+- [TinaCMS Docs](https://tina.io/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
