@@ -5,6 +5,11 @@ export const Journal: Collection = {
   label: 'Journal',
   path: 'content/journal',
   format: 'mdx',
+  ui: {
+    router: ({ document }) => {
+      return `/en/journal/${document._sys.filename}`;
+    },
+  },
   fields: [
     // Basic Info
     {
