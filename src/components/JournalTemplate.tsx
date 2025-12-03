@@ -13,13 +13,9 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
   const mainHeadline = lang === 'vi' 
     ? journal.template_layout?.main_headline_vi 
     : journal.template_layout?.main_headline_en;
-  
-  const testimonialQuote = lang === 'vi'
-    ? journal.testimonial?.quote_vi
-    : journal.testimonial?.quote_en;
 
   return (
-    <div className='bg-background-1 min-h-screen'>
+    <div className='bg-background-1  '>
       {/* Main Template Container */}
       <div className='relative w-full max-w-[1400px] mx-auto z-[1] pb-10'>
         <div className='flex'>
@@ -28,7 +24,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
             {/* Top Left image */}
             {journal.template_layout?.image_top && (
               <div
-                className='relative overflow-hidden -translate-y-1/4'
+                className='relative overflow-hidden'
                 data-tina-field={tinaField(
                   journal.template_layout,
                   'image_top'
@@ -45,7 +41,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
             )}
 
             {/* Left Content Area - 75% of left column */}
-            <div className='flex-1 px-8'>
+            <div className='flex-1 px-8 pt-8'>
               <div className='max-w-[464px] mx-auto flex flex-col justify-center'>
                 {/* Couple Names */}
                 <div className='mb-12'>
@@ -126,7 +122,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                 {/* Sub image */}
                 {journal.template_layout?.image_sub && (
                   <div
-                    className='relative w-full overflow-hidden translate-x-20'
+                    className='relative w-full overflow-hidden'
                     data-tina-field={tinaField(
                       journal.template_layout,
                       'image_sub'
@@ -168,43 +164,6 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
           </div>
         </div>
       </div>
-      {/* Testimonial Section */}
-      {journal.testimonial && (
-        <div className='bg-paper px-12 py-20 -mt-20'>
-          <div className='w-[446px] mx-auto text-center'>
-            {/* Testimonial Heading */}
-            <div
-              className='text-h3 mb-3'
-              data-tina-field={tinaField(journal.testimonial, 'heading')}>
-              Testimonial
-            </div>
-
-            {/* Decorative Script Text */}
-            {journal.testimonial.decorative_text && (
-              <div
-                className='text-h4 text-handwriting mb-3 text-center'
-                data-tina-field={tinaField(
-                  journal.testimonial,
-                  'decorative_text'
-                )}>
-                {journal.testimonial.decorative_text}
-              </div>
-            )}
-
-            {/* Quote */}
-            {testimonialQuote && (
-              <p
-                className='text-center text-text-secondary text-body-sm'
-                data-tina-field={tinaField(
-                  journal.testimonial,
-                  lang === 'vi' ? 'quote_vi' : 'quote_en'
-                )}>
-                {testimonialQuote}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

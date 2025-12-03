@@ -147,7 +147,7 @@ export default function HomeClient({ data, variables, query, lang }: HomeClientP
   const page = tinaData.page;
 
   return (
-    <div className='min-h-screen bg-background-1'>
+    <div className='  bg-background-1'>
       <Header lang={lang} />
       <HeroSection lang={lang} page={page} />
       <ServicesSection lang={lang} page={page} />

@@ -103,7 +103,7 @@ export default async function BlogPostPage({ params }: Props) {
     lang === 'en' ? text.en : text.vi;
 
   return (
-    <div className='min-h-screen bg-background-1'>
+    <div className='  bg-background-1'>
       <Header lang={lang} />
 
       {/* Breadcrumb */}

@@ -171,7 +171,7 @@ export default function CityWeddingPage({ params }: Props) {
   ];
 
   return (
-    <div className="min-h-screen bg-background-1">
+    <div className="  bg-background-1">
       <Header lang={lang} />
 
       {/* Breadcrumb */}

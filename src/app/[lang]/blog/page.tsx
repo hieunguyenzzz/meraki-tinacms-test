@@ -57,7 +57,7 @@ export default async function BlogPage({ params }: Props) {
   }
 
   return (
-    <div className='min-h-screen bg-background-1'>
+    <div className='  bg-background-1'>
       <Header lang={lang} />
 
       {/* Hero Section */}

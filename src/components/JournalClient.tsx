@@ -24,7 +24,7 @@ export default function JournalClient({
   const journal = tinaData.journal;
 
   return (
-    <div className='min-h-screen bg-background-1'>
+    <div className='bg-background-1'>
       <Header lang={lang} />
 
       <JournalTemplate journal={journal} lang={lang} />
@@ -33,19 +33,19 @@ export default function JournalClient({
         <div className='py-16 space-y-16'>
           {journal.content_blocks.map((block: any, index: number) => {
             const blockType = block.__typename?.replace('JournalContent_blocks', '') || '';
-            
+
             // Image Gallery (1-4 columns, flexible number of images)
             if (blockType === 'ImageGallery') {
               const caption = lang === 'vi' ? block.caption_vi : block.caption_en;
               const columns = block.columns || '1';
-              const gridClass = 
+              const gridClass =
                 columns === '1' ? 'grid-cols-1' :
-                columns === '2' ? 'grid-cols-1 md:grid-cols-2' :
-                columns === '3' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
-                'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
-              
+                  columns === '2' ? 'grid-cols-1 md:grid-cols-2' :
+                    columns === '3' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
+                      'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
+
               return (
-                <div key={index} className='max-w-6xl mx-auto px-8'>
+                <div key={index} className='max-w-[1400px] mx-auto px-8'>
                   <div className={`grid ${gridClass} gap-4`}>
                     {block.images?.map((img: any, imgIndex: number) => {
                       const altText = lang === 'vi' ? img.alt_vi : img.alt_en;
@@ -62,7 +62,7 @@ export default function JournalClient({
                     })}
                   </div>
                   {caption && (
-                    <p 
+                    <p
                       className='mt-4 text-center text-gray-600 text-sm'
                       data-tina-field={tinaField(block, lang === 'vi' ? 'caption_vi' : 'caption_en')}
                     >
@@ -77,11 +77,11 @@ export default function JournalClient({
             if (blockType === 'TwoImagesAsymmetry') {
               const caption = lang === 'vi' ? block.caption_vi : block.caption_en;
               const offset = block.offset || 'up';
-              const leftOffset = offset === 'up' ? '-mt-12 md:-mt-24' : 'mt-12 md:mt-24';
-              const rightOffset = offset === 'up' ? 'mt-12 md:mt-24' : '-mt-12 md:-mt-24';
-              
+              const leftOffset = offset === 'up' ? '-mt-12 md:-mt-12' : 'mt-12 md:mt-12';
+              const rightOffset = offset === 'up' ? 'mt-12 md:mt-12' : '-mt-12 md:-mt-12';
+
               return (
-                <div key={index} className='max-w-6xl mx-auto px-8'>
+                <div key={index} className='max-w-[1400px] mx-auto px-8'>
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
                     <div className={leftOffset}>
                       <img
@@ -103,7 +103,7 @@ export default function JournalClient({
                     </div>
                   </div>
                   {caption && (
-                    <p 
+                    <p
                       className='mt-4 text-center text-gray-600 text-sm'
                       data-tina-field={tinaField(block, lang === 'vi' ? 'caption_vi' : 'caption_en')}
                     >
@@ -120,20 +120,20 @@ export default function JournalClient({
               const description = lang === 'vi' ? block.description_vi : block.description_en;
               const alignment = block.alignment || 'center';
               const alignClass = alignment === 'left' ? 'text-left' : alignment === 'right' ? 'text-right' : 'text-center';
-              
+
               return (
-                <div key={index} className={`max-w-4xl mx-auto px-8 ${alignClass}`}>
+                <div key={index} className={`max-w-[640px] mx-auto px-8 ${alignClass}`}>
                   {title && (
-                    <h2 
-                      className='text-3xl font-light mb-4'
+                    <h2
+                      className='text-h3 mb-4'
                       data-tina-field={tinaField(block, lang === 'vi' ? 'title_vi' : 'title_en')}
                     >
                       {title}
                     </h2>
                   )}
                   {description && (
-                    <p 
-                      className='text-lg text-gray-700 leading-relaxed whitespace-pre-line'
+                    <p
+                      className='text-body-md text-text-secondary leading-relaxed whitespace-pre-line'
                       data-tina-field={tinaField(block, lang === 'vi' ? 'description_vi' : 'description_en')}
                     >
                       {description}
@@ -145,6 +145,39 @@ export default function JournalClient({
 
             return null;
           })}
+        </div>
+      )}
+
+      {/* Testimonial Section */}
+      {journal.testimonial && (
+        <div className='bg-paper px-12 py-20'>
+          <div className='max-w-[446px] mx-auto text-center'>
+            {/* Testimonial Heading */}
+            <div className='text-h3 mb-3'>
+              Testimonial
+            </div>
+
+            {/* Decorative Script Text */}
+            {journal.testimonial?.decorative_text && (
+              <div
+                className='font-handwriting text-h4 mb-3 text-center'
+                data-tina-field={tinaField(journal.testimonial, 'decorative_text')}>
+                {journal.testimonial.decorative_text}
+              </div>
+            )}
+
+            {/* Quote */}
+            {(lang === 'vi' ? journal.testimonial?.quote_vi : journal.testimonial?.quote_en) && (
+              <p
+                className='text-center text-text-secondary text-body-sm'
+                data-tina-field={tinaField(
+                  journal.testimonial,
+                  lang === 'vi' ? 'quote_vi' : 'quote_en'
+                )}>
+                {lang === 'vi' ? journal.testimonial.quote_vi : journal.testimonial.quote_en}
+              </p>
+            )}
+          </div>
         </div>
       )}
 
