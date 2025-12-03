@@ -113,11 +113,11 @@ export default function DestinationWeddingPage({ params }: Props) {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background-1">
       <Header lang={lang} />
 
       {/* Breadcrumb */}
-      <div className="bg-gray-50 py-4">
+      <div className="  py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
@@ -181,7 +181,7 @@ export default function DestinationWeddingPage({ params }: Props) {
 
           <div className="grid md:grid-cols-3 gap-8">
             {destinations.map((destination, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+              <div key={index} className="bg-background-1 rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
                 <div className="h-48 bg-gray-200"></div>
                 <div className="p-6">
                   <h3 className="text-xl font-medium text-gray-900 mb-3">
@@ -208,7 +208,7 @@ export default function DestinationWeddingPage({ params }: Props) {
       </section>
 
       {/* Planning Process */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16  ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-light text-gray-900 mb-4">
@@ -224,7 +224,7 @@ export default function DestinationWeddingPage({ params }: Props) {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {planningSteps.map((step, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
+              <div key={index} className="bg-background-1 p-6 rounded-lg shadow-sm">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-medium mr-3">
                     {step.step}

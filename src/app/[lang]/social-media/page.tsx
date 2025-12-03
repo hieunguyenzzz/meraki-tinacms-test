@@ -84,11 +84,11 @@ export default function SocialMediaPage({ params }: Props) {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background-1">
       <Header lang={lang} />
 
       {/* Hero Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20  ">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
             {lang === 'en' ? 'Follow Our Journey' : 'Theo dõi hành trình của chúng tôi'}
@@ -107,7 +107,7 @@ export default function SocialMediaPage({ params }: Props) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8">
             {socialPlatforms.map((platform, index) => (
-              <div key={index} className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div key={index} className="bg-background-1 p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-center mb-4">
                   <div className="text-gray-700 mr-4">
                     {platform.icon}
@@ -138,7 +138,7 @@ export default function SocialMediaPage({ params }: Props) {
       </section>
 
       {/* Instagram Feed Placeholder */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16  ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-light text-gray-900 mb-4">

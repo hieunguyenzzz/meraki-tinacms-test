@@ -61,11 +61,11 @@ export default function ServicePage({ params }: Props) {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background-1">
       <Header lang={lang} />
 
       {/* Hero Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20  ">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
             {lang === 'en' ? 'Our Services' : 'Dịch vụ của chúng tôi'}
@@ -113,7 +113,7 @@ export default function ServicePage({ params }: Props) {
       </section>
 
       {/* Specialized Services */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16  ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-light text-gray-900 mb-4">
@@ -128,7 +128,7 @@ export default function ServicePage({ params }: Props) {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-background-1 p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="h-48 bg-gray-200 rounded-lg mb-6"></div>
               <h3 className="text-2xl font-medium text-gray-900 mb-4">
                 {lang === 'en' ? 'Destination Weddings' : 'Tiệc cưới điểm đến'}
@@ -150,7 +150,7 @@ export default function ServicePage({ params }: Props) {
               </a>
             </div>
 
-            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="bg-background-1 p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
               <div className="h-48 bg-gray-200 rounded-lg mb-6"></div>
               <h3 className="text-2xl font-medium text-gray-900 mb-4">
                 {lang === 'en' ? 'City Weddings' : 'Tiệc cưới thành phố'}

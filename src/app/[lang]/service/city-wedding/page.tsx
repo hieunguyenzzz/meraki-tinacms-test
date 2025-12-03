@@ -171,11 +171,11 @@ export default function CityWeddingPage({ params }: Props) {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background-1">
       <Header lang={lang} />
 
       {/* Breadcrumb */}
-      <div className="bg-gray-50 py-4">
+      <div className="  py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
@@ -239,7 +239,7 @@ export default function CityWeddingPage({ params }: Props) {
 
           <div className="grid md:grid-cols-2 gap-8">
             {cityVenues.map((venue, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+              <div key={index} className="bg-background-1 rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
                 <div className="h-48 bg-gray-200"></div>
                 <div className="p-6">
                   <h3 className="text-xl font-medium text-gray-900 mb-3">
@@ -266,7 +266,7 @@ export default function CityWeddingPage({ params }: Props) {
       </section>
 
       {/* City Wedding Advantages */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16  ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-light text-gray-900 mb-4">
@@ -315,7 +315,7 @@ export default function CityWeddingPage({ params }: Props) {
 
           <div className="grid md:grid-cols-2 gap-8">
             {planningServices.map((service, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <div key={index} className="bg-background-1 p-6 rounded-lg shadow-sm border border-gray-100">
                 <h3 className="text-xl font-medium text-gray-900 mb-3">
                   {lang === 'en' ? service.title.en : service.title.vi}
                 </h3>
@@ -339,7 +339,7 @@ export default function CityWeddingPage({ params }: Props) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16  ">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-light text-gray-900 mb-4">
             {lang === 'en' ? 'Ready to Plan Your Urban Celebration?' : 'Sẵn sàng lập kế hoạch cho lễ kỷ niệm đô thị?'}

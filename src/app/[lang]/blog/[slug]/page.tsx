@@ -103,11 +103,11 @@ export default async function BlogPostPage({ params }: Props) {
     lang === 'en' ? text.en : text.vi;
 
   return (
-    <div className='min-h-screen bg-white'>
+    <div className='min-h-screen bg-background-1'>
       <Header lang={lang} />
 
       {/* Breadcrumb */}
-      <div className='bg-gray-50 py-4'>
+      <div className='  py-4'>
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
           <nav className='flex' aria-label='Breadcrumb'>
             <ol className='flex items-center space-x-4'>
@@ -216,7 +216,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {blogPost.tags.map((tag: string, index: number) => (
                   <span
                     key={index}
-                    className='px-2 py-1 bg-gray-50 text-gray-600 text-xs rounded border'>
+                    className='px-2 py-1   text-gray-600 text-xs rounded border'>
                     #{tag}
                   </span>
                 ))}
@@ -272,7 +272,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
           {/* CTA Section */}
-          <div className='mt-12 p-8 bg-gray-50 rounded-lg text-center'>
+          <div className='mt-12 p-8   rounded-lg text-center'>
             <h3 className='text-2xl font-light text-gray-900 mb-4'>
               {t({
                 en: 'Need Help Planning Your Wedding?',
@@ -302,7 +302,7 @@ export default async function BlogPostPage({ params }: Props) {
       </article>
 
       {/* Related Posts */}
-      <section className='py-12 bg-gray-50'>
+      <section className='py-12  '>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <h2 className='text-3xl font-light text-gray-900 mb-8 text-center'>
             {t({ en: 'Related Articles', vi: 'Bài viết liên quan' })}

@@ -57,11 +57,11 @@ export default async function BlogPage({ params }: Props) {
   }
 
   return (
-    <div className='min-h-screen bg-white'>
+    <div className='min-h-screen bg-background-1'>
       <Header lang={lang} />
 
       {/* Hero Section */}
-      <section className='py-16 bg-gray-50'>
+      <section className='py-16  '>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
           <h1 className='text-4xl md:text-5xl font-light text-gray-900 mb-6'>
             {lang === 'en' ? 'Wedding Blog' : 'Blog Cưới'}
@@ -85,7 +85,7 @@ export default async function BlogPage({ params }: Props) {
                   <h2 className='text-2xl font-light text-gray-900 mb-6'>
                     {lang === 'en' ? 'Featured Article' : 'Bài viết nổi bật'}
                   </h2>
-                  <article className='bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow'>
+                  <article className='bg-background-1 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow'>
                     <div className='md:flex'>
                       {blogs[0].featured_image && (
                         <div className='md:w-1/2'>
@@ -160,7 +160,7 @@ export default async function BlogPage({ params }: Props) {
                     {blogs.slice(1).map((blog, index) => (
                       <article
                         key={index}
-                        className='bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow'>
+                        className='bg-background-1 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow'>
                         {blog.featured_image && (
                           <img
                             src={blog.featured_image}

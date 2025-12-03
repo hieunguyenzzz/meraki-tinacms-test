@@ -56,11 +56,11 @@ export default async function LoveNotesPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background-1">
       <Header lang={lang} />
 
       {/* Hero Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20  ">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
             {lang === 'en' ? 'Love Notes' : 'Lời cảm ơn'}
@@ -80,7 +80,7 @@ export default async function LoveNotesPage({ params }: Props) {
           {testimonials.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
+                <div key={index} className="bg-background-1 p-8 rounded-lg shadow-sm border border-gray-100">
                   <div className="flex mb-4">
                     {[...Array(5)].map((_, i) => (
                       <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
@@ -131,7 +131,7 @@ export default async function LoveNotesPage({ params }: Props) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16  ">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-light text-gray-900 mb-4">
             {lang === 'en' ? 'Ready to Create Your Own Love Story?' : 'Sẵn sàng tạo nên câu chuyện tình yêu của riêng bạn?'}
