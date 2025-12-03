@@ -47,7 +47,7 @@ function HeroSection({ lang, page }: { lang: string; page: any }) {
     : t(defaultContent.hero.subtitle, lang);
 
   return (
-    <section className='relative h-screen flex items-center justify-center bg-gray-50'>
+    <section className='relative h-screen flex items-center justify-center  '>
       <div className='text-center'>
         <h1
           className='text-5xl md:text-6xl font-light text-gray-900 mb-6'
@@ -98,7 +98,7 @@ function ServicesSection({ lang, page }: { lang: string; page: any }) {
   ];
 
   return (
-    <section className='py-16 bg-white'>
+    <section className='py-16 bg-background-1'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='text-center mb-12'>
           <h2 
@@ -147,7 +147,7 @@ export default function HomeClient({ data, variables, query, lang }: HomeClientP
   const page = tinaData.page;
 
   return (
-    <div className='min-h-screen bg-white'>
+    <div className='min-h-screen bg-background-1'>
       <Header lang={lang} />
       <HeroSection lang={lang} page={page} />
       <ServicesSection lang={lang} page={page} />
