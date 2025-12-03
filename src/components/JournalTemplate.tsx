@@ -67,8 +67,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                           'nationality'
                         )}>
                         <div className='text-body-sm mb-1 uppercase text-text-secondary'>
-                          {journal.wedding_details.nationality_label ||
-                            'NATIONALITY'}
+                          NATIONALITY
                         </div>
                         <div className='text-body-md'>
                           {journal.wedding_details.nationality}
@@ -84,8 +83,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                           'location'
                         )}>
                         <div className='text-body-sm mb-1 uppercase text-text-secondary'>
-                          {journal.wedding_details.location_label ||
-                            'WEDDING LOCATION'}
+                          WEDDING LOCATION
                         </div>
                         <div className='text-body-md'>
                           {journal.wedding_details.location}
@@ -101,8 +99,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                           'venue'
                         )}>
                         <div className='text-body-sm mb-1 uppercase text-text-secondary'>
-                          {journal.wedding_details.venue_label ||
-                            'WEDDING VENUE'}
+                          WEDDING VENUE
                         </div>
                         <div className='text-body-md'>
                           {journal.wedding_details.venue}

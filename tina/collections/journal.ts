@@ -20,18 +20,6 @@ export const Journal: Collection = {
     },
     {
       type: 'string',
-      name: 'subtitle_en',
-      label: 'Subtitle (English)',
-      required: true,
-    },
-    {
-      type: 'string',
-      name: 'subtitle_vi',
-      label: 'Subtitle (Vietnamese)',
-      required: true,
-    },
-    {
-      type: 'string',
       name: 'slug',
       label: 'URL Slug',
       required: true,
@@ -62,49 +50,24 @@ export const Journal: Collection = {
       required: true,
     },
 
-    // Hero Section (optional - for journals not using template layout)
-    {
-      type: 'object',
-      name: 'hero',
-      label: 'Hero Section',
-      fields: [
-        {
-          type: 'image',
-          name: 'image',
-          label: 'Hero Image',
-        },
-        {
-          type: 'string',
-          name: 'alt_en',
-          label: 'Alt Text (English)',
-        },
-        {
-          type: 'string',
-          name: 'alt_vi',
-          label: 'Alt Text (Vietnamese)',
-        },
-      ],
-    },
-
     // Template Layout Fields
     {
       type: 'object',
       name: 'template_layout',
-      label: 'Template Layout',
+      label: 'Main layout',
       fields: [
         // Top left detail image (e.g., bouquet)
         {
           type: 'image',
           name: 'image_top',
           label: 'Top image',
-          description: 'Small detail photo like bouquet, rings, etc.',
+          description: 'Small image on top left corner',
         },
         // Main headline
         {
           type: 'string',
           name: 'main_headline_en',
           label: 'Main Headline (English)',
-          description: "e.g., 'Grace Woven With Heritage'",
         },
         {
           type: 'string',
@@ -115,15 +78,15 @@ export const Journal: Collection = {
         {
           type: 'image',
           name: 'image_sub',
-          label: 'Ceremony/Group Photo',
-          description: 'Black & white or color ceremony photo',
+          label: 'Sub image',
+          description: 'Small image on bottom left corner',
         },
         // Large portrait photo (right side)
         {
           type: 'image',
           name: 'image_main',
-          label: 'Main Portrait Photo',
-          description: 'Large couple portrait on right side',
+          label: 'Main image',
+          description: 'Main image on the right side',
         },
       ],
     },
@@ -136,21 +99,9 @@ export const Journal: Collection = {
       fields: [
         {
           type: 'string',
-          name: 'nationality_label',
-          label: 'Nationality Label',
-          description: "e.g., 'NATIONALITY'",
-        },
-        {
-          type: 'string',
           name: 'nationality',
           label: 'Nationality',
           description: "e.g., 'Vietnamese - Vietnamese'",
-        },
-        {
-          type: 'string',
-          name: 'location_label',
-          label: 'Wedding Location Label',
-          description: "e.g., 'WEDDING LOCATION'",
         },
         {
           type: 'string',
@@ -160,35 +111,9 @@ export const Journal: Collection = {
         },
         {
           type: 'string',
-          name: 'venue_label',
-          label: 'Wedding Venue Label',
-          description: "e.g., 'WEDDING VENUE'",
-        },
-        {
-          type: 'string',
           name: 'venue',
           label: 'Venue',
           description: "e.g., 'Legacy Yên Tử McAllery'",
-        },
-        {
-          type: 'string',
-          name: 'guest_count',
-          label: 'Guest Count',
-        },
-        {
-          type: 'string',
-          name: 'wedding_type_en',
-          label: 'Wedding Type (English)',
-        },
-        {
-          type: 'string',
-          name: 'wedding_type_vi',
-          label: 'Wedding Type (Vietnamese)',
-        },
-        {
-          type: 'datetime',
-          name: 'wedding_date',
-          label: 'Wedding Date',
         },
       ],
     },
@@ -200,160 +125,20 @@ export const Journal: Collection = {
       label: 'Content Blocks',
       list: true,
       templates: [
-        // Text + Image Block (like "What We Love")
+        // 1 Large Image
         {
-          name: 'text_image_block',
-          label: 'Text + Image Block',
-          fields: [
-            {
-              type: 'string',
-              name: 'heading_en',
-              label: 'Heading (English)',
-            },
-            {
-              type: 'string',
-              name: 'heading_vi',
-              label: 'Heading (Vietnamese)',
-            },
-            {
-              type: 'rich-text',
-              name: 'content_en',
-              label: 'Content (English)',
-            },
-            {
-              type: 'rich-text',
-              name: 'content_vi',
-              label: 'Content (Vietnamese)',
-            },
-            {
-              type: 'image',
-              name: 'image',
-              label: 'Image',
-            },
-            {
-              type: 'string',
-              name: 'image_alt_en',
-              label: 'Image Alt Text (English)',
-            },
-            {
-              type: 'string',
-              name: 'image_alt_vi',
-              label: 'Image Alt Text (Vietnamese)',
-            },
-            {
-              type: 'string',
-              name: 'layout',
-              label: 'Layout',
-              options: [
-                'image-left',
-                'image-right',
-                'image-top',
-                'image-bottom',
-              ],
-              ui: {
-                component: 'select',
-              },
-            },
-            {
-              type: 'string',
-              name: 'background_color',
-              label: 'Background Color',
-              options: ['white', 'gray-50', 'gray-100'],
-              ui: {
-                component: 'select',
-              },
-            },
-          ],
-        },
-
-        // Gallery Block
-        {
-          name: 'gallery_block',
-          label: 'Gallery Block',
-          fields: [
-            {
-              type: 'string',
-              name: 'heading_en',
-              label: 'Heading (English)',
-            },
-            {
-              type: 'string',
-              name: 'heading_vi',
-              label: 'Heading (Vietnamese)',
-            },
-            {
-              type: 'object',
-              name: 'images',
-              label: 'Gallery Images',
-              list: true,
-              fields: [
-                {
-                  type: 'image',
-                  name: 'image',
-                  label: 'Image',
-                },
-                {
-                  type: 'string',
-                  name: 'alt_en',
-                  label: 'Alt Text (English)',
-                },
-                {
-                  type: 'string',
-                  name: 'alt_vi',
-                  label: 'Alt Text (Vietnamese)',
-                },
-                {
-                  type: 'string',
-                  name: 'caption_en',
-                  label: 'Caption (English)',
-                },
-                {
-                  type: 'string',
-                  name: 'caption_vi',
-                  label: 'Caption (Vietnamese)',
-                },
-              ],
-            },
-            {
-              type: 'string',
-              name: 'gallery_style',
-              label: 'Gallery Style',
-              options: ['grid-2', 'grid-3', 'grid-4', 'masonry', 'slideshow'],
-              ui: {
-                component: 'select',
-              },
-            },
-            {
-              type: 'string',
-              name: 'background_color',
-              label: 'Background Color',
-              options: ['white', 'gray-50', 'gray-100'],
-              ui: {
-                component: 'select',
-              },
-            },
-          ],
-        },
-
-        // Large Image Block
-        {
-          name: 'large_image_block',
-          label: 'Large Image Block',
+          name: 'largeImage',
+          label: '1 Large Image',
+          ui: {
+            itemProps: (item) => ({
+              label: item?.caption_en || '1 Large Image',
+            }),
+          },
           fields: [
             {
               type: 'image',
               name: 'image',
               label: 'Image',
-            },
-            {
-              type: 'string',
-              name: 'alt_en',
-              label: 'Alt Text (English)',
-            },
-            {
-              type: 'string',
-              name: 'alt_vi',
-              label: 'Alt Text (Vietnamese)',
             },
             {
               type: 'string',
@@ -365,108 +150,152 @@ export const Journal: Collection = {
               name: 'caption_vi',
               label: 'Caption (Vietnamese)',
             },
+          ],
+        },
+        // 2 Images Side by Side
+        {
+          name: 'twoImagesSideBySide',
+          label: '2 Images Side by Side',
+          ui: {
+            itemProps: () => ({
+              label: '2 Images Side by Side',
+            }),
+          },
+          fields: [
+            {
+              type: 'image',
+              name: 'image_left',
+              label: 'Left Image',
+            },
+            {
+              type: 'image',
+              name: 'image_right',
+              label: 'Right Image',
+            },
             {
               type: 'string',
-              name: 'size',
-              label: 'Image Size',
-              options: ['full-width', 'large', 'medium'],
-              ui: {
-                component: 'select',
-              },
+              name: 'caption_en',
+              label: 'Caption (English)',
+            },
+            {
+              type: 'string',
+              name: 'caption_vi',
+              label: 'Caption (Vietnamese)',
             },
           ],
         },
-
-        // Text Only Block
+        // 2 Images Asymmetry
         {
-          name: 'text_block',
-          label: 'Text Block',
+          name: 'twoImagesAsymmetry',
+          label: '2 Images Asymmetry',
+          ui: {
+            itemProps: () => ({
+              label: '2 Images Asymmetry',
+            }),
+          },
           fields: [
             {
-              type: 'string',
-              name: 'heading_en',
-              label: 'Heading (English)',
+              type: 'image',
+              name: 'image_large',
+              label: 'Large Image',
+            },
+            {
+              type: 'image',
+              name: 'image_small',
+              label: 'Small Image',
             },
             {
               type: 'string',
-              name: 'heading_vi',
-              label: 'Heading (Vietnamese)',
-            },
-            {
-              type: 'rich-text',
-              name: 'content_en',
-              label: 'Content (English)',
-            },
-            {
-              type: 'rich-text',
-              name: 'content_vi',
-              label: 'Content (Vietnamese)',
+              name: 'layout',
+              label: 'Layout',
+              options: [
+                { value: 'large-left', label: 'Large Left, Small Right' },
+                { value: 'large-right', label: 'Large Right, Small Left' },
+              ],
             },
             {
               type: 'string',
-              name: 'text_align',
-              label: 'Text Alignment',
-              options: ['left', 'center', 'right'],
-              ui: {
-                component: 'select',
-              },
+              name: 'caption_en',
+              label: 'Caption (English)',
             },
             {
               type: 'string',
-              name: 'background_color',
-              label: 'Background Color',
-              options: ['white', 'gray-50', 'gray-100'],
-              ui: {
-                component: 'select',
-              },
+              name: 'caption_vi',
+              label: 'Caption (Vietnamese)',
             },
           ],
         },
-
-        // Location Block (special block like "The Location")
+        // 3 Images
         {
-          name: 'location_block',
-          label: 'Location Block',
+          name: 'threeImages',
+          label: '3 Images',
+          ui: {
+            itemProps: () => ({
+              label: '3 Images',
+            }),
+          },
           fields: [
             {
-              type: 'string',
-              name: 'heading_en',
-              label: 'Heading (English)',
+              type: 'image',
+              name: 'image_1',
+              label: 'Image 1',
+            },
+            {
+              type: 'image',
+              name: 'image_2',
+              label: 'Image 2',
+            },
+            {
+              type: 'image',
+              name: 'image_3',
+              label: 'Image 3',
             },
             {
               type: 'string',
-              name: 'heading_vi',
-              label: 'Heading (Vietnamese)',
+              name: 'layout',
+              label: 'Layout',
+              options: [
+                { value: 'row', label: 'Row (3 equal columns)' },
+                { value: 'featured-left', label: 'Featured Left (1 large + 2 stacked)' },
+                { value: 'featured-right', label: 'Featured Right (2 stacked + 1 large)' },
+              ],
             },
             {
               type: 'string',
-              name: 'location_name_en',
-              label: 'Location Name (English)',
+              name: 'caption_en',
+              label: 'Caption (English)',
             },
             {
               type: 'string',
-              name: 'location_name_vi',
-              label: 'Location Name (Vietnamese)',
+              name: 'caption_vi',
+              label: 'Caption (Vietnamese)',
             },
-            {
-              type: 'rich-text',
-              name: 'description_en',
-              label: 'Description (English)',
-            },
-            {
-              type: 'rich-text',
-              name: 'description_vi',
-              label: 'Description (Vietnamese)',
-            },
+          ],
+        },
+        // Masonry Gallery (flexible number of images)
+        {
+          name: 'masonryGallery',
+          label: 'Masonry Gallery',
+          ui: {
+            itemProps: (item) => ({
+              label: `Masonry Gallery (${item?.images?.length || 0} images)`,
+            }),
+          },
+          fields: [
             {
               type: 'object',
               name: 'images',
-              label: 'Location Images',
+              label: 'Images',
               list: true,
+              ui: {
+                itemProps: (item) => ({
+                  label: item?.alt_en || 'Image',
+                }),
+              },
               fields: [
                 {
                   type: 'image',
-                  name: 'image',
+                  name: 'src',
                   label: 'Image',
                 },
                 {
@@ -481,43 +310,73 @@ export const Journal: Collection = {
                 },
               ],
             },
+            {
+              type: 'string',
+              name: 'columns',
+              label: 'Columns',
+              options: [
+                { value: '2', label: '2 Columns' },
+                { value: '3', label: '3 Columns' },
+                { value: '4', label: '4 Columns' },
+              ],
+            },
+            {
+              type: 'string',
+              name: 'caption_en',
+              label: 'Caption (English)',
+            },
+            {
+              type: 'string',
+              name: 'caption_vi',
+              label: 'Caption (Vietnamese)',
+            },
           ],
         },
-
-        // Quote Block
+        // Text Block
         {
-          name: 'quote_block',
-          label: 'Quote Block',
+          name: 'textBlock',
+          label: 'Text Block',
+          ui: {
+            itemProps: (item) => ({
+              label: item?.title_en || 'Text Block',
+            }),
+          },
           fields: [
             {
               type: 'string',
-              name: 'quote_en',
-              label: 'Quote (English)',
+              name: 'title_en',
+              label: 'Title (English)',
+            },
+            {
+              type: 'string',
+              name: 'title_vi',
+              label: 'Title (Vietnamese)',
+            },
+            {
+              type: 'string',
+              name: 'description_en',
+              label: 'Description (English)',
               ui: {
                 component: 'textarea',
               },
             },
             {
               type: 'string',
-              name: 'quote_vi',
-              label: 'Quote (Vietnamese)',
+              name: 'description_vi',
+              label: 'Description (Vietnamese)',
               ui: {
                 component: 'textarea',
               },
             },
             {
               type: 'string',
-              name: 'author',
-              label: 'Quote Author',
-            },
-            {
-              type: 'string',
-              name: 'background_color',
-              label: 'Background Color',
-              options: ['white', 'gray-50', 'gray-100'],
-              ui: {
-                component: 'select',
-              },
+              name: 'alignment',
+              label: 'Text Alignment',
+              options: [
+                { value: 'left', label: 'Left' },
+                { value: 'center', label: 'Center' },
+                { value: 'right', label: 'Right' },
+              ],
             },
           ],
         },
