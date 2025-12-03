@@ -310,7 +310,7 @@ export const Journal: Collection = {
         {
           type: "string",
           name: "quote_en",
-          label: "Quote (English)",
+          label: "Content (English)",
           ui: {
             component: "textarea",
           },
@@ -318,7 +318,7 @@ export const Journal: Collection = {
         {
           type: "string",
           name: "quote_vi",
-          label: "Quote (Vietnamese)",
+          label: "Content (Vietnamese)",
           ui: {
             component: "textarea",
           },

@@ -70,7 +70,7 @@ export default function JournalListingClient({
   }, [activeLocation]);
 
   return (
-    <div className='min-h-screen bg-background-base'>
+    <div className='  bg-background-base'>
       <Header lang={lang} />
 
       {/* Hero Section */}
