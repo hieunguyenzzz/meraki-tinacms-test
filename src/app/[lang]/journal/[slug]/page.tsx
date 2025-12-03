@@ -38,9 +38,9 @@ export async function generateMetadata({ params }: PageProps) {
     });
 
     const title = data.journal.couple_names || 'Journal Entry';
-    const subtitle = params.lang === 'vi' 
-      ? data.journal.subtitle_vi 
-      : data.journal.subtitle_en;
+    const subtitle = params.lang === 'vi'
+      ? data.journal.template_layout?.main_headline_vi
+      : data.journal.template_layout?.main_headline_en;
 
     return {
       title,
@@ -55,85 +55,15 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function JournalPage({ params }: PageProps) {
   const variables = { relativePath: `${params.slug}.mdx` };
-  const query = `
-    query Journal($relativePath: String!) {
-      journal(relativePath: $relativePath) {
-        id
-        couple_names
-        subtitle_en
-        subtitle_vi
-        slug
-        featured_image
-        template_layout {
-          image_top
-          image_main
-          image_sub
-          main_headline_en
-          main_headline_vi
-        }
-        wedding_details {
-          nationality_label
-          nationality
-          location_label
-          location
-          venue_label
-          venue
-          guest_count
-          wedding_type_en
-          wedding_type_vi
-          wedding_date
-        }
-        testimonial {
-          heading
-          decorative_text
-          quote_en
-          quote_vi
-          author
-        }
-        hero {
-          image
-          alt_en
-          alt_vi
-        }
-        content_blocks {
-          ... on JournalContent_blocksText_image_block {
-            heading_en
-            heading_vi
-            content_en
-            content_vi
-            image
-          }
-          ... on JournalContent_blocksGallery_block {
-            heading_en
-            heading_vi
-            images {
-              image
-              alt_en
-              alt_vi
-            }
-          }
-          ... on JournalContent_blocksQuote_block {
-            quote_en
-            quote_vi
-            author
-          }
-        }
-      }
-    }
-  `;
 
   try {
-    const { data } = await client.queries.journal(variables);
-
-    if (!data.journal) {
-      notFound();
-    }
+    const result = await client.queries.journal(variables);
 
     return (
       <JournalClient
-        data={data}
+        data={result.data}
         variables={variables}
-        query={query}
+        query={result.query}  // Use the auto-generated query
         lang={params.lang}
         slug={params.slug}
       />

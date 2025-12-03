@@ -29,8 +29,6 @@ Create a new MDX file in `content/journal/` with the following structure:
 ```yaml
 ---
 couple_names: BRIDE & GROOM
-subtitle_en: English subtitle
-subtitle_vi: Vietnamese subtitle
 slug: your-slug
 featured_image: /images/featured.jpg
 

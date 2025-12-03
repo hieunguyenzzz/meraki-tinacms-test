@@ -178,10 +178,10 @@ export default function JournalListingClient({
                           {t(
                             {
                               en:
-                                journal.node?.subtitle_en ||
+                                journal.node?.template_layout?.main_headline_en ||
                                 journal.node?.couple_names || '',
                               vi:
-                                journal.node?.subtitle_vi ||
+                                journal.node?.template_layout?.main_headline_vi ||
                                 journal.node?.couple_names || '',
                             },
                             lang
