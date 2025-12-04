@@ -143,6 +143,18 @@ export default function JournalClient({
               );
             }
 
+            // Spacing Block
+            if (blockType === 'Spacing') {
+              const size = block.size || 'md';
+              const heightClass =
+                size === 'sm' ? 'h-6' :
+                size === 'lg' ? 'h-18' :
+                size === 'xl' ? 'h-24' :
+                'h-12';
+
+              return <div key={index} className={heightClass} aria-hidden='true' />;
+            }
+
             return null;
           })}
         </div>

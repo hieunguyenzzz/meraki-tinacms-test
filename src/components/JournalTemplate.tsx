@@ -132,7 +132,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                       alt='Ceremony'
                       width={450}
                       height={300}
-                      className='object-cover grayscale'
+                      className='object-cover'
                       unoptimized
                     />
                   </div>
