@@ -7,6 +7,10 @@ import Header from './Header';
 import Footer from './Footer';
 import JournalTemplate from './JournalTemplate';
 import Lightbox from './Lightbox';
+import ImageGalleryBlock from './blocks/ImageGalleryBlock';
+import TwoImagesAsymmetryBlock from './blocks/TwoImagesAsymmetryBlock';
+import TextBlock from './blocks/TextBlock';
+import SpacingBlock from './blocks/SpacingBlock';
 
 interface LightboxImage {
   image: string;
@@ -95,147 +99,40 @@ export default function JournalClient({
 
             // Image Gallery (1-4 columns, flexible number of images)
             if (blockType === 'ImageGallery') {
-              const caption = lang === 'vi' ? block.caption_vi : block.caption_en;
-              const columns = block.columns || '1';
-              const gridClass =
-                columns === '1' ? 'grid-cols-1' :
-                  columns === '2' ? 'grid-cols-1 md:grid-cols-2' :
-                    columns === '3' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
-                      'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
-
               return (
-                <div key={blockIndex} className='max-w-[1400px] mx-auto px-8'>
-                  <div className={`grid ${gridClass} gap-4`}>
-                    {block.images?.map((img: any, imgIndex: number) => {
-                      const altText = lang === 'vi' ? img.alt_vi : img.alt_en;
-                      const globalIndex = indexMap[`${blockIndex}-${imgIndex}`];
-                      return (
-                        <button
-                          key={imgIndex}
-                          type='button'
-                          className='w-full cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
-                          onClick={() => openLightbox(globalIndex)}
-                          aria-label={altText || 'View image in gallery'}
-                        >
-                          <img
-                            src={img.src}
-                            alt={altText || ''}
-                            className='w-full h-auto'
-                            data-tina-field={tinaField(img, 'src')}
-                            loading='lazy'
-                          />
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {caption && (
-                    <p
-                      className='mt-4 text-center text-gray-600 text-sm'
-                      data-tina-field={tinaField(block, lang === 'vi' ? 'caption_vi' : 'caption_en')}
-                    >
-                      {caption}
-                    </p>
-                  )}
-                </div>
+                <ImageGalleryBlock
+                  key={blockIndex}
+                  data={block}
+                  lang={lang}
+                  blockIndex={blockIndex}
+                  indexMap={indexMap}
+                  onImageClick={openLightbox}
+                />
               );
             }
 
             // Two Images Asymmetry (Offset)
             if (blockType === 'TwoImagesAsymmetry') {
-              const caption = lang === 'vi' ? block.caption_vi : block.caption_en;
-              const offset = block.offset || 'up';
-              const leftOffset = offset === 'up' ? '-mt-12 md:-mt-12' : 'mt-12 md:mt-12';
-              const rightOffset = offset === 'up' ? 'mt-12 md:mt-12' : '-mt-12 md:-mt-12';
-              const leftIndex = indexMap[`${blockIndex}-left`];
-              const rightIndex = indexMap[`${blockIndex}-right`];
-
               return (
-                <div key={blockIndex} className='max-w-[1400px] mx-auto px-8'>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-                    <div className={leftOffset}>
-                      <button
-                        type='button'
-                        className='w-full cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
-                        onClick={() => openLightbox(leftIndex)}
-                        aria-label='View image in gallery'
-                      >
-                        <img
-                          src={block.image_left}
-                          alt=''
-                          className='w-full h-auto object-cover'
-                          data-tina-field={tinaField(block, 'image_left')}
-                          loading='lazy'
-                        />
-                      </button>
-                    </div>
-                    <div className={rightOffset}>
-                      <button
-                        type='button'
-                        className='w-full cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
-                        onClick={() => openLightbox(rightIndex)}
-                        aria-label='View image in gallery'
-                      >
-                        <img
-                          src={block.image_right}
-                          alt=''
-                          className='w-full h-auto object-cover'
-                          data-tina-field={tinaField(block, 'image_right')}
-                          loading='lazy'
-                        />
-                      </button>
-                    </div>
-                  </div>
-                  {caption && (
-                    <p
-                      className='mt-4 text-center text-gray-600 text-sm'
-                      data-tina-field={tinaField(block, lang === 'vi' ? 'caption_vi' : 'caption_en')}
-                    >
-                      {caption}
-                    </p>
-                  )}
-                </div>
+                <TwoImagesAsymmetryBlock
+                  key={blockIndex}
+                  data={block}
+                  lang={lang}
+                  blockIndex={blockIndex}
+                  indexMap={indexMap}
+                  onImageClick={openLightbox}
+                />
               );
             }
 
             // Text Block
             if (blockType === 'TextBlock') {
-              const title = lang === 'vi' ? block.title_vi : block.title_en;
-              const description = lang === 'vi' ? block.description_vi : block.description_en;
-              const alignment = block.alignment || 'center';
-              const alignClass = alignment === 'left' ? 'text-left' : alignment === 'right' ? 'text-right' : 'text-center';
-
-              return (
-                <div key={blockIndex} className={`max-w-[640px] mx-auto px-8 ${alignClass}`}>
-                  {title && (
-                    <h2
-                      className='text-h3 mb-4'
-                      data-tina-field={tinaField(block, lang === 'vi' ? 'title_vi' : 'title_en')}
-                    >
-                      {title}
-                    </h2>
-                  )}
-                  {description && (
-                    <p
-                      className='text-body-md text-text-secondary leading-relaxed whitespace-pre-line'
-                      data-tina-field={tinaField(block, lang === 'vi' ? 'description_vi' : 'description_en')}
-                    >
-                      {description}
-                    </p>
-                  )}
-                </div>
-              );
+              return <TextBlock key={blockIndex} data={block} lang={lang} />;
             }
 
             // Spacing Block
             if (blockType === 'Spacing') {
-              const size = block.size || 'md';
-              const heightClass =
-                size === 'sm' ? 'h-6' :
-                size === 'lg' ? 'h-18' :
-                size === 'xl' ? 'h-24' :
-                'h-12';
-
-              return <div key={blockIndex} className={heightClass} aria-hidden='true' />;
+              return <SpacingBlock key={blockIndex} data={block} />;
             }
 
             return null;
