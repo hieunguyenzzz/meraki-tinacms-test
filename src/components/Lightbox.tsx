@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface LightboxProps {
   images: Array<{
@@ -23,6 +23,9 @@ export default function Lightbox({
   onPrev, 
   lang 
 }: LightboxProps) {
+  const touchStartX = useRef<number | null>(null);
+
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -44,13 +47,52 @@ export default function Lightbox({
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, [isOpen, onClose, onNext, onPrev]);
 
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  // Touch swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX;
+    const SWIPE_THRESHOLD = 50;
+
+    if (Math.abs(diff) > SWIPE_THRESHOLD) {
+      if (diff > 0) {
+        onNext(); // Swipe left -> next image
+      } else {
+        onPrev(); // Swipe right -> previous image
+      }
+    }
+    
+    touchStartX.current = null;
+  };
+
   if (!isOpen || !images[currentIndex]) return null;
 
   const currentImage = images[currentIndex];
   const altText = lang === "en" ? currentImage.alt_en : currentImage.alt_vi;
 
   return (
-    <div className='fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center'>
+    <div 
+      className='fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center'
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Close Button */}
       <button
         onClick={onClose}
@@ -82,8 +124,7 @@ export default function Lightbox({
         <img
           src={currentImage.image}
           alt={altText || 'Gallery image'}
-          className='max-w-full max-h-full object-contain'
-          loading='lazy'
+          className='max-w-full max-h-[90vh] object-contain'
         />
       </div>
 
