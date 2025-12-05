@@ -4,9 +4,6 @@ import { Journal } from "./collections/journal";
 import { Testimonial } from "./collections/testimonial";
 import { Blog } from "./collections/blog";
 
-// Determine if running in local mode or TinaCMS Cloud mode
-const isLocal = process.env.TINA_PUBLIC_IS_LOCAL === 'true';
-
 export const config = defineConfig({
   // TinaCMS Cloud configuration
   clientId: process.env.TINA_CLIENT_ID || null,

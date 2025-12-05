@@ -2,8 +2,21 @@
 
 import { tinaField } from 'tinacms/dist/react';
 
+interface ImageItem extends Record<string, unknown> {
+  src: string;
+  alt_en: string;
+  alt_vi: string;
+}
+
+interface ImageGalleryBlockData extends Record<string, unknown> {
+  images?: ImageItem[];
+  caption_en?: string;
+  caption_vi?: string;
+  columns?: string;
+}
+
 interface ImageGalleryBlockProps {
-  data: any;
+  data: ImageGalleryBlockData;
   lang: string;
   blockIndex: number;
   indexMap: Record<string, number>;
@@ -31,7 +44,7 @@ export default function ImageGalleryBlock({
   return (
     <div className='max-w-[1400px] mx-auto px-8'>
       <div className={`grid ${gridClass} gap-6`}>
-        {data.images?.map((img: any, imgIndex: number) => {
+        {data.images?.map((img, imgIndex: number) => {
           const altText = lang === 'vi' ? img.alt_vi : img.alt_en;
           const globalIndex = indexMap[`${blockIndex}-${imgIndex}`];
           return (
