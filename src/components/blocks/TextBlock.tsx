@@ -2,8 +2,16 @@
 
 import { tinaField } from 'tinacms/dist/react';
 
+interface TextBlockData extends Record<string, unknown> {
+  title_en?: string;
+  title_vi?: string;
+  description_en?: string;
+  description_vi?: string;
+  alignment?: string;
+}
+
 interface TextBlockProps {
-  data: any;
+  data: TextBlockData;
   lang: string;
 }
 

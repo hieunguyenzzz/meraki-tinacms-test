@@ -2,8 +2,16 @@
 
 import { tinaField } from 'tinacms/dist/react';
 
+interface TwoImagesAsymmetryBlockData extends Record<string, unknown> {
+  caption_en?: string;
+  caption_vi?: string;
+  offset?: string;
+  image_left: string;
+  image_right: string;
+}
+
 interface TwoImagesAsymmetryBlockProps {
-  data: any;
+  data: TwoImagesAsymmetryBlockData;
   lang: string;
   blockIndex: number;
   indexMap: Record<string, number>;

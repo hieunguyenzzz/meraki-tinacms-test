@@ -1,7 +1,11 @@
 'use client';
 
+interface SpacingBlockData {
+  size?: string;
+}
+
 interface SpacingBlockProps {
-  data: any;
+  data: SpacingBlockData;
 }
 
 export default function SpacingBlock({ data }: SpacingBlockProps) {
