@@ -32,18 +32,18 @@ export default function ImageGalleryBlock({
 }: ImageGalleryBlockProps) {
   const caption = lang === 'vi' ? data.caption_vi : data.caption_en;
   const columns = data.columns || '1';
-  const gridClass =
+  const columnClass =
     columns === '1'
-      ? 'grid-cols-1'
+      ? 'columns-1'
       : columns === '2'
-      ? 'grid-cols-1 md:grid-cols-2'
+      ? 'columns-1 md:columns-2'
       : columns === '3'
-      ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-      : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
+      ? 'columns-1 md:columns-2 lg:columns-3'
+      : 'columns-1 md:columns-2 lg:columns-4';
 
   return (
     <div className='max-w-[1400px] mx-auto px-8'>
-      <div className={`grid ${gridClass} gap-6`}>
+      <div className={columnClass} style={{ columnGap: '1.5rem' }}>
         {data.images?.map((img, imgIndex: number) => {
           const altText = lang === 'vi' ? img.alt_vi : img.alt_en;
           const globalIndex = indexMap[`${blockIndex}-${imgIndex}`];
@@ -51,7 +51,7 @@ export default function ImageGalleryBlock({
             <button
               key={imgIndex}
               type='button'
-              className='w-full cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
+              className='w-full cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary break-inside-avoid block mb-6'
               onClick={() => onImageClick(globalIndex)}
               aria-label={altText || 'View image in gallery'}
             >
