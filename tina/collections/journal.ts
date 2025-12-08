@@ -1,5 +1,6 @@
 import { Collection } from "tinacms";
-import { imageGalleryBlock, twoImagesAsymmetryBlock, textBlock, spacingBlock } from "../templates";
+import { twoImagesAsymmetryBlock, textBlock, spacingBlock } from "../templates";
+import { imageGalleryBlock } from "../templates/ImageGallery";
 
 export const Journal: Collection = {
   name: "journal",
