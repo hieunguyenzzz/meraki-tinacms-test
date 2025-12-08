@@ -70,7 +70,10 @@ const SortableImageItem = ({
       <button
         type="button"
         className="w-full h-auto bg-gray-100 rounded mb-2 overflow-hidden hover:opacity-80 transition-opacity flex items-center justify-center"
-        onClick={() => onReplace(index)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onReplace(index);
+        }}
       >
         <img
           src={image.src}
@@ -133,9 +136,10 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
   // Drag and drop sensors
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      distance: 8,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any),
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -279,7 +283,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
                 image={image}
                 index={index}
                 onRemove={removeImage}
-                onReplace={() => replaceImage(index)}
+                onReplace={replaceImage}
                 onAltChange={updateAlt}
               />
             ))}
