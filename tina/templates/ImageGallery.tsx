@@ -420,7 +420,15 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
         </label>
         <button
           type="button"
-          onClick={() => setShowMediaPicker(true)}
+          onClick={() => {
+            cms.media.open({
+              allowDelete: true,
+              directory: uploadDir,
+              onSelect: (media) => {
+                input.onChange([...images, { src: media.src, alt_en: '', alt_vi: '' }]);
+              }
+            })
+          }}
           style={{
             padding: '8px 16px',
             backgroundColor: 'white',
