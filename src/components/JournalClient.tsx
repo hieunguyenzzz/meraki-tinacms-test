@@ -12,6 +12,7 @@ import TwoImagesAsymmetryBlock from './blocks/TwoImagesAsymmetryBlock';
 import TextBlock from './blocks/TextBlock';
 import SpacingBlock from './blocks/SpacingBlock';
 import TextImageBlock from './blocks/TextImageBlock';
+import TestimonialBlock from './blocks/TestimonialBlock';
 
 interface LightboxImage {
   image: string;
@@ -191,6 +192,11 @@ export default function JournalClient({
                   onImageClick={openLightbox}
                 />
               );
+            }
+
+            // Testimonial Block
+            if (blockType === 'Testimonial') {
+              return <TestimonialBlock key={blockIndex} data={block} lang={lang} />;
             }
 
             return null;
