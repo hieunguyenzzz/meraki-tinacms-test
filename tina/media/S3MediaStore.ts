@@ -77,13 +77,14 @@ export class S3MediaStore implements MediaStore {
   async list(options?: MediaListOptions): Promise<MediaList> {
     const directory = options?.directory?.replace(/^\//, '') || ''
     const limit = options?.limit || 500
-    const offset = options?.offset || ''
+    const offset = options?.offset ? String(options.offset) : ''
 
-    const params = new URLSearchParams({
-      directory,
-      limit: String(limit),
-      ...(offset ? { offset } : {}),
-    })
+    const params = new URLSearchParams()
+    params.set('directory', directory)
+    params.set('limit', String(limit))
+    if (offset) {
+      params.set('offset', offset)
+    }
 
     const response = await fetch(`/api/s3/list?${params}`)
 
@@ -108,9 +109,7 @@ export class S3MediaStore implements MediaStore {
         filename: item.filename,
         src: item.src,
       })),
-      offset: data.offset,
-      limit,
-      totalCount: data.items.length,
+      nextOffset: data.offset || undefined,
     }
   }
 
