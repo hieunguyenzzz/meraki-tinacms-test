@@ -11,6 +11,7 @@ import ImageGalleryBlock from './blocks/ImageGalleryBlock';
 import TwoImagesAsymmetryBlock from './blocks/TwoImagesAsymmetryBlock';
 import TextBlock from './blocks/TextBlock';
 import SpacingBlock from './blocks/SpacingBlock';
+import TextImageBlock from './blocks/TextImageBlock';
 
 interface LightboxImage {
   image: string;
@@ -67,6 +68,15 @@ export default function JournalClient({
           map[`${blockIndex}-right`] = images.length;
           images.push({ image: block.image_right });
         }
+      }
+
+      if (blockType === 'TextImageBlock' && block.image) {
+        map[`${blockIndex}-image`] = images.length;
+        images.push({
+          image: block.image,
+          alt_en: block.image_alt_en,
+          alt_vi: block.image_alt_vi,
+        });
       }
     });
 
@@ -167,6 +177,20 @@ export default function JournalClient({
             // Spacing Block
             if (blockType === 'Spacing') {
               return <SpacingBlock key={blockIndex} data={block} />;
+            }
+
+            // Text + Image Block
+            if (blockType === 'TextImageBlock') {
+              return (
+                <TextImageBlock
+                  key={blockIndex}
+                  data={block}
+                  lang={lang}
+                  blockIndex={blockIndex}
+                  indexMap={indexMap}
+                  onImageClick={openLightbox}
+                />
+              );
             }
 
             return null;
