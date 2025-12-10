@@ -1,7 +1,6 @@
 import { defineConfig } from "tinacms";
 import { Page } from "./collections/page";
 import { Journal } from "./collections/journal";
-import { Testimonial } from "./collections/testimonial";
 import { Blog } from "./collections/blog";
 
 export const config = defineConfig({
@@ -24,7 +23,7 @@ export const config = defineConfig({
   },
   
   schema: {
-    collections: [Page, Journal, Testimonial, Blog],
+    collections: [Page, Journal, Blog],
   },
 
   // Search configuration (optional - only enable if TINA_SEARCH_TOKEN is set)

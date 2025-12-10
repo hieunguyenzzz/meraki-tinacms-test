@@ -4,6 +4,7 @@ import { imageGalleryBlock } from "../templates/ImageGallery";
 import { textBlock } from "../templates/text";
 import { textImageBlock } from "../templates/textImage";
 import { twoImagesAsymmetryBlock } from "../templates/twoImagesAsymmetry";
+import { testimonialBlock } from "../templates/testimonial";
 
 export const Journal: Collection = {
   name: "journal",
@@ -135,93 +136,51 @@ export const Journal: Collection = {
         textBlock,
         textImageBlock,
         spacingBlock,
+        testimonialBlock,
       ],
     },
 
-    // Testimonial Section
-    {
-      type: "object",
-      name: "testimonial",
-      label: "Testimonial Section",
-      fields: [
-        {
-          type: "string",
-          name: "heading",
-          label: "Testimonial Heading",
-          description: "e.g., 'Testimonial'",
-        },
-        {
-          type: "string",
-          name: "decorative_text",
-          label: "Decorative Text",
-          description:
-            "Decorative script text above quote (e.g., cursive text)",
-        },
-        {
-          type: "string",
-          name: "quote_en",
-          label: "Content (English)",
-          ui: {
-            component: "textarea",
-          },
-        },
-        {
-          type: "string",
-          name: "quote_vi",
-          label: "Content (Vietnamese)",
-          ui: {
-            component: "textarea",
-          },
-        },
-        {
-          type: "string",
-          name: "author",
-          label: "Quote Author",
-        },
-      ],
-    },
-
-    // SEO Fields
-    {
-      type: "object",
-      name: "seo_en",
-      label: "SEO (English)",
-      fields: [
-        {
-          type: "string",
-          name: "title",
-          label: "Meta Title",
-        },
-        {
-          type: "string",
-          name: "description",
-          label: "Meta Description",
-          ui: {
-            component: "textarea",
-          },
-        },
-      ],
-    },
-    {
-      type: "object",
-      name: "seo_vi",
-      label: "SEO (Vietnamese)",
-      fields: [
-        {
-          type: "string",
-          name: "title",
-          label: "Meta Title",
-        },
-        {
-          type: "string",
-          name: "description",
-          label: "Meta Description",
-          ui: {
-            component: "textarea",
-          },
-        },
-      ],
-    },
+    // // SEO Fields
+    // {
+    //   type: "object",
+    //   name: "seo_en",
+    //   label: "SEO (English)",
+    //   fields: [
+    //     {
+    //       type: "string",
+    //       name: "title",
+    //       label: "Meta Title",
+    //     },
+    //     {
+    //       type: "string",
+    //       name: "description",
+    //       label: "Meta Description",
+    //       ui: {
+    //         component: "textarea",
+    //       },
+    //     },
+    //   ],
+    // },
+    // {
+    //   type: "object",
+    //   name: "seo_vi",
+    //   label: "SEO (Vietnamese)",
+    //   fields: [
+    //     {
+    //       type: "string",
+    //       name: "title",
+    //       label: "Meta Title",
+    //     },
+    //     {
+    //       type: "string",
+    //       name: "description",
+    //       label: "Meta Description",
+    //       ui: {
+    //         component: "textarea",
+    //       },
+    //     },
+    //   ],
+    // },
 
     // Publishing
     {
