@@ -5,7 +5,7 @@ const S3_REGION = process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1'
 const S3_BASE_URL = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`
 
 export class S3MediaStore implements MediaStore {
-  accept = '*'
+  accept = 'image/*,video/*,application/pdf'
 
   async persist(files: MediaUploadOptions[]): Promise<Media[]> {
     const uploadedFiles: Media[] = []
@@ -108,6 +108,11 @@ export class S3MediaStore implements MediaStore {
         directory: item.directory || '/',
         filename: item.filename,
         src: item.type === 'file' ? item.src : undefined,
+        thumbnails: item.type === 'file' && item.src ? {
+          '75x75': item.src,
+          '400x400': item.src,
+          '1000x1000': item.src,
+        } : undefined,
       })),
       nextOffset: data.offset || undefined,
     }
