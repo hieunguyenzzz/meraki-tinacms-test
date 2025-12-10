@@ -9,11 +9,11 @@ export const config = defineConfig({
   token: process.env.TINA_TOKEN || null,
   branch: process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main',
   
-  // Media storage configuration
+  // Media storage configuration - AWS S3
   media: {
-    tina: {
-      publicFolder: 'public',
-      mediaRoot: 'images',
+    loadCustomStore: async () => {
+      const { S3MediaStore } = await import('./media/S3MediaStore')
+      return S3MediaStore
     },
   },
   
