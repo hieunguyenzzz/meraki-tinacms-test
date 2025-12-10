@@ -9,17 +9,11 @@ export const config = defineConfig({
   clientId: null,
   token: null,
   branch: 'main',
-  // Use local filesystem for media
+  // AWS S3 Media Store
   media: {
-    // If you wanted cloudinary do this
-    // loadCustomStore: async () => {
-    //   const pack = await import("next-tinacms-cloudinary");
-    //   return pack.TinaCloudCloudinaryMediaStore;
-    // },
-    // this is the config for the tina cloud media store
-    tina: {
-      publicFolder: 'public',
-      mediaRoot: '',
+    loadCustomStore: async () => {
+      const pack = await import("next-tinacms-s3");
+      return pack.TinaCloudS3MediaStore;
     },
   },
   build: {
