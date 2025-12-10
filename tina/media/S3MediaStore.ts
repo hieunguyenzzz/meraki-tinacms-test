@@ -100,21 +100,20 @@ export class S3MediaStore implements MediaStore {
         filename: string
         directory: string
         src?: string
-        type: string
+        type: 'file' | 'dir'
         size?: number
-      }) => ({
+      }): Media => ({
         id: item.id,
         type: item.type,
         directory: item.directory || '/',
         filename: item.filename,
-        src: item.src,
+        src: item.type === 'file' ? item.src : undefined,
       })),
       nextOffset: data.offset || undefined,
     }
   }
 
-  // Required for previewSrc
-  previewSrc(src: string): string {
+  async previewSrc(src: string): Promise<string> {
     return src
   }
 }
