@@ -40,7 +40,6 @@ const SortableImageItem = ({
   index,
   onRemove,
   onReplace,
-  onAltChange,
 }: SortableImageItemProps) => {
   const {
     attributes,

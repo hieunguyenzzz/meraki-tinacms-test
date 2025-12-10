@@ -45,5 +45,15 @@ export const textBlock: Template = {
         { value: "right", label: "Right" },
       ],
     },
+    {
+      type: "string",
+      name: "columnLayout",
+      label: "Description Columns",
+      options: [
+        { value: "1", label: "1 Column" },
+        { value: "2", label: "2 Columns" },
+        { value: "3", label: "3 Columns" },
+      ],
+    },
   ],
 };
