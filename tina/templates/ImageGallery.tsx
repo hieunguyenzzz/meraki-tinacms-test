@@ -328,31 +328,6 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
     })
   );
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const filesToUpload = Array.from(files).map(file => ({
-      directory: uploadDir,
-      file
-    }));
-
-    try {
-      const assets = await cms.media.persist(filesToUpload);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newImages = assets.map((asset: any) => ({
-        src: asset.src,
-        alt_en: '',
-        alt_vi: ''
-      }));
-      input.onChange([...images, ...newImages]);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error("Upload failed", error);
-      alert("Upload failed: " + errorMessage);
-    }
-  };
-
   const removeImage = (index: number) => {
     const newImages = [...images];
     newImages.splice(index, 1);
@@ -399,24 +374,6 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
   return (
     <div className="gallery-field">
       <div className="actions" style={{ marginBottom: '1rem', display: 'flex', gap: '10px' }}>
-        <label style={{
-          cursor: 'pointer',
-          padding: '8px 16px',
-          backgroundColor: '#0070f3',
-          color: 'white',
-          borderRadius: '4px',
-          fontSize: '14px',
-          display: 'inline-block'
-        }}>
-          Bulk Upload
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={handleUpload}
-          />
-        </label>
         <button
           type="button"
           onClick={() => {
