@@ -3,6 +3,7 @@ import type { Media, MediaList, MediaListOptions, MediaStore, MediaUploadOptions
 const S3_BUCKET = process.env.NEXT_PUBLIC_S3_BUCKET || ''
 const S3_REGION = process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1'
 const S3_BASE_URL = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`
+const THUMBOR_BASE = 'https://thumbor.merakiweddingplanner.com/unsafe/fit-in'
 
 export class S3MediaStore implements MediaStore {
   accept = 'image/*,video/*,application/pdf'
@@ -109,9 +110,9 @@ export class S3MediaStore implements MediaStore {
         filename: item.filename,
         src: item.type === 'file' ? item.src : undefined,
         thumbnails: item.type === 'file' && item.src ? {
-          '75x75': item.src,
-          '400x400': item.src,
-          '1000x1000': item.src,
+          '75x75': `${THUMBOR_BASE}/75x75/${item.src}`,
+          '400x400': `${THUMBOR_BASE}/400x400/${item.src}`,
+          '1000x1000': `${THUMBOR_BASE}/1000x1000/${item.src}`,
         } : undefined,
       })),
       nextOffset: data.offset || undefined,
