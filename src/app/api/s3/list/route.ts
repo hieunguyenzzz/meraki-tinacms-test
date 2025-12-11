@@ -23,14 +23,14 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const directory = searchParams.get('directory') || ''
   const limit = parseInt(searchParams.get('limit') || '500', 10)
-  const offset = searchParams.get('offset') || ''
+  const cursor = searchParams.get('cursor') || ''
 
   try {
     const command = new ListObjectsV2Command({
       Bucket: BUCKET,
       Prefix: directory ? `${directory}/` : '',
       MaxKeys: limit,
-      StartAfter: offset || undefined,
+      ContinuationToken: cursor || undefined,
       Delimiter: '/',
     })
 
@@ -67,7 +67,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       items: [...directories, ...files],
-      offset: response.NextContinuationToken || null,
+      // Only return offset when there are more items (IsTruncated is true)
+      offset: response.IsTruncated ? response.NextContinuationToken : undefined,
     })
   } catch (error) {
     console.error('Error listing media:', error)
