@@ -110,9 +110,9 @@ export class S3MediaStore implements MediaStore {
         filename: item.filename,
         src: item.type === 'file' ? item.src : undefined,
         thumbnails: item.type === 'file' && item.src ? {
-          '75x75': `${THUMBOR_BASE}/75x75/${item.src}`,
-          '400x400': `${THUMBOR_BASE}/400x400/${item.src}`,
-          '1000x1000': `${THUMBOR_BASE}/1000x1000/${item.src}`,
+          '75x75': `${THUMBOR_BASE}/75x75/${item.src.replace(/^https?:\/\//, '')}`,
+          '400x400': `${THUMBOR_BASE}/400x400/${item.src.replace(/^https?:\/\//, '')}`,
+          '1000x1000': `${THUMBOR_BASE}/1000x1000/${item.src.replace(/^https?:\/\//, '')}`,
         } : undefined,
       })),
       nextOffset: data.offset || undefined,
