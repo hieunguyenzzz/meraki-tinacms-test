@@ -98,7 +98,7 @@ export class S3MediaStore implements MediaStore {
     params.set('directory', directory)
     params.set('limit', String(limit))
     if (offset) {
-      params.set('offset', offset)
+      params.set('cursor', offset)
     }
 
     const response = await fetch(`/api/s3/list?${params}`)
