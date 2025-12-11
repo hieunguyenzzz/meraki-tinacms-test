@@ -5,6 +5,20 @@ const S3_REGION = process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1'
 const S3_BASE_URL = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`
 const THUMBOR_BASE = 'https://thumbor.merakiweddingplanner.com/unsafe/fit-in'
 
+/**
+ * Generates a Thumbor URL for image thumbnails.
+ * Thumbor expects the source URL path to be decoded, so we decode any
+ * percent-encoded characters (like %20 for spaces) before passing to Thumbor.
+ */
+function getThumborUrl(size: string, src: string): string {
+  // Remove protocol from source URL
+  const urlWithoutProtocol = src.replace(/^https?:\/\//, '')
+  // Decode the URL path to handle encoded characters like %20
+  // Thumbor will re-encode as needed when fetching
+  const decodedUrl = decodeURIComponent(urlWithoutProtocol)
+  return `${THUMBOR_BASE}/${size}/${decodedUrl}`
+}
+
 export class S3MediaStore implements MediaStore {
   accept = 'image/*,video/*,application/pdf'
 
@@ -110,9 +124,9 @@ export class S3MediaStore implements MediaStore {
         filename: item.filename,
         src: item.type === 'file' ? item.src : undefined,
         thumbnails: item.type === 'file' && item.src ? {
-          '75x75': `${THUMBOR_BASE}/75x75/${item.src.replace(/^https?:\/\//, '')}`,
-          '400x400': `${THUMBOR_BASE}/400x400/${item.src.replace(/^https?:\/\//, '')}`,
-          '1000x1000': `${THUMBOR_BASE}/1000x1000/${item.src.replace(/^https?:\/\//, '')}`,
+          '75x75': getThumborUrl('75x75', item.src),
+          '400x400': getThumborUrl('400x400', item.src),
+          '1000x1000': getThumborUrl('1000x1000', item.src),
         } : undefined,
       })),
       nextOffset: data.offset || undefined,

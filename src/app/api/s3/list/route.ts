@@ -16,7 +16,8 @@ const s3Client = new S3Client({
 })
 
 const BUCKET = process.env.S3_BUCKET || ''
-const S3_BASE_URL = `https://${BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com`
+const S3_REGION = process.env.S3_REGION || 'ap-southeast-1'
+const S3_BASE_URL = `https://${BUCKET}.s3.${S3_REGION}.amazonaws.com`
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -35,18 +36,26 @@ export async function GET(request: NextRequest) {
 
     const response = await s3Client.send(command)
 
-    // Files in current directory
+    // Files in current directory - use public S3 URLs
+    // Note: The bucket must have public read access for these URLs to work
+    // Thumbor proxy handles image optimization and caching
     const files = (response.Contents || [])
       .filter((item) => item.Key && !item.Key.endsWith('/'))
-      .map((item) => ({
-        id: item.Key,
-        filename: item.Key?.split('/').pop() || '',
-        directory: directory || '/',
-        src: `${S3_BASE_URL}/${item.Key}`,
-        type: 'file',
-        size: item.Size,
-        lastModified: item.LastModified?.toISOString(),
-      }))
+      .map((item) => {
+        // Build public S3 URL - encode the key for URL safety
+        const encodedKey = item.Key!.split('/').map(segment => encodeURIComponent(segment)).join('/')
+        const publicUrl = `${S3_BASE_URL}/${encodedKey}`
+
+        return {
+          id: item.Key,
+          filename: item.Key?.split('/').pop() || '',
+          directory: directory || '/',
+          src: publicUrl,
+          type: 'file',
+          size: item.Size,
+          lastModified: item.LastModified?.toISOString(),
+        }
+      })
 
     // Subdirectories
     const directories = (response.CommonPrefixes || []).map((prefix) => ({
