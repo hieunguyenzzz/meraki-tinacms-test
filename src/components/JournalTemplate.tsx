@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { tinaField } from 'tinacms/dist/react';
-import Image from 'next/image';
+import MerakiImage from './ui/MerakiImage';
 
 interface JournalTemplateProps {
   journal: any;
@@ -29,13 +29,12 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                   journal.template_layout,
                   'image_top'
                 )}>
-                <Image
+                <MerakiImage
                   src={journal.template_layout.image_top}
                   alt='Detail'
                   width={212}
                   height={381}
                   className='object-cover'
-                  unoptimized
                 />
               </div>
             )}
@@ -127,13 +126,12 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                       journal.template_layout,
                       'image_sub'
                     )}>
-                    <Image
+                    <MerakiImage
                       src={journal.template_layout.image_sub}
                       alt='Ceremony'
                       width={450}
                       height={300}
                       className='object-cover'
-                      unoptimized
                     />
                   </div>
                 )}
@@ -150,14 +148,14 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                 data-tina-field={tinaField(
                   journal.template_layout,
                   'image_main'
-                )}>
-                <Image
+                )}
+                >
+                <MerakiImage
                   src={journal.template_layout.image_main}
                   alt={journal.couple_names}
                   width={587}
                   height={880}
                   className='object-cover'
-                  unoptimized
                 />
               </div>
             )}

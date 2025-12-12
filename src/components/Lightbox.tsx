@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import MerakiImage from "./ui/MerakiImage";
 
 interface LightboxProps {
   images: Array<{
@@ -121,10 +122,11 @@ export default function Lightbox({
 
       {/* Main Image */}
       <div className='max-w-4xl max-h-screen p-4'>
-        <img
+        <MerakiImage
           src={currentImage.image}
           alt={altText || 'Gallery image'}
           className='max-w-full max-h-[90vh] object-contain'
+          useNativeImg={true}
         />
       </div>
 

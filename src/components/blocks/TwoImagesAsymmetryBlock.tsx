@@ -1,6 +1,7 @@
 'use client';
 
 import { tinaField } from 'tinacms/dist/react';
+import MerakiImage from '../ui/MerakiImage';
 
 interface TwoImagesAsymmetryBlockData extends Record<string, unknown> {
   caption_en?: string;
@@ -42,12 +43,12 @@ export default function TwoImagesAsymmetryBlock({
             onClick={() => onImageClick(leftIndex)}
             aria-label='View image in gallery'
           >
-            <img
+            <MerakiImage
               src={data.image_left}
               alt=''
               className='w-full h-auto object-cover'
               data-tina-field={tinaField(data, 'image_left')}
-              loading='lazy'
+              useNativeImg={true}
             />
           </button>
         </div>
@@ -58,12 +59,12 @@ export default function TwoImagesAsymmetryBlock({
             onClick={() => onImageClick(rightIndex)}
             aria-label='View image in gallery'
           >
-            <img
+            <MerakiImage
               src={data.image_right}
               alt=''
               className='w-full h-auto object-cover'
               data-tina-field={tinaField(data, 'image_right')}
-              loading='lazy'
+              useNativeImg={true}
             />
           </button>
         </div>

@@ -314,7 +314,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
 
   // Get current filename for upload directory
   const formState = tinaForm.finalForm.getState();
-  const uploadDir = `journal/${formState.values.slug}`;
+  const uploadDir = `images/journal/${formState.values.slug}`;
 
   // Drag and drop sensors
   const sensors = useSensors(

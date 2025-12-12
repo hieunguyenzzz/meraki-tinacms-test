@@ -2,6 +2,7 @@
 import { client } from '../../../../tina/__generated__/client';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
+import MerakiImage from '../../../components/ui/MerakiImage';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
@@ -89,11 +90,11 @@ export default async function BlogPage({ params }: Props) {
                     <div className='md:flex'>
                       {blogs[0].featured_image && (
                         <div className='md:w-1/2'>
-                          <img
+                          <MerakiImage
                             src={blogs[0].featured_image}
                             alt={blogs[0].title}
                             className='w-full h-64 md:h-full object-cover'
-                            loading='lazy'
+                            useNativeImg={true}
                           />
                         </div>
                       )}
@@ -162,11 +163,11 @@ export default async function BlogPage({ params }: Props) {
                         key={index}
                         className='bg-background-1 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow'>
                         {blog.featured_image && (
-                          <img
+                          <MerakiImage
                             src={blog.featured_image}
                             alt={blog.title}
                             className='w-full h-48 object-cover'
-                            loading='lazy'
+                            useNativeImg={true}
                           />
                         )}
                         <div className='p-6'>

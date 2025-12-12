@@ -3,6 +3,7 @@ import { client } from '../../../../../tina/__generated__/client';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
 import Header from '../../../../components/Header';
 import Footer from '../../../../components/Footer';
+import MerakiImage from '../../../../components/ui/MerakiImage';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -192,10 +193,11 @@ export default async function BlogPostPage({ params }: Props) {
 
             {blogPost.featured_image && (
               <div className='mb-8'>
-                <img
+                <MerakiImage
                   src={blogPost.featured_image}
                   alt={title}
                   className='w-full h-64 md:h-96 object-cover rounded-lg shadow-sm'
+                  useNativeImg={true}
                 />
               </div>
             )}

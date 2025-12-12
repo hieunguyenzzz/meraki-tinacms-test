@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { tinaField } from 'tinacms/dist/react';
 import { cn } from '@/lib/utils';
+import MerakiImage from '../ui/MerakiImage';
 
 interface TextImageBlockData extends Record<string, unknown> {
   layout?: string;
@@ -80,13 +80,12 @@ export default function TextImageBlock({
               data-tina-field={tinaField(data, 'image')}
               onClick={handleImageClick}
             >
-              <Image
+              <MerakiImage
                 src={data.image}
                 alt={title || 'Image'}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
-                unoptimized
               />
             </div>
           )}

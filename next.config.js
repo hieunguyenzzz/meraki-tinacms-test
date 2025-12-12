@@ -5,6 +5,19 @@ const nextConfig = {
   // Enable standalone output for Docker production builds
   output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
   
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'merakiweddingplanner.s3.ap-southeast-1.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'imageproxy.hieunguyen.dev',
+      },
+    ],
+  },
+
   async rewrites() {
     return [
       {

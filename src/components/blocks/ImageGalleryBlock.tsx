@@ -1,6 +1,7 @@
 'use client';
 
 import { tinaField } from 'tinacms/dist/react';
+import MerakiImage from '../ui/MerakiImage';
 
 interface ImageItem extends Record<string, unknown> {
   src: string;
@@ -55,12 +56,14 @@ export default function ImageGalleryBlock({
               onClick={() => onImageClick(globalIndex)}
               aria-label={altText || 'View image in gallery'}
             >
-              <img
+              <MerakiImage
                 src={img.src}
                 alt={altText || ''}
                 className='w-full h-auto'
                 data-tina-field={tinaField(img, 'src')}
-                loading='lazy'
+                // We use native img here because we don't have dimensions for masonry layout
+                // and Next.js Image requires width/height or fill (which needs fixed parent height)
+                useNativeImg={true}
               />
             </button>
           );
