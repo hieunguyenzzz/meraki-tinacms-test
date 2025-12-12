@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Pagination from './Pagination';
+import MerakiImage from './ui/MerakiImage';
 import type { PageQuery, JournalConnectionEdges } from '../../tina/__generated__/types';
 
 interface Props {
@@ -78,10 +79,16 @@ export default function JournalListingClient({
         <div className='grid sm:grid-cols-1 lg:grid-cols-2 items-stretch'>
           {/* Left - Hero Image */}
           <div
-            className={
-              'md:h-[500px] relative lg:h-full overflow-hidden bg-[url(/images/journal/listing/hero-image.jpg)] bg-cover bg-center'
-            }
-            data-tina-field={tinaField(page.hero, 'background_image')}></div>
+            className='md:h-[500px] relative lg:h-full overflow-hidden'
+            data-tina-field={tinaField(page.hero, 'background_image')}>
+            <MerakiImage
+              src={page.hero?.background_image || '/images/journal/listing/hero-image.jpg'}
+              alt='Hero Background'
+              fill
+              className='object-cover object-center'
+              priority
+            />
+          </div>
 
           {/* Right - Hero Content */}
           <div className='md:w-[540px] mx-auto md:-translate-y-20 lg:translate-y-0 lg:w-full p-20 flex flex-col gap-20 justify-between bg-paper bg-background-1 items-center text-center'>
@@ -97,11 +104,11 @@ export default function JournalListingClient({
             {/* Featured Journal Thumbnail */}
             {page.hero?.featured_thumbnail && (
               <div data-tina-field={tinaField(page.hero, 'featured_thumbnail')}>
-                <img
+                <MerakiImage
                   src={page.hero.featured_thumbnail}
                   alt='Featured'
                   className='w-[260px] h-auto object-cover'
-                  loading='lazy'
+                  useNativeImg={true}
                 />
               </div>
             )}
@@ -161,11 +168,11 @@ export default function JournalListingClient({
                       {/* Image Container */}
                       <div className='relative aspect-[3/4] overflow-hidden mb-6'>
                         {journal.node?.featured_image ? (
-                          <img
+                          <MerakiImage
                             src={journal.node.featured_image}
                             alt={journal.node.couple_names}
-                            className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
-                            loading='lazy'
+                            fill
+                            className='object-cover group-hover:scale-105 transition-transform duration-500'
                           />
                         ) : (
                           <div className='w-full h-full bg-background-1' />
@@ -232,11 +239,11 @@ export default function JournalListingClient({
         <section className='py-10 bg-background-1 bg-paper'>
           <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6'>
             <div className='flex items-center justify-center'>
-              <img
+              <MerakiImage
                 src='/images/botanical/2.svg'
                 alt='Decorative botanical element'
                 className='w-[48px] h-auto'
-                loading='lazy'
+                useNativeImg={true}
               />
             </div>
 
