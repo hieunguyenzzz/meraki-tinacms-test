@@ -407,8 +407,6 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
           backgroundColor: '#f9f9f9',
           padding: '10px',
           borderRadius: '4px',
-          maxHeight: '600px',
-          overflowY: 'auto',
           columnCount: columns || 1,
           columnGap: '8px'
         }}>

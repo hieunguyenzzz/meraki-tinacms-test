@@ -71,7 +71,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                     )}
 
                     {/* Wedding Location */}
-                    {journal.wedding_details.location && (
+                    {/* {journal.wedding_details.location && (
                       <div
                         data-tina-field={tinaField(
                           journal.wedding_details,
@@ -84,7 +84,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                           {journal.wedding_details.location}
                         </div>
                       </div>
-                    )}
+                    )} */}
 
                     {/* Wedding Venue */}
                     {journal.wedding_details.venue && (

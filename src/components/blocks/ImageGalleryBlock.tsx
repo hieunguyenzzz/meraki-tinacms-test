@@ -43,7 +43,7 @@ export default function ImageGalleryBlock({
       : 'columns-1 md:columns-2 lg:columns-4';
 
   return (
-    <div className='max-w-[1400px] mx-auto px-8'>
+    <div className='max-w-[920px] mx-auto px-8'>
       <div className={columnClass} style={{ columnGap: '1.5rem' }}>
         {data.images?.map((img, imgIndex: number) => {
           const altText = lang === 'vi' ? img.alt_vi : img.alt_en;

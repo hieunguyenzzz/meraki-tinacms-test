@@ -42,7 +42,7 @@ export default function TextImageBlock({
   };
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="max-w-[920px] mx-auto px-4">
       <div className={cn(
         "flex flex-col gap-8 md:gap-16 items-center",
         isTextLeft ? "md:flex-row" : "md:flex-row-reverse"
