@@ -34,7 +34,7 @@ export default function TwoImagesAsymmetryBlock({
   const rightIndex = indexMap[`${blockIndex}-right`];
 
   return (
-    <div className='max-w-[1400px] mx-auto px-8'>
+    <div className='max-w-[920px] mx-auto px-8'>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
         <div className={leftOffset}>
           <button
