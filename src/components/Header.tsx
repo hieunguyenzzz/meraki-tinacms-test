@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import MerakiImage from './ui/MerakiImage';
 
 interface HeaderProps {
   lang: string;
@@ -56,7 +55,7 @@ export default function Header({ lang }: HeaderProps) {
       {/* Logo */}
       <div className='flex-shrink-0'>
         <a href={`/${lang}`} className='block'>
-          <MerakiImage src='/logo.svg' alt='Meraki' className='h-8 w-auto' useNativeImg={true} />
+          <img src='/logo.svg' alt='Meraki' className='h-8 w-auto' />
         </a>
       </div>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>

@@ -1,5 +1,3 @@
-import MerakiImage from './ui/MerakiImage';
-
 interface FooterProps {
   lang: string;
 }
@@ -17,11 +15,10 @@ export default function Footer({ lang }: FooterProps) {
         <div className='flex justify-between mb-12'>
           {/* Brand Column */}
           <div className='md:pr-20'>
-            <MerakiImage
+            <img
               src='/logo.svg'
               alt='Meraki'
               className='h-10 w-auto mb-6'
-              useNativeImg={true}
             />
             <div className='space-y-2 text-body-sm text-text-secondary'>
               <p>
