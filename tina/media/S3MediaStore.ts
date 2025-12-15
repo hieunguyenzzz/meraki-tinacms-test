@@ -10,7 +10,7 @@ const THUMBOR_BASE = 'https://thumbor.merakiweddingplanner.com/unsafe/fit-in'
  * Thumbor expects the source URL path to be decoded, so we decode any
  * percent-encoded characters (like %20 for spaces) before passing to Thumbor.
  */
-function getThumborUrl(size: string, src: string): string {
+export function getThumborUrl(size: string, src: string): string {
   // Remove protocol from source URL
   const urlWithoutProtocol = src.replace(/^https?:\/\//, '')
   // Decode the URL path to handle encoded characters like %20
