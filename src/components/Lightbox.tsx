@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import MerakiImage from "./ui/MerakiImage";
 
 interface LightboxProps {
   images: Array<{
     image: string;
+    thumbnail?: string;
     alt_en?: string;
     alt_vi?: string;
   }>;
@@ -25,6 +26,12 @@ export default function Lightbox({
   lang 
 }: LightboxProps) {
   const touchStartX = useRef<number | null>(null);
+
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  useEffect(() => {
+    setImgLoaded(false);
+  }, [currentIndex]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -121,12 +128,23 @@ export default function Lightbox({
       )}
 
       {/* Main Image */}
-      <div className='max-w-4xl max-h-screen p-4'>
+      <div className='max-h-screen p-4 relative flex items-center justify-center w-full h-full'>
+        {/* Thumbnail Placeholder */}
+        {currentImage.thumbnail && (
+          <MerakiImage
+            src={currentImage.thumbnail}
+            alt={altText || 'Gallery image placeholder'}
+            className='absolute h-[90vh] z-0'
+            useNativeImg={true}
+          />
+        )}
+        
         <MerakiImage
           src={currentImage.image}
           alt={altText || 'Gallery image'}
-          className='max-w-full max-h-[90vh] object-contain'
+          className={`max-w-full max-h-[90vh] object-contain z-10 relative ${imgLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
           useNativeImg={true}
+          onLoad={() => setImgLoaded(true)}
         />
       </div>
 

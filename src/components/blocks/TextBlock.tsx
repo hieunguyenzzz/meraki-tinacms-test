@@ -49,7 +49,7 @@ export default function TextBlock({ data, lang }: TextBlockProps) {
       )}
       {description && (
         <div
-          className={columnClass}
+          className={`${columnClass} ${columns === 1 ? alignClass : ''}`}
           data-tina-field={tinaField(
             data,
             lang === 'vi' ? 'description_vi' : 'description_en'
