@@ -2,6 +2,7 @@
 
 import { tinaField } from 'tinacms/dist/react';
 import MerakiImage from '../ui/MerakiImage';
+import { getThumborUrl } from '@/lib/image';
 
 interface ImageItem extends Record<string, unknown> {
   src: string;
@@ -57,7 +58,7 @@ export default function ImageGalleryBlock({
               aria-label={altText || 'View image in gallery'}
             >
               <MerakiImage
-                src={img.src}
+                src={getThumborUrl('400x400', img.src)}
                 alt={altText || ''}
                 className='w-full h-auto'
                 data-tina-field={tinaField(img, 'src')}

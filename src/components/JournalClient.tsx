@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { getThumborUrl } from '@/lib/image';
 import Header from './Header';
 import Footer from './Footer';
 import JournalTemplate from './JournalTemplate';
@@ -16,6 +17,7 @@ import TestimonialBlock from './blocks/TestimonialBlock';
 
 interface LightboxImage {
   image: string;
+  thumbnail?: string;
   alt_en?: string;
   alt_vi?: string;
 }
@@ -53,7 +55,8 @@ export default function JournalClient({
         block.images.forEach((img: any, imgIndex: number) => {
           map[`${blockIndex}-${imgIndex}`] = images.length;
           images.push({
-            image: img.src,
+            image: getThumborUrl('1000x1000', img.src),
+            thumbnail: getThumborUrl('75x75', img.src),
             alt_en: img.alt_en,
             alt_vi: img.alt_vi,
           });
@@ -63,18 +66,25 @@ export default function JournalClient({
       if (blockType === 'TwoImagesAsymmetry') {
         if (block.image_left) {
           map[`${blockIndex}-left`] = images.length;
-          images.push({ image: block.image_left });
+          images.push({ 
+            image: getThumborUrl('1000x1000', block.image_left),
+            thumbnail: getThumborUrl('75x75', block.image_left)
+          });
         }
         if (block.image_right) {
           map[`${blockIndex}-right`] = images.length;
-          images.push({ image: block.image_right });
+          images.push({ 
+            image: getThumborUrl('1000x1000', block.image_right),
+            thumbnail: getThumborUrl('75x75', block.image_right)
+          });
         }
       }
 
       if (blockType === 'TextImageBlock' && block.image) {
         map[`${blockIndex}-image`] = images.length;
         images.push({
-          image: block.image,
+          image: getThumborUrl('1000x1000', block.image),
+          thumbnail: getThumborUrl('75x75', block.image),
           alt_en: block.image_alt_en,
           alt_vi: block.image_alt_vi,
         });

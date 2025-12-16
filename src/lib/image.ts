@@ -1,6 +1,15 @@
+import { getThumborUrl as getThumborUrlRaw } from '../../tina/media/S3MediaStore';
+
 const S3_BUCKET = process.env.NEXT_PUBLIC_S3_BUCKET || 'merakiweddingplanner';
 const S3_REGION = process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1';
 export const S3_BASE_URL = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`;
+
+export function getThumborUrl(size: string, src: string): string {
+  if (!src) return '';
+  // If it's not an absolute URL, resolve it first
+  const resolvedSrc = resolveImageUrl(src);
+  return getThumborUrlRaw(size, resolvedSrc);
+}
 
 export function resolveImageUrl(src: string | null | undefined): string {
   if (!src) return '';
