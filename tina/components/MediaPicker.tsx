@@ -25,27 +25,28 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [items, setItems] = React.useState<any[]>([]);
   const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
-  const [offset, setOffset] = React.useState(0);
+  const [nextCursor, setNextCursor] = React.useState<string | undefined>(undefined);
   const [hasMore, setHasMore] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [columns, setColumns] = React.useState(5);
   const LIMIT = 20;
 
-  const fetchMedia = React.useCallback(async (dir: string, currentOffset: number) => {
+  const fetchMedia = React.useCallback(async (dir: string, cursor?: string) => {
     setLoading(true);
     try {
       const result = await cms.media.list({
         directory: dir,
         limit: LIMIT,
-        offset: currentOffset,
+        offset: cursor,
       });
 
-      if (currentOffset === 0) {
+      if (!cursor) {
         setItems(result.items);
       } else {
         setItems(prev => [...prev, ...result.items]);
       }
 
+      setNextCursor(result.nextOffset as string | undefined);
       setHasMore(!!result.nextOffset);
     } catch (e) {
       console.error('Fetch cms media error', e);
@@ -56,15 +57,15 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
 
   React.useEffect(() => {
     if (open) {
-      setOffset(0);
-      fetchMedia(directory, 0);
+      setNextCursor(undefined);
+      fetchMedia(directory, undefined);
     }
   }, [directory, open]);
 
   const loadMore = () => {
-    const newOffset = offset + LIMIT;
-    setOffset(newOffset);
-    fetchMedia(directory, newOffset);
+    if (nextCursor) {
+      fetchMedia(directory, nextCursor);
+    }
   };
 
   const toggleSelection = (src: string) => {
