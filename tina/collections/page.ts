@@ -1,4 +1,5 @@
 import type { Collection } from "tinacms";
+import { CustomImageField } from "../fields/CustomImageField";
 
 export const Page: Collection = {
   label: 'Page Content',
@@ -76,11 +77,17 @@ export const Page: Collection = {
           type: 'image',
           name: 'background_image',
           label: 'Background Image',
+          ui: {
+            component: CustomImageField,
+          },
         },
         {
           type: 'image',
           name: 'featured_thumbnail',
           label: 'Featured Thumbnail',
+          ui: {
+            component: CustomImageField,
+          },
         },
         {
           type: 'string',
