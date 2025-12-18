@@ -30,6 +30,7 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
   const [loading, setLoading] = React.useState(false);
   const [columns, setColumns] = React.useState(5);
   const LIMIT = 20;
+  const loaderRef = React.useRef<HTMLDivElement>(null);
 
   const fetchMedia = React.useCallback(async (dir: string, cursor?: string) => {
     setLoading(true);
@@ -62,11 +63,29 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
     }
   }, [directory, open]);
 
-  const loadMore = () => {
-    if (nextCursor) {
+  const loadMore = React.useCallback(() => {
+    if (nextCursor && !loading) {
       fetchMedia(directory, nextCursor);
     }
-  };
+  }, [nextCursor, loading, fetchMedia, directory]);
+
+  // Infinite scroll: auto-load when scrolling to bottom
+  React.useEffect(() => {
+    const loader = loaderRef.current;
+    if (!loader) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(loader);
+    return () => observer.disconnect();
+  }, [hasMore, loading, loadMore]);
 
   const toggleSelection = (src: string) => {
     if (selectedItems.includes(src)) {
@@ -175,17 +194,12 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
             </div>
           )}
 
-          {hasMore && (
-            <div className="mt-6 text-center pb-4">
-              <button
-                onClick={loadMore}
-                disabled={loading}
-                className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 rounded-full text-sm font-medium shadow-sm transition-colors disabled:opacity-50"
-              >
-                {loading ? 'Loading...' : 'Load More'}
-              </button>
-            </div>
-          )}
+          {/* Infinite scroll sentinel */}
+          <div ref={loaderRef} className="mt-6 text-center pb-4 h-10">
+            {loading && (
+              <span className="text-sm text-gray-500">Loading...</span>
+            )}
+          </div>
         </div>
 
         {/* Footer */}
