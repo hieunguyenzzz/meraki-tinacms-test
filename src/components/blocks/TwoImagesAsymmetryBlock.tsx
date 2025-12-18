@@ -20,6 +20,8 @@ interface TwoImagesAsymmetryBlockProps {
   onImageClick: (index: number) => void;
 }
 
+const IMAGE_BLOCK_GAP = '90px'
+
 export default function TwoImagesAsymmetryBlock({
   data,
   lang,
@@ -29,8 +31,8 @@ export default function TwoImagesAsymmetryBlock({
 }: TwoImagesAsymmetryBlockProps) {
   const caption = lang === 'vi' ? data.caption_vi : data.caption_en;
   const offset = data.offset || 'up';
-  const leftOffset = offset === 'up' ? '-mt-12 md:-mt-12' : 'mt-12 md:mt-12';
-  const rightOffset = offset === 'up' ? 'mt-12 md:mt-12' : '-mt-12 md:-mt-12';
+  const leftOffset = offset === 'up' ? `-mt-[${IMAGE_BLOCK_GAP}] md:-mt-[${IMAGE_BLOCK_GAP}]` : `mt-[${IMAGE_BLOCK_GAP}] md:mt-[${IMAGE_BLOCK_GAP}]`;
+  const rightOffset = offset === 'up' ? `mt-[${IMAGE_BLOCK_GAP}] md:mt-[${IMAGE_BLOCK_GAP}]` : `-mt-[${IMAGE_BLOCK_GAP}] md:-mt-[${IMAGE_BLOCK_GAP}]`;
   const leftIndex = indexMap[`${blockIndex}-left`];
   const rightIndex = indexMap[`${blockIndex}-right`];
 

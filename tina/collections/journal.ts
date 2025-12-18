@@ -1,4 +1,5 @@
 import { Collection } from "tinacms";
+import { CustomImageField } from "../fields/CustomImageField";
 import { spacingBlock } from "../templates/spacing";
 import { imageGalleryBlock } from "../templates/ImageGallery";
 import { textBlock } from "../templates/text";
@@ -54,6 +55,9 @@ export const Journal: Collection = {
       name: "featured_image",
       label: "Featured Image (for listing page)",
       required: true,
+      ui: {
+        component: CustomImageField,
+      },
     },
 
     // Template Layout Fields
@@ -68,6 +72,9 @@ export const Journal: Collection = {
           name: "image_top",
           label: "Top image",
           description: "Small image on top left corner",
+          ui: {
+            component: CustomImageField,
+          },
         },
         // Main headline
         {
@@ -86,6 +93,9 @@ export const Journal: Collection = {
           name: "image_sub",
           label: "Sub image",
           description: "Small image on bottom left corner",
+          ui: {
+            component: CustomImageField,
+          },
         },
         // Large portrait photo (right side)
         {
@@ -93,6 +103,9 @@ export const Journal: Collection = {
           name: "image_main",
           label: "Main image",
           description: "Main image on the right side",
+          ui: {
+            component: CustomImageField,
+          },
         },
       ],
     },

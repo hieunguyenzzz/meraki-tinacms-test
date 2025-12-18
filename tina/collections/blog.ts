@@ -1,4 +1,5 @@
 import { Collection } from "tinacms";
+import { CustomImageField } from "../fields/CustomImageField";
 
 export const Blog: Collection = {
   name: "blog",
@@ -40,6 +41,9 @@ export const Blog: Collection = {
       type: "image",
       name: "featured_image",
       label: "Featured Image",
+      ui: {
+        component: CustomImageField,
+      },
     },
     {
       type: "string",
