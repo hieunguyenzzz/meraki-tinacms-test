@@ -45,6 +45,12 @@ const SortableImageItem = ({
   onReplace,
   widthClass,
 }: SortableImageItemProps) => {
+  // Use a safe ID that handles whitespaces and special characters
+  const itemId = React.useMemo(() => 
+    image.src ? encodeURIComponent(image.src) : `image-${index}`,
+    [image.src, index]
+  );
+
   const {
     attributes,
     listeners,
@@ -52,7 +58,7 @@ const SortableImageItem = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: `image-${index}` });
+  } = useSortable({ id: itemId });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -135,43 +141,47 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
     })
   );
 
-  React.useEffect(() => {
-    let masonry: any = null;
-    let imgLoaded: any = null;
+  const masonryInstance = React.useRef<any>(null);
 
+  React.useEffect(() => {
     const initMasonry = async () => {
       const Masonry = (await import('masonry-layout')).default;
       const imagesLoaded = (await import('imagesloaded')).default;
 
       if (containerRef.current) {
-        masonry = new Masonry(containerRef.current, {
-          itemSelector: '.masonry-item',
-          columnWidth: '.grid-sizer',
-          gutter: 8,
-          percentPosition: true,
-          transitionDuration: '0.3s',
-        });
+        if (!masonryInstance.current) {
+          masonryInstance.current = new Masonry(containerRef.current, {
+            itemSelector: '.masonry-item',
+            columnWidth: '.grid-sizer',
+            gutter: 8,
+            percentPosition: true,
+            transitionDuration: '0.3s',
+          });
+          masonryRef.current = masonryInstance.current;
+        } else {
+          masonryInstance.current.reloadItems();
+          masonryInstance.current.layout();
+        }
 
-        masonryRef.current = masonry;
-
-        imgLoaded = imagesLoaded(containerRef.current);
+        const imgLoaded = imagesLoaded(containerRef.current);
         imgLoaded.on('progress', () => {
-          masonry?.layout();
+          masonryInstance.current?.layout();
         });
 
         setTimeout(() => {
-          masonry?.layout();
+          masonryInstance.current?.layout();
         }, 100);
       }
     };
 
     initMasonry();
-
-    return () => {
-      masonry?.destroy();
-      imgLoaded?.off('progress');
-    };
   }, [images, columns]);
+
+  React.useEffect(() => {
+    return () => {
+      masonryInstance.current?.destroy();
+    };
+  }, []);
 
   const removeImage = (index: number) => {
     const newImages = [...images];
@@ -201,19 +211,34 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
+      // Capture scroll position of the Tina sidebar or main window
+      const scrollParent = containerRef.current?.closest('.tina-sidebar-content') || 
+                           containerRef.current?.closest('[style*="overflow: auto"]') ||
+                           containerRef.current?.closest('[style*="overflow: scroll"]');
+      const scrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
+
       const oldIndex = images.findIndex(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (_: any, i: any) => `image-${i}` === active.id
+        (img: any, i: number) => (img.src ? encodeURIComponent(img.src) : `image-${i}`) === active.id
       );
       const newIndex = images.findIndex(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (_: any, i: any) => `image-${i}` === over.id
+        (img: any, i: number) => (img.src ? encodeURIComponent(img.src) : `image-${i}`) === over.id
       );
 
       if (oldIndex !== -1 && newIndex !== -1) {
         input.onChange(arrayMove(images, oldIndex, newIndex));
-        // Masonry will re-layout on next render due to images.length or columns change
-        // but we might need to force it if length doesn't change
+        
+        // Restore scroll position after Tina re-renders
+        if (scrollParent) {
+          requestAnimationFrame(() => {
+            scrollParent.scrollTop = scrollTop;
+          });
+        } else {
+          requestAnimationFrame(() => {
+            window.scrollTo(window.scrollX, scrollTop);
+          });
+        }
+
+        // Masonry will re-layout on next render
         setTimeout(() => masonryRef.current?.layout(), 100);
       }
     }
@@ -257,13 +282,12 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
           <div className={`grid-sizer ${widthClass} absolute invisible`} />
 
           <SortableContext
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            items={images.map((_: any, i: number) => `image-${i}`)}
+            items={images.map((img: any, i: number) => img.src ? encodeURIComponent(img.src) : `image-${i}`)}
             strategy={rectSortingStrategy}
           >
             {images.map((image: ImageData, index: number) => (
               <SortableImageItem
-                key={`image-${index}`}
+                key={image.src ? encodeURIComponent(image.src) : `image-${index}`}
                 image={image}
                 index={index}
                 onRemove={removeImage}
