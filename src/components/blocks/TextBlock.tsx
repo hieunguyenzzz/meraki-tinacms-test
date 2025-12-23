@@ -35,7 +35,7 @@ export default function TextBlock({ data, lang }: TextBlockProps) {
       : '';
 
   return (
-    <div className={`max-w-[920px] mx-auto px-8`}>
+    <div className={`max-w-[968px] mx-auto px-6`}>
       {title && (
         <h2
           className={`text-h3 mb-4 ${alignClass}`}

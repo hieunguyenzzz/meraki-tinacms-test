@@ -15,6 +15,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'imageproxy.hieunguyen.dev',
       },
+      {
+        protocol: 'https',
+        hostname: 'thumbor.merakiweddingplanner.com',
+      }
     ],
   },
 

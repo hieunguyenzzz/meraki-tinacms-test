@@ -16,7 +16,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-  verticalListSortingStrategy,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { MediaPicker } from "../components/MediaPicker";
@@ -35,6 +35,7 @@ interface SortableImageItemProps {
   onRemove: (index: number) => void;
   onReplace: (index: number) => void;
   onAltChange: (index: number, lang: 'en' | 'vi', value: string) => void;
+  widthClass: string;
 }
 
 const SortableImageItem = ({
@@ -42,6 +43,7 @@ const SortableImageItem = ({
   index,
   onRemove,
   onReplace,
+  widthClass,
 }: SortableImageItemProps) => {
   const {
     attributes,
@@ -56,20 +58,21 @@ const SortableImageItem = ({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : 1,
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative rounded cursor-grab active:cursor-grabbing group ${isDragging ? "opacity-50" : ""
+      className={`masonry-item ${widthClass} relative rounded cursor-grab active:cursor-grabbing group mb-2 ${isDragging ? "opacity-50" : ""
         }`}
       {...attributes}
       {...listeners}
     >
       <button
         type="button"
-        className="w-full h-auto bg-gray-100 rounded mb-2 overflow-hidden hover:opacity-80 transition-opacity flex items-center justify-center"
+        className="w-full h-auto bg-gray-100 rounded overflow-hidden hover:opacity-80 transition-opacity flex items-center justify-center"
         onClick={(e) => {
           e.stopPropagation();
           onReplace(index);
@@ -78,7 +81,7 @@ const SortableImageItem = ({
         <img
           src={getThumborUrl('400x400', image.src)}
           alt={image.alt_en || ""}
-          className="max-w-full max-h-full object-contain"
+          className="w-full h-auto object-contain block"
           draggable={false}
         />
       </button>
@@ -103,11 +106,18 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
   const cms = useCMS();
   const images = input.value || [];
   const [showMediaPicker, setShowMediaPicker] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const masonryRef = React.useRef<any>(null);
 
   // Get columns from sibling field
   const columnsPath = input.name.split('.').slice(0, -1).concat('columns').join('.');
   const columnsState = tinaForm.finalForm.getFieldState(columnsPath);
   const columns = parseInt(columnsState?.value || '1');
+
+  const widthClass = columns === 1 ? 'w-full' :
+    columns === 2 ? 'w-[calc(50%-16px)]' :
+      columns === 3 ? 'w-[calc(33.333%-16px)]' :
+        'w-[calc(25%-16px)]';
 
   // Get current filename for upload directory
   const formState = tinaForm.finalForm.getState();
@@ -124,6 +134,44 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  React.useEffect(() => {
+    let masonry: any = null;
+    let imgLoaded: any = null;
+
+    const initMasonry = async () => {
+      const Masonry = (await import('masonry-layout')).default;
+      const imagesLoaded = (await import('imagesloaded')).default;
+
+      if (containerRef.current) {
+        masonry = new Masonry(containerRef.current, {
+          itemSelector: '.masonry-item',
+          columnWidth: '.grid-sizer',
+          gutter: 8,
+          percentPosition: true,
+          transitionDuration: '0.3s',
+        });
+
+        masonryRef.current = masonry;
+
+        imgLoaded = imagesLoaded(containerRef.current);
+        imgLoaded.on('progress', () => {
+          masonry?.layout();
+        });
+
+        setTimeout(() => {
+          masonry?.layout();
+        }, 100);
+      }
+    };
+
+    initMasonry();
+
+    return () => {
+      masonry?.destroy();
+      imgLoaded?.off('progress');
+    };
+  }, [images, columns]);
 
   const removeImage = (index: number) => {
     const newImages = [...images];
@@ -164,6 +212,9 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
 
       if (oldIndex !== -1 && newIndex !== -1) {
         input.onChange(arrayMove(images, oldIndex, newIndex));
+        // Masonry will re-layout on next render due to images.length or columns change
+        // but we might need to force it if length doesn't change
+        setTimeout(() => masonryRef.current?.layout(), 100);
       }
     }
   };
@@ -192,17 +243,23 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <div style={{
-          backgroundColor: '#f9f9f9',
-          padding: '10px',
-          borderRadius: '4px',
-          columnCount: columns || 1,
-          columnGap: '8px'
-        }}>
+        <div
+          ref={containerRef}
+          className="relative"
+          style={{
+            backgroundColor: '#f9f9f9',
+            padding: '10px',
+            borderRadius: '4px',
+            minHeight: '100px'
+          }}
+        >
+          {/* Sizer element for Masonry */}
+          <div className={`grid-sizer ${widthClass} absolute invisible`} />
+
           <SortableContext
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             items={images.map((_: any, i: number) => `image-${i}`)}
-            strategy={verticalListSortingStrategy}
+            strategy={rectSortingStrategy}
           >
             {images.map((image: ImageData, index: number) => (
               <SortableImageItem
@@ -212,6 +269,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
                 onRemove={removeImage}
                 onReplace={replaceImage}
                 onAltChange={updateAlt}
+                widthClass={widthClass}
               />
             ))}
           </SortableContext>
