@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import type Masonry from 'masonry-layout';
+import ImagesLoaded from 'imagesloaded';
 import { tinaField } from 'tinacms/dist/react';
 import MerakiImage from '../ui/MerakiImage';
 import { getThumborUrl } from '@/lib/image';
@@ -34,7 +36,7 @@ export default function ImageGalleryBlock({
   onImageClick,
 }: ImageGalleryBlockProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const masonryRef = useRef<any>(null);
+  const masonryRef = useRef<Masonry | null>(null);
 
   const caption = lang === 'vi' ? data.caption_vi : data.caption_en;
   const columns = data.columns || '1';
@@ -50,8 +52,9 @@ export default function ImageGalleryBlock({
       : 'w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]';
 
   useEffect(() => {
-    let masonry: any = null;
-    let imgLoaded: any = null;
+    let masonry: Masonry;
+    let imgLoaded: ImagesLoaded.ImagesLoaded;
+    let imageLoadedLayoutCallback: () => void;
 
     const initMasonry = async () => {
       const Masonry = (await import('masonry-layout')).default;
@@ -66,25 +69,26 @@ export default function ImageGalleryBlock({
         percentPosition: true,
         transitionDuration: '0.3s',
       });
+      imageLoadedLayoutCallback = () => {
+        masonry?.layout?.();
+      };
 
       masonryRef.current = masonry;
 
       imgLoaded = imagesLoaded(containerRef.current);
-      imgLoaded.on('progress', () => {
-        masonry?.layout();
-      });
+      imgLoaded.on('progress', imageLoadedLayoutCallback);
       
       // Initial layout after a short delay to ensure styles are applied
       setTimeout(() => {
-        masonry?.layout();
+        masonry?.layout?.();
       }, 100);
     };
 
     initMasonry();
 
     return () => {
-      masonry?.destroy();
-      imgLoaded?.off('progress');
+      masonry?.destroy?.();
+      imgLoaded?.off?.('progress', imageLoadedLayoutCallback);
     };
   }, [data.images, columns]);
 
