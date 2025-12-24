@@ -1,6 +1,7 @@
 'use client';
 
 import React from "react";
+import type Masonry from 'masonry-layout';
 import { wrapFieldsWithMeta, useCMS, Template } from "tinacms";
 import {
   DndContext,
@@ -110,10 +111,10 @@ const SortableImageItem = ({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
   const cms = useCMS();
-  const images = input.value || [];
+  const images = React.useMemo(() => input.value || [], [input.value]);
   const [showMediaPicker, setShowMediaPicker] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const masonryRef = React.useRef<any>(null);
+  const masonryRef = React.useRef<Masonry | null>(null);
 
   // Get columns from sibling field
   const columnsPath = input.name.split('.').slice(0, -1).concat('columns').join('.');
@@ -141,7 +142,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
     })
   );
 
-  const masonryInstance = React.useRef<any>(null);
+  const masonryInstance = React.useRef<Masonry | null>(null);
 
   React.useEffect(() => {
     const initMasonry = async () => {
@@ -159,17 +160,17 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
           });
           masonryRef.current = masonryInstance.current;
         } else {
-          masonryInstance.current.reloadItems();
-          masonryInstance.current.layout();
+          masonryInstance.current.reloadItems?.();
+          masonryInstance.current.layout?.();
         }
 
         const imgLoaded = imagesLoaded(containerRef.current);
         imgLoaded.on('progress', () => {
-          masonryInstance.current?.layout();
+          masonryInstance.current?.layout?.();
         });
 
         setTimeout(() => {
-          masonryInstance.current?.layout();
+          masonryInstance.current?.layout?.();
         }, 100);
       }
     };
@@ -179,7 +180,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
 
   React.useEffect(() => {
     return () => {
-      masonryInstance.current?.destroy();
+      masonryInstance.current?.destroy?.();
     };
   }, []);
 
@@ -218,10 +219,10 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
       const scrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
 
       const oldIndex = images.findIndex(
-        (img: any, i: number) => (img.src ? encodeURIComponent(img.src) : `image-${i}`) === active.id
+        (img: ImageData, i: number) => (img.src ? encodeURIComponent(img.src) : `image-${i}`) === active.id
       );
       const newIndex = images.findIndex(
-        (img: any, i: number) => (img.src ? encodeURIComponent(img.src) : `image-${i}`) === over.id
+        (img: ImageData, i: number) => (img.src ? encodeURIComponent(img.src) : `image-${i}`) === over.id
       );
 
       if (oldIndex !== -1 && newIndex !== -1) {
@@ -239,7 +240,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
         }
 
         // Masonry will re-layout on next render
-        setTimeout(() => masonryRef.current?.layout(), 100);
+        setTimeout(() => masonryRef.current?.layout?.(), 100);
       }
     }
   };
@@ -282,7 +283,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
           <div className={`grid-sizer ${widthClass} absolute invisible`} />
 
           <SortableContext
-            items={images.map((img: any, i: number) => img.src ? encodeURIComponent(img.src) : `image-${i}`)}
+            items={images.map((img: ImageData, i: number) => img.src ? encodeURIComponent(img.src) : `image-${i}`)}
             strategy={rectSortingStrategy}
           >
             {images.map((image: ImageData, index: number) => (
