@@ -110,7 +110,7 @@ export default function ImageGalleryBlock({
               aria-label={altText || 'View image in gallery'}
             >
               <MerakiImage
-                src={getThumborUrl('400x400', img.src)}
+                src={getThumborUrl('1000x1000', img.src)}
                 alt={altText || ''}
                 className='w-full h-auto block'
                 data-tina-field={tinaField(img, 'src')}
