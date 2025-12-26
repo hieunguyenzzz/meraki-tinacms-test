@@ -86,7 +86,7 @@ const SortableImageItem = ({
         }}
       >
         <img
-          src={getThumborUrl('400x400', image.src)}
+          src={getThumborUrl('180x', image.src)}
           alt={image.alt_en || ""}
           className="w-full h-auto object-contain block"
           draggable={false}

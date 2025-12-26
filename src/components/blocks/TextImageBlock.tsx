@@ -82,7 +82,7 @@ export default function TextImageBlock({
               onClick={handleImageClick}
             >
               <MerakiImage
-                src={getThumborUrl('400x400', data.image)}
+                src={getThumborUrl('480x0', data.image)}
                 alt={title || 'Image'}
                 fill
                 className="object-cover"
