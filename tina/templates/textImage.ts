@@ -34,20 +34,16 @@ export const textImageBlock: Template = {
         label: "Title (Vietnamese)",
     },
     {
-        type: "string",
+        type: "rich-text",
         name: "description_en",
         label: "Description (English)",
-        ui: {
-        component: "textarea",
-        },
+        toolbarOverride: ["bold", "italic", "link"],
     },
     {
-        type: "string",
+        type: "rich-text",
         name: "description_vi",
         label: "Description (Vietnamese)",
-        ui: {
-        component: "textarea",
-        },
+        toolbarOverride: ["bold", "italic", "link"],
     },
     {
       type: "image",

@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react';
-import { useTina, tinaField } from 'tinacms/dist/react';
+import { useTina } from 'tinacms/dist/react';
 import { getThumborUrl } from '@/lib/image';
 import Header from './Header';
 import Footer from './Footer';
@@ -112,39 +112,6 @@ export default function JournalClient({
       <Header lang={lang} />
 
       <JournalTemplate journal={journal} lang={lang} />
-
-      {/* Testimonial Section */}
-      {journal.testimonial && (
-        <div className='bg-paper px-12 py-20'>
-          <div className='max-w-[446px] mx-auto text-center'>
-            {/* Testimonial Heading */}
-            <div className='text-h3 mb-3'>
-              Testimonial
-            </div>
-
-            {/* Decorative Script Text */}
-            {journal.testimonial?.decorative_text && (
-              <div
-                className='text-handwriting text-h4 mb-3 text-center'
-                data-tina-field={tinaField(journal.testimonial, 'decorative_text')}>
-                {journal.testimonial.decorative_text}
-              </div>
-            )}
-
-            {/* Quote */}
-            {(lang === 'vi' ? journal.testimonial?.quote_vi : journal.testimonial?.quote_en) && (
-              <p
-                className='text-center text-text-secondary text-body-sm'
-                data-tina-field={tinaField(
-                  journal.testimonial,
-                  lang === 'vi' ? 'quote_vi' : 'quote_en'
-                )}>
-                {lang === 'vi' ? journal.testimonial.quote_vi : journal.testimonial.quote_en}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Content Blocks */}
       {journal.content_blocks && journal.content_blocks.length > 0 && (
