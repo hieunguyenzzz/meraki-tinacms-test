@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { tinaField } from 'tinacms/dist/react';
+import { TinaMarkdown } from 'tinacms/dist/rich-text';
 import { cn } from '@/lib/utils';
 import MerakiImage from '../ui/MerakiImage';
 import { getThumborUrl } from '@/lib/image';
@@ -9,8 +11,8 @@ interface TextImageBlockData extends Record<string, unknown> {
   layout?: string;
   title_en?: string;
   title_vi?: string;
-  description_en?: string;
-  description_vi?: string;
+  description_en?: any;
+  description_vi?: any;
   image?: string;
 }
 
@@ -22,12 +24,12 @@ interface TextImageBlockProps {
   onImageClick?: (index: number) => void;
 }
 
-export default function TextImageBlock({ 
-  data, 
+export default function TextImageBlock({
+  data,
   lang,
   blockIndex,
   indexMap,
-  onImageClick 
+  onImageClick
 }: TextImageBlockProps) {
   const isTextLeft = data.layout === 'text-left';
   const title = lang === 'vi' ? data.title_vi : data.title_en;
@@ -59,13 +61,27 @@ export default function TextImageBlock({
                 {title}
               </h2>
             )}
-            {description && (
-              <p
-                className="text-body-md text-text-secondary leading-relaxed whitespace-pre-line"
+            {!!description && (
+              <div
+                className="text-body-md text-text-secondary leading-relaxed"
                 data-tina-field={tinaField(data, lang === 'vi' ? 'description_vi' : 'description_en')}
               >
-                {description}
-              </p>
+                <TinaMarkdown
+                  content={description}
+                  components={{
+                    p: (props: any) => (
+                      <p className="text-body-md text-text-secondary leading-relaxed mb-2 last:mb-0" {...props} />
+                    ),
+                    bold: (props: any) => <strong className="font-bold" {...props} />,
+                    italic: (props: any) => <em className="italic" {...props} />,
+                    a: ({ url, children }: any) => (
+                      <a className="underline hover:opacity-70 transition-opacity" target="_blank" href={url} rel="noopener noreferrer">
+                        {children}
+                      </a>
+                    ),
+                  }}
+                />
+              </div>
             )}
           </div>
         </div>
@@ -73,7 +89,7 @@ export default function TextImageBlock({
         {/* Image Section */}
         <div className="flex-1 w-full md:w-1/2">
           {data.image && (
-            <div 
+            <div
               className={cn(
                 "relative aspect-[4/5] w-full overflow-hidden rounded-sm",
                 onImageClick && "cursor-pointer hover:opacity-95 transition-opacity"

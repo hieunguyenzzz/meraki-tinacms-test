@@ -1,12 +1,14 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { tinaField } from 'tinacms/dist/react';
+import { TinaMarkdown } from 'tinacms/dist/rich-text';
 
 interface TextBlockData extends Record<string, unknown> {
   title_en?: string;
   title_vi?: string;
-  description_en?: string;
-  description_vi?: string;
+  description_en?: any;
+  description_vi?: any;
   alignment?: string;
   columnLayout?: string;
 }
@@ -47,7 +49,7 @@ export default function TextBlock({ data, lang }: TextBlockProps) {
           {title}
         </h2>
       )}
-      {description && (
+      {!!description && (
         <div
           className={`${columnClass} ${columns === 1 ? alignClass : ''}`}
           data-tina-field={tinaField(
@@ -55,9 +57,21 @@ export default function TextBlock({ data, lang }: TextBlockProps) {
             lang === 'vi' ? 'description_vi' : 'description_en'
           )}
         >
-          <p className='text-body-md text-text-secondary leading-relaxed whitespace-pre-line'>
-            {description}
-          </p>
+          <TinaMarkdown 
+            content={description}
+            components={{
+              p: (props: any) => (
+                <p className="text-body-md text-text-secondary leading-relaxed mb-2 last:mb-0" {...props} />
+              ),
+              bold: (props: any) => <strong className="font-bold" {...props} />,
+              italic: (props: any) => <em className="italic" {...props} />,
+              a: ({url, children}: any) => (
+                <a className="underline hover:opacity-70 transition-opacity" target="_blank" href={url} rel="noopener noreferrer">
+                  {children}
+                </a>
+              ),
+            }}
+          />
         </div>
       )}
     </div>

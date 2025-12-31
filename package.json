@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tinacms build && next build",
-    "build:local": "tinacms build --local --skip-cloud-checks && next build",
+    "build:local": "tinacms build --local --skip-cloud-checks --no-client-build-cache && next build",
     "dev": "tinacms dev -c \"next dev\"",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "next start",
