@@ -11,6 +11,8 @@ interface ImageItem extends Record<string, unknown> {
   src: string;
   alt_en: string;
   alt_vi: string;
+  width?: number;
+  height?: number;
 }
 
 interface ImageGalleryBlockData extends Record<string, unknown> {
@@ -115,6 +117,8 @@ export default function ImageGalleryBlock({
                 className='w-full h-auto block'
                 data-tina-field={tinaField(img, 'src')}
                 useNativeImg={true}
+                width={img.width}
+                height={img.height}
               />
             </button>
           );
