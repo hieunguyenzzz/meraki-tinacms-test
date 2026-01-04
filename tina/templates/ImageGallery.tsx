@@ -194,9 +194,24 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
     cms.media.open({
       allowDelete: true,
       directory: uploadDir,
-      onSelect: (media) => {
+      onSelect: async (media) => {
+        if (!media?.src) return;
         const newImages = [...images];
-        newImages[index] = { ...newImages[index], src: media.src };
+        
+        // Fetch dimensions
+        const img = new Image();
+        img.src = getThumborUrl('0x0', media.src);
+        await new Promise((resolve) => {
+             img.onload = resolve;
+             img.onerror = resolve;
+        });
+
+        newImages[index] = { 
+            ...newImages[index], 
+            src: media.src,
+            width: img.naturalWidth,
+            height: img.naturalHeight
+        };
         input.onChange(newImages);
       }
     })
@@ -305,8 +320,10 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
         open={showMediaPicker}
         onOpenChange={setShowMediaPicker}
         onInsert={(selectedImages) => {
-          const newImages = selectedImages.map(src => ({
-            src,
+          const newImages = selectedImages.map(img => ({
+            src: img.src,
+            width: img.width,
+            height: img.height,
             alt_en: '',
             alt_vi: ''
           }));
@@ -343,6 +360,22 @@ export const imageGalleryBlock: Template = {
           type: "image",
           name: "src",
           label: "Image",
+        },
+        {
+          type: "number",
+          name: "width",
+          label: "Width",
+          ui: {
+            component: () => null
+          }
+        },
+        {
+          type: "number",
+          name: "height",
+          label: "Height",
+          ui: {
+            component: () => null
+          }
         },
         {
           type: "string",

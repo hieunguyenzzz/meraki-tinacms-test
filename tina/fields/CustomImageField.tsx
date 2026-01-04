@@ -7,9 +7,9 @@ import { getThumborUrl } from "../media/S3MediaStore";
 export const CustomImageField = wrapFieldsWithMeta(({ input }: any) => {
   const [showPicker, setShowPicker] = React.useState(false);
 
-  const handleInsert = (selectedImages: string[]) => {
+  const handleInsert = (selectedImages: Array<{ src: string; width: number; height: number }>) => {
     if (selectedImages.length > 0) {
-      input.onChange(selectedImages[0]);
+      input.onChange(selectedImages[0].src);
     }
     setShowPicker(false);
   };

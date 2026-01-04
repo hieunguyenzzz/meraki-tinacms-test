@@ -14,7 +14,7 @@ import { getThumborUrl } from "../media/S3MediaStore";
 export interface MediaPickerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onInsert: (selectedImages: string[]) => void;
+  onInsert: (selectedImages: Array<{ src: string; width: number; height: number }>) => void;
   initialDirectory?: string;
   multiple?: boolean;
 }
@@ -210,7 +210,23 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
           <div className="flex gap-3">
             <button onClick={() => onOpenChange(false)} className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">Cancel</button>
             <button
-              onClick={() => onInsert(selectedItems)}
+              onClick={async () => {
+                const imagesWithDimensions = await Promise.all(
+                  selectedItems.map((src) => {
+                    return new Promise<{ src: string; width: number; height: number }>((resolve) => {
+                      const img = new Image();
+                      img.onload = () => {
+                        resolve({ src, width: img.naturalWidth, height: img.naturalHeight });
+                      };
+                      img.onerror = () => {
+                        resolve({ src, width: 0, height: 0 });
+                      };
+                      img.src = getThumborUrl('0x0', src);
+                    });
+                  })
+                );
+                onInsert(imagesWithDimensions);
+              }}
               disabled={selectedItems.length === 0}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm transition-colors"
             >
