@@ -72,7 +72,7 @@ const SortableImageItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`masonry-item ${widthClass} relative rounded cursor-grab active:cursor-grabbing group mb-2 ${isDragging ? "opacity-50" : ""
+      className={`masonry-item ${widthClass} relative rounded cursor-grab active:cursor-grabbing group mb-2 min-h-32 bg-gray-100 ${isDragging ? "opacity-50" : ""
         }`}
       {...attributes}
       {...listeners}
