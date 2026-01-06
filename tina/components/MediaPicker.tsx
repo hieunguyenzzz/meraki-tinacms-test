@@ -31,6 +31,43 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
   const [columns, setColumns] = React.useState(5);
   const LIMIT = 20;
   const loaderRef = React.useRef<HTMLDivElement>(null);
+  const uploadInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleCreateFolder = () => {
+    const folderName = prompt("Enter folder name:");
+    if (folderName && folderName.trim()) {
+      const newDir = directory ? `${directory}/${folderName.trim()}` : folderName.trim();
+      setDirectory(newDir);
+    }
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setLoading(true);
+    try {
+      const filesToUpload = Array.from(files).map((file) => ({
+        directory: directory || "",
+        file,
+      }));
+
+      await cms.media.persist(filesToUpload);
+      
+      // Refresh the current directory
+      setNextCursor(undefined);
+      fetchMedia(directory, undefined);
+    } catch (e) {
+      console.error("Upload failed", e);
+      alert("Upload failed. See console for details.");
+    } finally {
+      setLoading(false);
+      // Reset input
+      if (uploadInputRef.current) {
+        uploadInputRef.current.value = "";
+      }
+    }
+  };
 
   const fetchMedia = React.useCallback(async (dir: string, cursor?: string) => {
     setLoading(true);
@@ -127,6 +164,27 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
           >
             <span>↑</span> Up
           </button>
+          
+          <button
+            onClick={handleCreateFolder}
+            className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded text-sm font-medium hover:bg-gray-200 flex items-center gap-1"
+          >
+            <span>+</span> New Folder
+          </button>
+
+          <button
+            onClick={() => uploadInputRef.current?.click()}
+            className="px-3 py-1.5 bg-blue-600 text-white border border-blue-600 rounded text-sm font-medium hover:bg-blue-700 flex items-center gap-1 shadow-sm"
+          >
+            <span>↑</span> Upload
+          </button>
+          <input
+            ref={uploadInputRef}
+            type="file"
+            multiple
+            className="hidden"
+            onChange={handleUpload}
+          />
           <div className="flex-1 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600 font-mono truncate">
             /{directory}
           </div>
