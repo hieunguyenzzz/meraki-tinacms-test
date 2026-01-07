@@ -49,6 +49,7 @@ export const textBlock: Template = {
         { value: "1", label: "1 Column" },
         { value: "2", label: "2 Columns" },
         { value: "3", label: "3 Columns" },
+        { value: "title-left", label: "Title Left / Description Right" },
       ],
     },
   ],
