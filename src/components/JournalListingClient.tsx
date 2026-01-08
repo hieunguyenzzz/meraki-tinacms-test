@@ -40,12 +40,12 @@ export default function JournalListingClient({
 
   // Available locations
   const locations = useMemo(() => {
-    const filters = (page as any).location_filters || [];
+    const filters = page.location_filters || [];
     const allLabel = t({ en: 'All', vi: 'Tất cả' }, lang);
 
     return [
       { label: allLabel, value: 'All' },
-      ...filters.map((f: any) => ({ label: f.value, value: f.value }))
+      ...filters.map((f) => ({ label: f?.value, value: f?.value }))
     ];
   }, [page, lang]);
 
@@ -134,7 +134,7 @@ export default function JournalListingClient({
             {locations.map((location) => (
               <button
                 key={location.value}
-                onClick={() => setActiveLocation(location.value)}
+                onClick={() => setActiveLocation(location?.value ?? 'All')}
                 className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${activeLocation === location.value
                     ? 'text-text-primary bg-background-2'
                     : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
