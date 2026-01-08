@@ -6,6 +6,7 @@ import { textBlock } from "../templates/text";
 import { textImageBlock } from "../templates/textImage";
 import { twoImagesAsymmetryBlock } from "../templates/twoImagesAsymmetry";
 import { testimonialBlock } from "../templates/testimonial";
+import { JOURNAL_LOCATIONS } from "../constants";
 
 export const Journal: Collection = {
   name: "journal",
@@ -38,15 +39,7 @@ export const Journal: Collection = {
       name: "location",
       label: "Location",
       required: true,
-      options: [
-        "Tà Năng",
-        "Đà Lạt",
-        "Quảng Ninh",
-        "Nha Trang",
-        "Phú Quốc",
-        "Hà Nội",
-        "Sapa",
-      ],
+      options: JOURNAL_LOCATIONS,
     },
 
     // Featured Image for Listing

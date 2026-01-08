@@ -38,17 +38,16 @@ export default function JournalListingClient({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 12;
 
-  // Available locations (should match journal schema)
-  const locations = [
-    'All',
-    'Tà Năng',
-    'Đà Lạt',
-    'Quảng Ninh',
-    'Nha Trang',
-    'Phú Quốc',
-    'Hà Nội',
-    'Sapa',
-  ];
+  // Available locations
+  const locations = useMemo(() => {
+    const filters = (page as any).location_filters || [];
+    const allLabel = t({ en: 'All', vi: 'Tất cả' }, lang);
+
+    return [
+      { label: allLabel, value: 'All' },
+      ...filters.map((f: any) => ({ label: f.value, value: f.value }))
+    ];
+  }, [page, lang]);
 
   // Filter journals by location
   const filteredJournals = useMemo(() => {
@@ -134,16 +133,13 @@ export default function JournalListingClient({
           <div className='flex gap-6 overflow-x-auto justify-center'>
             {locations.map((location) => (
               <button
-                key={location}
-                onClick={() => setActiveLocation(location)}
-                className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${
-                  activeLocation === location
+                key={location.value}
+                onClick={() => setActiveLocation(location.value)}
+                className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${activeLocation === location.value
                     ? 'text-text-primary bg-background-2'
                     : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
-                }`}>
-                {location === 'All'
-                  ? t({ en: 'All', vi: 'Tất cả' }, lang)
-                  : location}
+                  }`}>
+                {location.value}
               </button>
             ))}
           </div>
@@ -162,9 +158,8 @@ export default function JournalListingClient({
                 return (
                   <div
                     key={index}
-                    className={`group ${
-                      shouldTranslate ? 'lg:-translate-y-16' : ''
-                    }`}>
+                    className={`group ${shouldTranslate ? 'lg:-translate-y-16' : ''
+                      }`}>
                     <a href={`/${lang}/journal/${journal.node?.slug}`}>
                       {/* Image Container */}
                       <div className='relative aspect-[3/4] overflow-hidden mb-6'>
@@ -210,19 +205,19 @@ export default function JournalListingClient({
               <p className='text-body-md text-text-secondary'>
                 {activeLocation === 'All'
                   ? t(
-                      {
-                        en: 'No wedding journals available yet. Check back soon!',
-                        vi: 'Chưa có nhật ký cưới nào. Hãy quay lại sau!',
-                      },
-                      lang
-                    )
+                    {
+                      en: 'No wedding journals available yet. Check back soon!',
+                      vi: 'Chưa có nhật ký cưới nào. Hãy quay lại sau!',
+                    },
+                    lang
+                  )
                   : t(
-                      {
-                        en: `No wedding journals found for ${activeLocation}.`,
-                        vi: `Không tìm thấy nhật ký cưới nào cho ${activeLocation}.`,
-                      },
-                      lang
-                    )}
+                    {
+                      en: `No wedding journals found for ${activeLocation}.`,
+                      vi: `Không tìm thấy nhật ký cưới nào cho ${activeLocation}.`,
+                    },
+                    lang
+                  )}
               </p>
             </div>
           )}
@@ -272,9 +267,8 @@ export default function JournalListingClient({
             </p>
 
             <a
-              href={`/${lang}${
-                page.lets_connect.button_link || '/lets-connect'
-              }`}
+              href={`/${lang}${page.lets_connect.button_link || '/lets-connect'
+                }`}
               className='inline-block text-body-md text-text-primary hover:text-text-accent transition-colors border-b border-text-primary hover:border-text-accent'
               data-tina-field={tinaField(
                 page.lets_connect,

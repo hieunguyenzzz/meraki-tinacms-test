@@ -1,5 +1,6 @@
 import type { Collection } from "tinacms";
 import { CustomImageField } from "../fields/CustomImageField";
+import { JOURNAL_LOCATIONS } from "../constants";
 
 export const Page: Collection = {
   label: 'Page Content',
@@ -47,6 +48,26 @@ export const Page: Collection = {
       ui: {
         component: 'select',
       },
+    },
+    {
+      type: 'object',
+      name: 'location_filters',
+      label: 'Location Filters (Journal Listing Only)',
+      list: true,
+      ui: {
+        itemProps: (item) => {
+          return { label: item?.value };
+        },
+      },
+      fields: [
+        {
+          type: 'string',
+          name: 'value',
+          label: 'Location Tag',
+          options: JOURNAL_LOCATIONS,
+          required: true,
+        }
+      ],
     },
     {
       type: 'object',
