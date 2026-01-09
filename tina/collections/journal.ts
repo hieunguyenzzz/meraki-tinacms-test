@@ -42,6 +42,14 @@ export const Journal: Collection = {
       options: JOURNAL_LOCATIONS,
     },
 
+    // Priority for Sorting
+    {
+      type: "number",
+      name: "priority",
+      label: "Priority Order",
+      description: "Optional. Lower number = Higher priority (1 is highest, then 10, 20...). Leave empty to sort by date.",
+    },
+
     // Featured Image for Listing
     {
       type: "image",
