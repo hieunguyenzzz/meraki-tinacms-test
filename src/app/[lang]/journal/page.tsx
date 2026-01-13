@@ -49,8 +49,8 @@ export default async function JournalPage({ params }: Props) {
       const nodeB = b.node as any;
 
       // 1. Priority check (Ascending: 1 -> 100)
-      const priorityA = nodeA.priority;
-      const priorityB = nodeB.priority;
+      const priorityA = nodeA.listing_priority;
+      const priorityB = nodeB.listing_priority;
 
       // Both have priority -> Compare them
       if (typeof priorityA === 'number' && typeof priorityB === 'number') {
