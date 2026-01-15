@@ -5,7 +5,7 @@ export const JOURNAL_LOCATIONS = [
   "Phú Quốc",
   "Hà Nội",
   "Sapa",
-  "Sài Gòn",
+  "TP.HCM",
   "Huế",
   "Đà Nẵng",
   "Hội An",
