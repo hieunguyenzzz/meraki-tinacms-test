@@ -5,7 +5,8 @@ import { useState } from 'react';
 
 interface TestimonialBlockData extends Record<string, unknown> {
 //   heading?: string;
-  decorative_text?: string;
+  decorative_text_en?: string;
+  decorative_text_vi?: string;
   quote_en?: string;
   quote_vi?: string;
   author?: string;
@@ -20,6 +21,7 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
   const [isExpanded, setIsExpanded] = useState(false);
   
   const text = (lang === 'vi' ? data.quote_vi : data.quote_en) || '';
+  const decorativeText = (lang === 'vi' ? data.decorative_text_vi : data.decorative_text_en) || '';
   // Approx char limit (~5 lines on mobile/desktop) to allow inline "Read more"
   const MAX_LENGTH = 280; 
   const shouldTruncate = text.length > MAX_LENGTH;
@@ -46,11 +48,11 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
         </div>
 
         {/* Decorative Script Text */}
-        {data.decorative_text && (
+        {decorativeText && (
           <div
             className='text-handwriting text-h4 mb-3 text-center'
-            data-tina-field={tinaField(data, 'decorative_text')}>
-            {data.decorative_text}
+            data-tina-field={tinaField(data, lang === 'vi' ? 'decorative_text_vi' : 'decorative_text_en')}>
+            {decorativeText}
           </div>
         )}
 

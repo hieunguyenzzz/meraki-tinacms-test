@@ -17,8 +17,14 @@ export const testimonialBlock: Template = {
     // },
     {
       type: "string",
-      name: "decorative_text",
-      label: "Decorative Text",
+      name: "decorative_text_en",
+      label: "Decorative Text (English)",
+      description: "Decorative script text above quote (e.g., cursive text)",
+    },
+    {
+      type: "string",
+      name: "decorative_text_vi",
+      label: "Decorative Text (Vietnamese)",
       description: "Decorative script text above quote (e.g., cursive text)",
     },
     {
