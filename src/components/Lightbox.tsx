@@ -135,7 +135,7 @@ export default function Lightbox({
             src={currentImage.thumbnail}
             alt={altText || 'Gallery image placeholder'}
             className='absolute h-[90vh] z-0'
-            useNativeImg={true}
+            width={75}
           />
         )}
         
@@ -143,7 +143,9 @@ export default function Lightbox({
           src={currentImage.image}
           alt={altText || 'Gallery image'}
           className={`max-w-full max-h-[90vh] object-contain z-10 relative ${imgLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
-          useNativeImg={true}
+          width={1200}
+          sizes='100vw'
+          priority
           onLoad={() => setImgLoaded(true)}
         />
       </div>

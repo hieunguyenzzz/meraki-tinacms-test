@@ -7,7 +7,6 @@ import Footer from './Footer';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
 import type { PageQuery, JournalConnectionEdges } from '../../tina/__generated__/types';
-import { getThumborUrl } from '@/lib/image';
 
 interface Props {
   data: PageQuery;
@@ -108,7 +107,7 @@ export default function JournalListingClient({
                   src={page.hero.featured_thumbnail}
                   alt='Featured'
                   className='w-[260px] h-auto object-cover'
-                  useNativeImg={true}
+                  width={260}
                 />
               </div>
             )}
@@ -165,10 +164,9 @@ export default function JournalListingClient({
                       <div className='relative aspect-[3/4] overflow-hidden mb-6'>
                         {journal.node?.featured_image ? (
                           <MerakiImage
-                            src={getThumborUrl('400x0', journal.node.featured_image)}
+                            src={journal.node.featured_image}
                             alt={journal.node.couple_names}
                             fill
-                            useNativeImg={true}
                             className='object-cover group-hover:scale-105 transition-transform duration-500'
                           />
                         ) : (
@@ -240,7 +238,7 @@ export default function JournalListingClient({
                 src='/images/botanical/2.svg'
                 alt='Decorative botanical element'
                 className='w-[48px] h-auto'
-                useNativeImg={true}
+                width={48}
               />
             </div>
 

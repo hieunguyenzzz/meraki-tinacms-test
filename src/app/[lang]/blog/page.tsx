@@ -94,7 +94,7 @@ export default async function BlogPage({ params }: Props) {
                             src={blogs[0].featured_image}
                             alt={blogs[0].title}
                             className='w-full h-64 md:h-full object-cover'
-                            useNativeImg={true}
+                            width={600}
                           />
                         </div>
                       )}
@@ -167,7 +167,7 @@ export default async function BlogPage({ params }: Props) {
                             src={blog.featured_image}
                             alt={blog.title}
                             className='w-full h-48 object-cover'
-                            useNativeImg={true}
+                            width={400}
                           />
                         )}
                         <div className='p-6'>

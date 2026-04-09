@@ -5,7 +5,6 @@ import { tinaField } from 'tinacms/dist/react';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
 import { cn } from '@/lib/utils';
 import MerakiImage from '../ui/MerakiImage';
-import { getThumborUrl } from '@/lib/image';
 
 interface TextImageBlockData extends Record<string, unknown> {
   layout?: string;
@@ -98,7 +97,7 @@ export default function TextImageBlock({
               onClick={handleImageClick}
             >
               <MerakiImage
-                src={getThumborUrl('480x0', data.image)}
+                src={data.image}
                 alt={title || 'Image'}
                 fill
                 className="object-cover"

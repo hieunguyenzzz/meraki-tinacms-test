@@ -10,8 +10,8 @@ interface JournalTemplateProps {
 }
 
 export default function JournalTemplate({ journal, lang }: JournalTemplateProps) {
-  const mainHeadline = lang === 'vi' 
-    ? journal.template_layout?.main_headline_vi 
+  const mainHeadline = lang === 'vi'
+    ? journal.template_layout?.main_headline_vi
     : journal.template_layout?.main_headline_en;
 
   return (
@@ -149,7 +149,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                   journal.template_layout,
                   'image_main'
                 )}
-                >
+              >
                 <MerakiImage
                   src={journal.template_layout.image_main}
                   alt={journal.couple_names}

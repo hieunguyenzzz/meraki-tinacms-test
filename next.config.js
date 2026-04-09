@@ -5,21 +5,9 @@ const nextConfig = {
   // Enable standalone output for Docker production builds
   output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
   
+  // next/image is not used — all images go through Thumbor CDN
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'merakiweddingplanner.s3.ap-southeast-1.amazonaws.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'imageproxy.hieunguyen.dev',
-      },
-      {
-        protocol: 'https',
-        hostname: 'thumbor.merakiweddingplanner.com',
-      }
-    ],
+    unoptimized: true,
   },
 
   async rewrites() {

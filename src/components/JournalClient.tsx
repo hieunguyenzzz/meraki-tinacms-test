@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react';
 import { useTina } from 'tinacms/dist/react';
-import { getThumborUrl } from '@/lib/image';
 import Header from './Header';
 import Footer from './Footer';
 import JournalTemplate from './JournalTemplate';
@@ -55,8 +54,8 @@ export default function JournalClient({
         block.images.forEach((img: any, imgIndex: number) => {
           map[`${blockIndex}-${imgIndex}`] = images.length;
           images.push({
-            image: getThumborUrl('1000x1000', img.src),
-            thumbnail: getThumborUrl('75x75', img.src),
+            image: img.src,
+            thumbnail: img.src,
             alt_en: img.alt_en,
             alt_vi: img.alt_vi,
           });
@@ -67,15 +66,15 @@ export default function JournalClient({
         if (block.image_left) {
           map[`${blockIndex}-left`] = images.length;
           images.push({ 
-            image: getThumborUrl('1000x1000', block.image_left),
-            thumbnail: getThumborUrl('75x75', block.image_left)
+            image: block.image_left,
+            thumbnail: block.image_left,
           });
         }
         if (block.image_right) {
           map[`${blockIndex}-right`] = images.length;
           images.push({ 
-            image: getThumborUrl('1000x1000', block.image_right),
-            thumbnail: getThumborUrl('75x75', block.image_right)
+            image: block.image_right,
+            thumbnail: block.image_right,
           });
         }
       }
@@ -83,8 +82,8 @@ export default function JournalClient({
       if (blockType === 'TextImageBlock' && block.image) {
         map[`${blockIndex}-image`] = images.length;
         images.push({
-          image: getThumborUrl('1000x1000', block.image),
-          thumbnail: getThumborUrl('75x75', block.image),
+          image: block.image,
+          thumbnail: block.image,
           alt_en: block.image_alt_en,
           alt_vi: block.image_alt_vi,
         });

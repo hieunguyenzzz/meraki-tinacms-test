@@ -197,7 +197,7 @@ export default async function BlogPostPage({ params }: Props) {
                   src={blogPost.featured_image}
                   alt={title}
                   className='w-full h-64 md:h-96 object-cover rounded-lg shadow-sm'
-                  useNativeImg={true}
+                  width={800}
                 />
               </div>
             )}

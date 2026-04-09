@@ -2,7 +2,6 @@
 
 import { tinaField } from 'tinacms/dist/react';
 import MerakiImage from '../ui/MerakiImage';
-import { getThumborUrl } from '@/lib/image';
 
 interface TwoImagesAsymmetryBlockData extends Record<string, unknown> {
   caption_en?: string;
@@ -47,11 +46,11 @@ export default function TwoImagesAsymmetryBlock({
             aria-label='View image in gallery'
           >
             <MerakiImage
-              src={getThumborUrl('400x400', data.image_left)}
+              src={data.image_left}
               alt=''
               className='w-full h-auto object-cover'
               data-tina-field={tinaField(data, 'image_left')}
-              useNativeImg={true}
+              width={400}
             />
           </button>
         </div>
@@ -63,11 +62,11 @@ export default function TwoImagesAsymmetryBlock({
             aria-label='View image in gallery'
           >
             <MerakiImage
-              src={getThumborUrl('480x0', data.image_right)}
+              src={data.image_right}
               alt=''
               className='w-full h-auto object-cover'
               data-tina-field={tinaField(data, 'image_right')}
-              useNativeImg={true}
+              width={480}
             />
           </button>
         </div>

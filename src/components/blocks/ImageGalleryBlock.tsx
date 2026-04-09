@@ -5,7 +5,6 @@ import type Masonry from 'masonry-layout';
 import ImagesLoaded from 'imagesloaded';
 import { tinaField } from 'tinacms/dist/react';
 import MerakiImage from '../ui/MerakiImage';
-import { getThumborUrl } from '@/lib/image';
 
 interface ImageItem extends Record<string, unknown> {
   src: string;
@@ -112,11 +111,11 @@ export default function ImageGalleryBlock({
               aria-label={altText || 'View image in gallery'}
             >
               <MerakiImage
-                src={getThumborUrl('480x0', img.src)}
+                src={img.src}
                 alt={altText || ''}
                 className='w-full h-auto block'
                 data-tina-field={tinaField(img, 'src')}
-                useNativeImg={true}
+                thumborWidth={480}
                 width={img.width}
                 height={img.height}
               />
