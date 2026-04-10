@@ -7,16 +7,17 @@ const THUMBOR_BASE = 'https://thumbor.merakiweddingplanner.com/unsafe/fit-in'
 
 /**
  * Generates a Thumbor URL for image thumbnails.
- * Thumbor expects the source URL path to be decoded, so we decode any
- * percent-encoded characters (like %20 for spaces) before passing to Thumbor.
+ * Source URLs are normalized by decoding then re-encoding with encodeURI,
+ * ensuring spaces and non-ASCII characters are percent-encoded (%20 etc.)
+ * while path separators and other URL-safe characters are preserved.
  */
 export function getThumborUrl(size: string, src: string): string {
   // Remove protocol from source URL
   const urlWithoutProtocol = src.replace(/^https?:\/\//, '')
-  // Decode the URL path to handle encoded characters like %20
-  // Thumbor will re-encode as needed when fetching
-  const decodedUrl = decodeURIComponent(urlWithoutProtocol)
-  return `${THUMBOR_BASE}/${size}/${decodedUrl}`
+  // Normalize encoding: decode first (handles already-encoded URLs), then
+  // re-encode with encodeURI so spaces/non-ASCII chars become valid %XX sequences.
+  const normalizedUrl = encodeURI(decodeURIComponent(urlWithoutProtocol))
+  return `${THUMBOR_BASE}/${size}/${normalizedUrl}`
 }
 
 export class S3MediaStore implements MediaStore {

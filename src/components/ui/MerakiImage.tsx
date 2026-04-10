@@ -119,8 +119,8 @@ export default function MerakiImage({
       sizes={defaultSizes}
       alt={alt}
       className={className}
-      width={width}
-      height={height}
+      width={width || undefined}
+      height={height || undefined}
       loading={loading}
       fetchPriority={fetchPriority}
       {...props}
