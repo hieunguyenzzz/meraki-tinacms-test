@@ -251,6 +251,7 @@ export default function BlogListingClient({
                 alt='Decorative botanical element'
                 className='w-[48px] h-auto'
                 width={48}
+                height={48}
               />
             </div>
 

@@ -208,6 +208,7 @@ export default function BlogClient({
               alt='Decorative botanical element'
               className='w-[48px] h-auto'
               width={48}
+              height={48}
             />
           </div>
           <h2 className='text-h2 font-vocago'>
