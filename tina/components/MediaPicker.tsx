@@ -29,6 +29,8 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
   const [hasMore, setHasMore] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [columns, setColumns] = React.useState(5);
+  const [bulkDeleteMode, setBulkDeleteMode] = React.useState(false);
+  const [bulkDeleteItems, setBulkDeleteItems] = React.useState<string[]>([]);
   const [deleting, setDeleting] = React.useState(false);
   const LIMIT = 20;
   const loaderRef = React.useRef<HTMLDivElement>(null);
@@ -139,13 +141,13 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
 
   const imageItems = items.filter(item => item.type !== 'dir');
   const allImageSrcs = imageItems.map(item => item.src as string);
-  const allSelected = allImageSrcs.length > 0 && allImageSrcs.every(src => selectedItems.includes(src));
+  const allBulkSelected = allImageSrcs.length > 0 && allImageSrcs.every(src => bulkDeleteItems.includes(src));
 
   const handleSelectAll = () => {
-    if (allSelected) {
-      setSelectedItems(prev => prev.filter(src => !allImageSrcs.includes(src)));
+    if (allBulkSelected) {
+      setBulkDeleteItems(prev => prev.filter(src => !allImageSrcs.includes(src)));
     } else {
-      setSelectedItems(prev => {
+      setBulkDeleteItems(prev => {
         const merged = [...prev];
         for (const src of allImageSrcs) {
           if (!merged.includes(src)) merged.push(src);
@@ -155,9 +157,25 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
     }
   };
 
+  const toggleBulkDelete = (src: string) => {
+    setBulkDeleteItems(prev =>
+      prev.includes(src) ? prev.filter(i => i !== src) : [...prev, src]
+    );
+  };
+
+  const handleEnterBulkDelete = () => {
+    setBulkDeleteItems([]);
+    setBulkDeleteMode(true);
+  };
+
+  const handleExitBulkDelete = () => {
+    setBulkDeleteMode(false);
+    setBulkDeleteItems([]);
+  };
+
   const handleDeleteSelected = async () => {
-    if (selectedItems.length === 0) return;
-    const confirmed = confirm(`Delete ${selectedItems.length} selected image${selectedItems.length > 1 ? 's' : ''}? This cannot be undone.`);
+    if (bulkDeleteItems.length === 0) return;
+    const confirmed = confirm(`Delete ${bulkDeleteItems.length} selected image${bulkDeleteItems.length > 1 ? 's' : ''}? This cannot be undone.`);
     if (!confirmed) return;
 
     setDeleting(true);
@@ -165,7 +183,7 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
       const response = await fetch('/api/s3/batch-delete', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keys: selectedItems }),
+        body: JSON.stringify({ keys: bulkDeleteItems }),
       });
 
       if (!response.ok) {
@@ -178,7 +196,8 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
         alert(`${result.deleted} file(s) deleted. ${result.errors.length} failed.`);
       }
 
-      setSelectedItems([]);
+      setBulkDeleteItems([]);
+      setBulkDeleteMode(false);
       setNextCursor(undefined);
       fetchMedia(directory, undefined);
     } catch (e) {
@@ -212,7 +231,7 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
         <div className="p-3 border-b flex items-center gap-3 bg-white">
           <button
             onClick={handleUpClick}
-            disabled={!directory}
+            disabled={!directory || bulkDeleteMode}
             className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded text-sm font-medium hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
           >
             <span>↑</span> Up
@@ -220,14 +239,16 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
           
           <button
             onClick={handleCreateFolder}
-            className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded text-sm font-medium hover:bg-gray-200 flex items-center gap-1"
+            disabled={bulkDeleteMode}
+            className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded text-sm font-medium hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
           >
             <span>+</span> New Folder
           </button>
 
           <button
             onClick={() => uploadInputRef.current?.click()}
-            className="px-3 py-1.5 bg-blue-600 text-white border border-blue-600 rounded text-sm font-medium hover:bg-blue-700 flex items-center gap-1 shadow-sm"
+            disabled={bulkDeleteMode}
+            className="px-3 py-1.5 bg-blue-600 text-white border border-blue-600 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 shadow-sm"
           >
             <span>↑</span> Upload
           </button>
@@ -239,12 +260,21 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
             onChange={handleUpload}
           />
 
-          {imageItems.length > 0 && (
+          {!bulkDeleteMode && imageItems.length > 0 && (
+            <button
+              onClick={handleEnterBulkDelete}
+              className="px-3 py-1.5 bg-red-50 border border-red-300 text-red-700 rounded text-sm font-medium hover:bg-red-100 flex items-center gap-1"
+            >
+              🗑 Bulk Delete
+            </button>
+          )}
+
+          {bulkDeleteMode && imageItems.length > 0 && (
             <button
               onClick={handleSelectAll}
               className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded text-sm font-medium hover:bg-gray-200 flex items-center gap-1"
             >
-              {allSelected ? '☐ Deselect All' : '☑ Select All'}
+              {allBulkSelected ? '☐ Deselect All' : '☑ Select All'}
             </button>
           )}
 
@@ -265,6 +295,14 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
           </div>
         </div>
 
+        {/* Bulk delete mode banner */}
+        {bulkDeleteMode && (
+          <div className="px-4 py-2 bg-red-50 border-b border-red-200 text-red-700 text-sm font-medium flex items-center gap-2">
+            <span>🗑</span>
+            <span>Bulk Delete Mode — click images to mark for deletion. Image selection for insert is disabled.</span>
+          </div>
+        )}
+
         {/* Grid */}
         <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
           {items.length === 0 && !loading ? (
@@ -281,8 +319,8 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
                   return (
                     <div
                       key={item.id}
-                      onClick={() => handleFolderClick(item.filename)}
-                      className="aspect-square bg-white border border-gray-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm"
+                      onClick={() => !bulkDeleteMode && handleFolderClick(item.filename)}
+                      className={`aspect-square bg-white border border-gray-200 rounded-lg flex flex-col items-center justify-center transition-all shadow-sm ${bulkDeleteMode ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:bg-blue-50 hover:border-blue-300'}`}
                     >
                       <span className="text-4xl mb-2 text-yellow-400">📁</span>
                       <span className="text-xs text-center px-2 truncate w-full font-medium text-gray-700">{item.filename}</span>
@@ -291,20 +329,31 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
                 }
 
                 const isSelected = selectedItems.includes(item.src);
+                const isBulkSelected = bulkDeleteItems.includes(item.src);
                 const thumbnailSrc = item.thumbnails?.['400x400'] || getThumborUrl('400x400', item.src);
 
                 return (
                   <div
                     key={item.id}
-                    onClick={() => toggleSelection(item.src)}
-                    className={`relative aspect-square bg-white border rounded-lg overflow-hidden cursor-pointer group transition-all shadow-sm ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'hover:border-gray-400'}`}
+                    onClick={() => bulkDeleteMode ? toggleBulkDelete(item.src) : toggleSelection(item.src)}
+                    className={`relative aspect-square bg-white border rounded-lg overflow-hidden cursor-pointer group transition-all shadow-sm ${
+                      bulkDeleteMode
+                        ? isBulkSelected ? 'ring-2 ring-red-500 border-red-500' : 'hover:border-red-300'
+                        : isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'hover:border-gray-400'
+                    }`}
                   >
                     <img src={thumbnailSrc} alt={item.filename} className="w-full h-full object-contain" />
 
                     {/* Selection Indicator */}
-                    <div className={`absolute top-2 right-2 rounded-full w-6 h-6 flex items-center justify-center text-xs transition-all ${isSelected ? 'bg-blue-500 text-white scale-100' : 'bg-gray-200/80 text-transparent scale-90 group-hover:scale-100 group-hover:bg-white group-hover:text-gray-400'}`}>
-                      ✓
-                    </div>
+                    {bulkDeleteMode ? (
+                      <div className={`absolute top-2 right-2 rounded-full w-6 h-6 flex items-center justify-center text-xs transition-all ${isBulkSelected ? 'bg-red-500 text-white scale-100' : 'bg-gray-200/80 text-transparent scale-90 group-hover:scale-100 group-hover:bg-white group-hover:text-gray-400'}`}>
+                        ✕
+                      </div>
+                    ) : (
+                      <div className={`absolute top-2 right-2 rounded-full w-6 h-6 flex items-center justify-center text-xs transition-all ${isSelected ? 'bg-blue-500 text-white scale-100' : 'bg-gray-200/80 text-transparent scale-90 group-hover:scale-100 group-hover:bg-white group-hover:text-gray-400'}`}>
+                        ✓
+                      </div>
+                    )}
 
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white text-xs p-2 pt-6 truncate opacity-0 group-hover:opacity-100 transition-opacity">
                       {item.filename}
@@ -325,42 +374,61 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
 
         {/* Footer */}
         <SheetFooter className="p-4 border-t bg-white flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] sm:justify-between">
-          <div className="text-sm text-gray-600 font-medium">
-            {selectedItems.length} selected
-          </div>
-          <div className="flex gap-3">
-            <button onClick={() => onOpenChange(false)} className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">Cancel</button>
-            <button
-              onClick={handleDeleteSelected}
-              disabled={selectedItems.length === 0 || deleting}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm transition-colors"
-            >
-              {deleting ? 'Deleting…' : `Delete Selected (${selectedItems.length})`}
-            </button>
-            <button
-              onClick={async () => {
-                const imagesWithDimensions = await Promise.all(
-                  selectedItems.map((src) => {
-                    return new Promise<{ src: string; width: number; height: number }>((resolve) => {
-                      const img = new Image();
-                      img.onload = () => {
-                        resolve({ src, width: img.naturalWidth, height: img.naturalHeight });
-                      };
-                      img.onerror = () => {
-                        resolve({ src, width: 0, height: 0 });
-                      };
-                      img.src = getThumborUrl('0x0', src);
-                    });
-                  })
-                );
-                onInsert(imagesWithDimensions);
-              }}
-              disabled={selectedItems.length === 0}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm transition-colors"
-            >
-              Insert Selected ({selectedItems.length})
-            </button>
-          </div>
+          {bulkDeleteMode ? (
+            <>
+              <div className="text-sm font-medium text-red-600">
+                Bulk Delete Mode — {bulkDeleteItems.length} selected
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleExitBulkDelete}
+                  disabled={deleting}
+                  className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteSelected}
+                  disabled={bulkDeleteItems.length === 0 || deleting}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm transition-colors"
+                >
+                  {deleting ? 'Deleting…' : `Delete Selected (${bulkDeleteItems.length})`}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="text-sm text-gray-600 font-medium">
+                {selectedItems.length} selected
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => onOpenChange(false)} className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">Cancel</button>
+                <button
+                  onClick={async () => {
+                    const imagesWithDimensions = await Promise.all(
+                      selectedItems.map((src) => {
+                        return new Promise<{ src: string; width: number; height: number }>((resolve) => {
+                          const img = new Image();
+                          img.onload = () => {
+                            resolve({ src, width: img.naturalWidth, height: img.naturalHeight });
+                          };
+                          img.onerror = () => {
+                            resolve({ src, width: 0, height: 0 });
+                          };
+                          img.src = getThumborUrl('0x0', src);
+                        });
+                      })
+                    );
+                    onInsert(imagesWithDimensions);
+                  }}
+                  disabled={selectedItems.length === 0}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm transition-colors"
+                >
+                  Insert Selected ({selectedItems.length})
+                </button>
+              </div>
+            </>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>
