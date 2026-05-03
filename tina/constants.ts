@@ -1,12 +1,12 @@
 export const JOURNAL_LOCATIONS = [
   "Đà Lạt",
-  "Quảng Ninh",
+  "Đà Nẵng",
+  "Hà Nội",
+  "Hội An",
+  "Huế",
   "Nha Trang",
   "Phú Quốc",
-  "Hà Nội",
+  "Quảng Ninh",
   "Sapa",
   "TP.HCM",
-  "Huế",
-  "Đà Nẵng",
-  "Hội An",
 ];
