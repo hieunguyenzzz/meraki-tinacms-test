@@ -31,6 +31,13 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
+    if (keys.length > 1000) {
+      return NextResponse.json(
+        { error: 'Cannot delete more than 1000 files at once' },
+        { status: 400 }
+      )
+    }
+
     // Normalize keys: strip S3 base URL prefix if present
     const normalizedKeys = keys.map((key: string) =>
       key.startsWith(S3_BASE_URL) ? key.replace(`${S3_BASE_URL}/`, '') : key
