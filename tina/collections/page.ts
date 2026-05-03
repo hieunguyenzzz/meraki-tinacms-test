@@ -44,7 +44,7 @@ export const Page: Collection = {
       type: 'string',
       name: 'page_type',
       label: 'Page Type',
-      options: ['homepage', 'journal-listing', 'about', 'contact'],
+      options: ['homepage', 'journal-listing', 'blog-listing', 'about', 'contact'],
       ui: {
         component: 'select',
       },

@@ -1,5 +1,11 @@
 import { Collection } from "tinacms";
 import { CustomImageField } from "../fields/CustomImageField";
+import { spacingBlock } from "../templates/spacing";
+import { imageGalleryBlock } from "../templates/ImageGallery";
+import { textBlock } from "../templates/text";
+import { textImageBlock } from "../templates/textImage";
+import { twoImagesAsymmetryBlock } from "../templates/twoImagesAsymmetry";
+import { testimonialBlock } from "../templates/testimonial";
 
 export const Blog: Collection = {
   name: "blog",
@@ -129,6 +135,21 @@ export const Blog: Collection = {
       name: "published",
       label: "Published",
       required: true,
+    },
+    // Flexible Content Blocks (block builder, same as journal)
+    {
+      type: "object",
+      name: "content_blocks",
+      label: "Content Blocks",
+      list: true,
+      templates: [
+        imageGalleryBlock,
+        twoImagesAsymmetryBlock,
+        textBlock,
+        textImageBlock,
+        spacingBlock,
+        testimonialBlock,
+      ],
     },
   ],
 };
