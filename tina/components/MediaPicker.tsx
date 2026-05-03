@@ -29,6 +29,7 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
   const [hasMore, setHasMore] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [columns, setColumns] = React.useState(5);
+  const [deleting, setDeleting] = React.useState(false);
   const LIMIT = 20;
   const loaderRef = React.useRef<HTMLDivElement>(null);
   const uploadInputRef = React.useRef<HTMLInputElement>(null);
@@ -136,6 +137,58 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
     }
   };
 
+  const imageItems = items.filter(item => item.type !== 'dir');
+  const allImageSrcs = imageItems.map(item => item.src as string);
+  const allSelected = allImageSrcs.length > 0 && allImageSrcs.every(src => selectedItems.includes(src));
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      setSelectedItems(prev => prev.filter(src => !allImageSrcs.includes(src)));
+    } else {
+      setSelectedItems(prev => {
+        const merged = [...prev];
+        for (const src of allImageSrcs) {
+          if (!merged.includes(src)) merged.push(src);
+        }
+        return merged;
+      });
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedItems.length === 0) return;
+    const confirmed = confirm(`Delete ${selectedItems.length} selected image${selectedItems.length > 1 ? 's' : ''}? This cannot be undone.`);
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      const response = await fetch('/api/s3/batch-delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keys: selectedItems }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      if (result.errors && result.errors.length > 0) {
+        console.error('Some files failed to delete:', result.errors);
+        alert(`${result.deleted} file(s) deleted. ${result.errors.length} failed.`);
+      }
+
+      setSelectedItems([]);
+      setNextCursor(undefined);
+      fetchMedia(directory, undefined);
+    } catch (e) {
+      console.error('Delete failed', e);
+      alert('Delete failed. See console for details.');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleFolderClick = (folderName: string) => {
     const newDir = directory ? `${directory}/${folderName}` : folderName;
     setDirectory(newDir);
@@ -185,6 +238,16 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
             className="hidden"
             onChange={handleUpload}
           />
+
+          {imageItems.length > 0 && (
+            <button
+              onClick={handleSelectAll}
+              className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded text-sm font-medium hover:bg-gray-200 flex items-center gap-1"
+            >
+              {allSelected ? '☐ Deselect All' : '☑ Select All'}
+            </button>
+          )}
+
           <div className="flex-1 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600 font-mono truncate">
             /{directory}
           </div>
@@ -267,6 +330,13 @@ export const MediaPicker = ({ open, onOpenChange, onInsert, initialDirectory = "
           </div>
           <div className="flex gap-3">
             <button onClick={() => onOpenChange(false)} className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">Cancel</button>
+            <button
+              onClick={handleDeleteSelected}
+              disabled={selectedItems.length === 0 || deleting}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm transition-colors"
+            >
+              {deleting ? 'Deleting…' : `Delete Selected (${selectedItems.length})`}
+            </button>
             <button
               onClick={async () => {
                 const imagesWithDimensions = await Promise.all(
