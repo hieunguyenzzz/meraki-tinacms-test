@@ -108,6 +108,18 @@ export const Journal: Collection = {
             component: CustomImageField,
           },
         },
+        {
+          type: "number",
+          name: "image_main_position_x",
+          label: "Main image — Horizontal position",
+          description: "0 = left edge, 50 = center, 100 = right edge. Default: 50",
+        },
+        {
+          type: "number",
+          name: "image_main_position_y",
+          label: "Main image — Vertical position",
+          description: "0 = top, 50 = center, 100 = bottom. Default: 50",
+        },
       ],
     },
 
