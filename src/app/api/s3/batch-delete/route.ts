@@ -16,8 +16,9 @@ const s3Client = new S3Client({
 })
 
 const BUCKET = process.env.S3_BUCKET || ''
+const S3_REGION = process.env.S3_REGION || 'ap-southeast-1'
 
-const S3_BASE_URL = `https://${process.env.NEXT_PUBLIC_S3_BUCKET || ''}.s3.${process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1'}.amazonaws.com`
+const S3_BASE_URL = `https://${BUCKET}.s3.${S3_REGION}.amazonaws.com`
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -38,10 +39,12 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // Normalize keys: strip S3 base URL prefix if present
-    const normalizedKeys = keys.map((key: string) =>
-      key.startsWith(S3_BASE_URL) ? key.replace(`${S3_BASE_URL}/`, '') : key
-    )
+    // Normalize keys: strip S3 base URL prefix if present, then URL-decode path segments
+    const normalizedKeys = keys.map((key: string) => {
+      const withoutBase = key.startsWith(S3_BASE_URL) ? key.replace(`${S3_BASE_URL}/`, '') : key
+      // URL-decode each path segment so the S3 key matches the original object key
+      return withoutBase.split('/').map((segment: string) => decodeURIComponent(segment)).join('/')
+    })
 
     const command = new DeleteObjectsCommand({
       Bucket: BUCKET,
