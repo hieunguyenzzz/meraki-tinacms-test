@@ -11,25 +11,35 @@ import {
 } from "@/components/ui/sheet";
 import { getThumborUrl } from "../media/S3MediaStore";
 
-export interface MediaPickerProps {
+interface MediaPickerBaseProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onInsert?: (selectedImages: Array<{ src: string; width: number; height: number }>) => void;
   initialDirectory?: string;
   multiple?: boolean;
-  mode?: "picker" | "manager";
   embedded?: boolean;
 }
 
-export const MediaPicker = ({
-  open,
-  onOpenChange,
-  onInsert,
-  initialDirectory = "journal",
-  multiple = true,
-  mode = "picker",
-  embedded = false,
-}: MediaPickerProps) => {
+type MediaPickerPickerModeProps = {
+  mode?: "picker";
+  onInsert: (selectedImages: Array<{ src: string; width: number; height: number }>) => void;
+};
+
+type MediaPickerManagerModeProps = {
+  mode: "manager";
+  onInsert?: never;
+};
+
+export type MediaPickerProps = MediaPickerBaseProps & (MediaPickerPickerModeProps | MediaPickerManagerModeProps);
+
+export const MediaPicker = (props: MediaPickerProps) => {
+  const {
+    open,
+    onOpenChange,
+    initialDirectory = "journal",
+    multiple = true,
+    embedded = false,
+  } = props;
+  const mode = props.mode ?? "picker";
   const cms = useCMS();
   const [directory, setDirectory] = React.useState(initialDirectory);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -427,7 +437,9 @@ export const MediaPicker = ({
                     });
                   })
                 );
-                onInsert?.(imagesWithDimensions);
+                if (props.mode !== "manager") {
+                  props.onInsert(imagesWithDimensions);
+                }
               }}
               disabled={selectedItems.length === 0}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm transition-colors"
