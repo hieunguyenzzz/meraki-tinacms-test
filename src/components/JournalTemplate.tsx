@@ -157,6 +157,8 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                   height={880}
                   className='object-cover'
                   style={{
+                    width: '100%',
+                    height: '100%',
                     objectPosition: `${journal.template_layout.image_main_position_x ?? 50}% ${journal.template_layout.image_main_position_y ?? 50}%`,
                   }}
                 />
