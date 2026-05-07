@@ -2,9 +2,8 @@ import { defineConfig } from "tinacms";
 import { Page } from "./collections/page";
 import { Journal } from "./collections/journal";
 import { Blog } from "./collections/blog";
+import { MdOutlinePhotoLibrary } from "react-icons/md";
 import { MediaManagerScreen } from "./components/MediaManagerScreen";
-
-const MediaIcon = () => null;
 
 export const config = defineConfig({
   cmsCallback: (cms) => {
@@ -15,7 +14,7 @@ export const config = defineConfig({
     cms.plugins.add({
       __type: "screen",
       name: "Media Manager",
-      Icon: MediaIcon,
+      Icon: MdOutlinePhotoLibrary,
       layout: "fullscreen",
       Component: MediaManagerScreen,
     });
