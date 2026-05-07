@@ -11,7 +11,6 @@ export const MediaManagerScreen = ({ close }: MediaManagerScreenProps) => {
     <MediaPicker
       open
       onOpenChange={close}
-      onInsert={() => undefined}
       mode="manager"
       embedded
     />

@@ -14,7 +14,7 @@ import { getThumborUrl } from "../media/S3MediaStore";
 export interface MediaPickerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onInsert: (selectedImages: Array<{ src: string; width: number; height: number }>) => void;
+  onInsert?: (selectedImages: Array<{ src: string; width: number; height: number }>) => void;
   initialDirectory?: string;
   multiple?: boolean;
   mode?: "picker" | "manager";
@@ -427,7 +427,7 @@ export const MediaPicker = ({
                     });
                   })
                 );
-                onInsert(imagesWithDimensions);
+                onInsert?.(imagesWithDimensions);
               }}
               disabled={selectedItems.length === 0}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium shadow-sm transition-colors"
