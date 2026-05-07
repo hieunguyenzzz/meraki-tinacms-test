@@ -30,6 +30,10 @@ type MediaPickerManagerModeProps = {
 
 export type MediaPickerProps = MediaPickerBaseProps & (MediaPickerPickerModeProps | MediaPickerManagerModeProps);
 
+const isPickerProps = (value: MediaPickerProps): value is MediaPickerBaseProps & MediaPickerPickerModeProps => {
+  return value.mode !== "manager";
+};
+
 export const MediaPicker = (props: MediaPickerProps) => {
   const {
     open,
@@ -436,7 +440,7 @@ export const MediaPicker = (props: MediaPickerProps) => {
                     });
                   })
                 );
-                if ("onInsert" in props) {
+                if (isPickerProps(props)) {
                   props.onInsert(imagesWithDimensions);
                 }
               }}
