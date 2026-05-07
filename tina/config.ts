@@ -2,8 +2,26 @@ import { defineConfig } from "tinacms";
 import { Page } from "./collections/page";
 import { Journal } from "./collections/journal";
 import { Blog } from "./collections/blog";
+import { MediaManagerScreen } from "./components/MediaManagerScreen";
+
+const MediaIcon = () => null;
 
 export const config = defineConfig({
+  cmsCallback: (cms) => {
+    // Remove the built-in "Media Manager" screen plugin
+    cms.plugins.getType("screen").remove("Media Manager");
+
+    // Add the custom media manager screen plugin
+    cms.plugins.add({
+      __type: "screen",
+      name: "Media Manager",
+      Icon: MediaIcon,
+      layout: "fullscreen",
+      Component: MediaManagerScreen,
+    });
+
+    return cms;
+  },
   // TinaCMS Cloud configuration
   clientId: process.env.TINA_CLIENT_ID || null,
   token: process.env.TINA_TOKEN || null,
