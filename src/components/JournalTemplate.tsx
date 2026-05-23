@@ -129,7 +129,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                     <MerakiImage
                       src={journal.template_layout.image_sub}
                       alt='Ceremony'
-                      width={450}
+                      width={464}
                       height={300}
                       className='object-cover'
                     />

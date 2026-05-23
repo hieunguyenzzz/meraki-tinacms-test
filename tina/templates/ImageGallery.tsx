@@ -1,25 +1,25 @@
 'use client';
 
-import React from "react";
-import type Masonry from 'masonry-layout';
-import { wrapFieldsWithMeta, useCMS, Template } from "tinacms";
 import {
-  DndContext,
   closestCenter,
+  DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
+  rectSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-  rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import type Masonry from 'masonry-layout';
+import React from "react";
+import { Template, useCMS, wrapFieldsWithMeta } from "tinacms";
 import { MediaPicker } from "../components/MediaPicker";
 import { getThumborUrl } from "../media/S3MediaStore";
 
@@ -47,7 +47,7 @@ const SortableImageItem = ({
   widthClass,
 }: SortableImageItemProps) => {
   // Use a safe ID that handles whitespaces and special characters
-  const itemId = React.useMemo(() => 
+  const itemId = React.useMemo(() =>
     image.src ? encodeURIComponent(image.src) : `image-${index}`,
     [image.src, index]
   );
@@ -72,14 +72,13 @@ const SortableImageItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`masonry-item ${widthClass} relative rounded cursor-grab active:cursor-grabbing group mb-2 min-h-32 bg-gray-100 ${isDragging ? "opacity-50" : ""
-        }`}
+      className={`masonry-item ${widthClass} relative rounded cursor-grab active:cursor-grabbing group mb-2 min-h-32 bg-gray-100 ${isDragging ? "opacity-50" : ""}`}
       {...attributes}
       {...listeners}
     >
       <button
         type="button"
-        className="w-full h-auto bg-gray-100 rounded overflow-hidden hover:opacity-80 transition-opacity flex items-center justify-center"
+        className="w-full h-full bg-gray-100 rounded overflow-hidden hover:opacity-80 transition-opacity flex items-center justify-center min-h-28"
         onClick={(e) => {
           e.stopPropagation();
           onReplace(index);
@@ -88,7 +87,7 @@ const SortableImageItem = ({
         <img
           src={getThumborUrl('180x', image.src)}
           alt={image.alt_en || ""}
-          className="w-full h-auto object-contain block"
+          className="w-full h-full object-contain block"
           draggable={false}
         />
       </button>
@@ -128,7 +127,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
 
   // Get current filename for upload directory
   const formState = tinaForm.finalForm.getState();
-  const uploadDir = `images/journal/${formState.values.slug}`;
+  const uploadDir = `journal/${formState.values.slug}`;
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -190,27 +189,50 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
     input.onChange(newImages);
   };
 
+  const getDirectoryFromImageSrc = (src?: string): string | undefined => {
+    if (!src) return undefined;
+
+    // Normalize URL/paths and return directory without a leading slash.
+    const stripLeadingSlash = (value: string) => value.replace(/^\//, '');
+
+    let path = src;
+    try {
+      // Handles absolute URLs (e.g. S3 URLs) and keeps pathname only.
+      path = new URL(src).pathname;
+    } catch {
+      // If it's already a relative path, use it as-is.
+      path = src;
+    }
+
+    path = stripLeadingSlash(path.split('?')[0].split('#')[0] || '');
+
+    if (!path || !path.includes('/')) return undefined;
+    return path.substring(0, path.lastIndexOf('/')) || undefined;
+  };
+
   const replaceImage = (index: number) => {
+    const currentImageDir = getDirectoryFromImageSrc(images[index]?.src);
+
     cms.media.open({
       allowDelete: true,
-      directory: uploadDir,
+      directory: currentImageDir || uploadDir,
       onSelect: async (media) => {
         if (!media?.src) return;
         const newImages = [...images];
-        
+
         // Fetch dimensions
         const img = new Image();
         img.src = getThumborUrl('0x0', media.src);
         await new Promise((resolve) => {
-             img.onload = resolve;
-             img.onerror = resolve;
+          img.onload = resolve;
+          img.onerror = resolve;
         });
 
-        newImages[index] = { 
-            ...newImages[index], 
-            src: media.src,
-            width: img.naturalWidth,
-            height: img.naturalHeight
+        newImages[index] = {
+          ...newImages[index],
+          src: media.src,
+          width: img.naturalWidth,
+          height: img.naturalHeight
         };
         input.onChange(newImages);
       }
@@ -228,9 +250,9 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
 
     if (over && active.id !== over.id) {
       // Capture scroll position of the Tina sidebar or main window
-      const scrollParent = containerRef.current?.closest('.tina-sidebar-content') || 
-                           containerRef.current?.closest('[style*="overflow: auto"]') ||
-                           containerRef.current?.closest('[style*="overflow: scroll"]');
+      const scrollParent = containerRef.current?.closest('.tina-sidebar-content') ||
+        containerRef.current?.closest('[style*="overflow: auto"]') ||
+        containerRef.current?.closest('[style*="overflow: scroll"]');
       const scrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
 
       const oldIndex = images.findIndex(
@@ -242,7 +264,7 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
 
       if (oldIndex !== -1 && newIndex !== -1) {
         input.onChange(arrayMove(images, oldIndex, newIndex));
-        
+
         // Restore scroll position after Tina re-renders
         if (scrollParent) {
           requestAnimationFrame(() => {
@@ -357,9 +379,12 @@ export const imageGalleryBlock: Template = {
       },
       fields: [
         {
-          type: "image",
+          type: "string",
           name: "src",
           label: "Image",
+          ui: {
+            component: () => null,
+          },
         },
         {
           type: "number",
