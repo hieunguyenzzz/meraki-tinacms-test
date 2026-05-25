@@ -144,7 +144,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
             {/* Main image */}
             {journal.template_layout?.image_main && (
               <div
-                className='h-[75%] relative overflow-hidden'
+                className='h-[880px] relative overflow-hidden'
                 data-tina-field={tinaField(
                   journal.template_layout,
                   'image_main'
