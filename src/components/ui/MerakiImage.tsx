@@ -1,6 +1,10 @@
 'use client';
 
-import { resolveImageUrl, getThumborUrl } from '@/lib/image';
+import {
+  resolveImageUrl,
+  getThumborUrl,
+  type ThumborFitMode,
+} from '@/lib/image';
 
 const THUMBOR_HOST = 'thumbor.merakiweddingplanner.com';
 const MAX_THUMBOR_WIDTH = 2000;
@@ -10,9 +14,42 @@ function isThumborUrl(url: string): boolean {
   return url.includes(THUMBOR_HOST);
 }
 
-function buildSrcSet(src: string, widths: number[]): string {
+function isValidDimension(value?: number): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0;
+}
+
+function getThumborSize(
+  targetWidth: number,
+  originalWidth?: number,
+  originalHeight?: number
+): string {
+  if (isValidDimension(originalWidth) && isValidDimension(originalHeight)) {
+    const targetHeight = Math.max(
+      1,
+      Math.round((targetWidth * originalHeight) / originalWidth)
+    );
+    return `${targetWidth}x${targetHeight}`;
+  }
+
+  return `${targetWidth}x0`;
+}
+
+function buildSrcSet(
+  src: string,
+  widths: number[],
+  fitMode: ThumborFitMode,
+  originalWidth?: number,
+  originalHeight?: number
+): string {
   return widths
-    .map((w) => `${getThumborUrl(`${w}x0`, src)} ${w}w`)
+    .map(
+      (w) =>
+        `${getThumborUrl(
+          getThumborSize(w, originalWidth, originalHeight),
+          src,
+          fitMode
+        )} ${w}w`
+    )
     .join(', ');
 }
 
@@ -30,6 +67,7 @@ interface MerakiImageProps
   /** Override the Thumbor display width independently from the HTML width.
    *  When set, Thumbor URLs use this value while width/height stay for aspect ratio. */
   thumborWidth?: number;
+  thumborFitMode?: ThumborFitMode;
   fill?: boolean;
   sizes?: string;
   priority?: boolean;
@@ -42,6 +80,7 @@ export default function MerakiImage({
   width,
   height,
   thumborWidth,
+  thumborFitMode = 'fit-in',
   fill,
   sizes,
   priority,
@@ -66,15 +105,35 @@ export default function MerakiImage({
         Math.round(effectiveWidth * 1.5),
         effectiveWidth * 2,
       ].filter((w) => w <= MAX_THUMBOR_WIDTH);
-      displaySrc = getThumborUrl(`${effectiveWidth}x0`, resolvedSrc);
-      srcSet = buildSrcSet(resolvedSrc, widths);
+      displaySrc = getThumborUrl(
+        getThumborSize(effectiveWidth, width, height),
+        resolvedSrc,
+        thumborFitMode
+      );
+      srcSet = buildSrcSet(
+        resolvedSrc,
+        widths,
+        thumborFitMode,
+        width,
+        height
+      );
     } else if (fill) {
       // Fill mode: generate srcSet at standard breakpoints
-      displaySrc = getThumborUrl(`${FILL_WIDTHS[2]}x0`, resolvedSrc);
-      srcSet = buildSrcSet(resolvedSrc, FILL_WIDTHS);
+      displaySrc = getThumborUrl(
+        getThumborSize(FILL_WIDTHS[2], width, height),
+        resolvedSrc,
+        thumborFitMode
+      );
+      srcSet = buildSrcSet(
+        resolvedSrc,
+        FILL_WIDTHS,
+        thumborFitMode,
+        width,
+        height
+      );
     } else {
       // No width, no fill: use a sensible default
-      displaySrc = getThumborUrl('800x0', resolvedSrc);
+      displaySrc = getThumborUrl('800x0', resolvedSrc, thumborFitMode);
     }
   }
 

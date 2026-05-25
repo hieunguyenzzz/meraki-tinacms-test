@@ -125,7 +125,6 @@ export default function ImageGalleryBlock({
           columnWidth: '.grid-sizer',
           gutter: 24,
           percentPosition: true,
-          horizontalOrder: true,
           transitionDuration: '0s',
         });
       } else {
@@ -189,6 +188,7 @@ export default function ImageGalleryBlock({
           return (
             <button
               key={`${img.src}-${imgIndex}`}
+              data-index={imgIndex}
               type='button'
               className={`masonry-item ${itemWidthClass} cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary block mb-6`}
               onClick={() => onImageClick(globalIndex)}
@@ -200,6 +200,7 @@ export default function ImageGalleryBlock({
                 className='w-full h-auto block'
                 data-tina-field={tinaField(img, 'src')}
                 thumborWidth={480}
+                thumborFitMode=''
                 width={img.width}
                 height={img.height}
               />

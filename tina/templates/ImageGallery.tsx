@@ -72,13 +72,14 @@ const SortableImageItem = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`masonry-item ${widthClass} relative rounded cursor-grab active:cursor-grabbing group mb-2 min-h-32 bg-gray-100 ${isDragging ? "opacity-50" : ""}`}
+      data-index={index}
+      className={`masonry-item ${widthClass} relative rounded cursor-grab active:cursor-grabbing group mb-2 min-h-24 bg-gray-100 ${isDragging ? "opacity-50" : ""}`}
       {...attributes}
       {...listeners}
     >
       <button
         type="button"
-        className="w-full h-full bg-gray-100 rounded overflow-hidden hover:opacity-80 transition-opacity flex items-center justify-center min-h-28"
+        className="w-full h-full bg-gray-100 rounded overflow-hidden hover:opacity-80 transition-opacity flex items-center justify-center min-h-24"
         onClick={(e) => {
           e.stopPropagation();
           onReplace(index);

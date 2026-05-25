@@ -1,14 +1,23 @@
-import { getThumborUrl as getThumborUrlRaw } from '../../tina/media/S3MediaStore';
+import {
+  getThumborUrl as getThumborUrlRaw,
+  type ThumborFitMode,
+} from '../../tina/media/S3MediaStore';
+
+export type { ThumborFitMode };
 
 const S3_BUCKET = process.env.NEXT_PUBLIC_S3_BUCKET || 'merakiweddingplanner';
 const S3_REGION = process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1';
 export const S3_BASE_URL = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`;
 
-export function getThumborUrl(size: string, src: string): string {
+export function getThumborUrl(
+  size: string,
+  src: string,
+  fitMode: ThumborFitMode = 'fit-in'
+): string {
   if (!src) return '';
   // If it's not an absolute URL, resolve it first
   const resolvedSrc = resolveImageUrl(src);
-  return getThumborUrlRaw(size, resolvedSrc);
+  return getThumborUrlRaw(size, resolvedSrc, fitMode);
 }
 
 export function resolveImageUrl(src: string | null | undefined): string {

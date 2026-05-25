@@ -1,9 +1,17 @@
-import type { Media, MediaList, MediaListOptions, MediaStore, MediaUploadOptions } from 'tinacms'
+import type {
+  Media,
+  MediaList,
+  MediaListOptions,
+  MediaStore,
+  MediaUploadOptions,
+} from 'tinacms';
 
-const S3_BUCKET = process.env.NEXT_PUBLIC_S3_BUCKET || ''
-const S3_REGION = process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1'
-const S3_BASE_URL = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`
-const THUMBOR_BASE = 'https://thumbor.merakiweddingplanner.com/unsafe/fit-in'
+const S3_BUCKET = process.env.NEXT_PUBLIC_S3_BUCKET || '';
+const S3_REGION = process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1';
+const S3_BASE_URL = `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com`;
+const THUMBOR_BASE = 'https://thumbor.merakiweddingplanner.com/unsafe';
+
+export type ThumborFitMode = 'fit-in' | 'full-fit-in' | '';
 
 /**
  * Generates a Thumbor URL for image thumbnails.
@@ -11,20 +19,24 @@ const THUMBOR_BASE = 'https://thumbor.merakiweddingplanner.com/unsafe/fit-in'
  * ensuring spaces and non-ASCII characters are percent-encoded (%20 etc.)
  * while path separators and other URL-safe characters are preserved.
  */
-export function getThumborUrl(size: string, src: string): string {
+export function getThumborUrl(
+  size: string,
+  src: string,
+  fitMode: ThumborFitMode = 'fit-in'
+): string {
   // Remove protocol from source URL
-  const urlWithoutProtocol = src.replace(/^https?:\/\//, '')
+  const urlWithoutProtocol = src.replace(/^https?:\/\//, '');
   // Normalize encoding: decode first (handles already-encoded URLs), then
   // re-encode with encodeURI so spaces/non-ASCII chars become valid %XX sequences.
-  const normalizedUrl = encodeURI(decodeURIComponent(urlWithoutProtocol))
-  return `${THUMBOR_BASE}/${size}/${normalizedUrl}`
+  const normalizedUrl = encodeURI(decodeURIComponent(urlWithoutProtocol));
+  return `${THUMBOR_BASE}/${fitMode}/${size}/${normalizedUrl}`;
 }
 
 export class S3MediaStore implements MediaStore {
-  accept = 'image/*,video/*,application/pdf'
+  accept = 'image/*,video/*,application/pdf';
 
   async persist(files: MediaUploadOptions[]): Promise<Media[]> {
-    const uploadedFiles: Media[] = []
+    const uploadedFiles: Media[] = [];
 
     for (const { file, directory } of files) {
       // Get presigned URL for upload
@@ -38,13 +50,13 @@ export class S3MediaStore implements MediaStore {
           directory: directory?.replace(/^\//, '') || '',
           contentType: file.type,
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error(`Failed to get upload URL: ${response.statusText}`)
+        throw new Error(`Failed to get upload URL: ${response.statusText}`);
       }
 
-      const { signedUrl, src } = await response.json()
+      const { signedUrl, src } = await response.json();
 
       // Upload file directly to S3
       const uploadResponse = await fetch(signedUrl, {
@@ -53,10 +65,10 @@ export class S3MediaStore implements MediaStore {
         headers: {
           'Content-Type': file.type,
         },
-      })
+      });
 
       if (!uploadResponse.ok) {
-        throw new Error(`Failed to upload file: ${uploadResponse.statusText}`)
+        throw new Error(`Failed to upload file: ${uploadResponse.statusText}`);
       }
 
       uploadedFiles.push({
@@ -65,17 +77,18 @@ export class S3MediaStore implements MediaStore {
         directory: directory || '/',
         filename: file.name,
         src,
-      })
+      });
     }
 
-    return uploadedFiles
+    return uploadedFiles;
   }
 
   async delete(media: Media): Promise<void> {
     // Extract the key from the src URL
-    const key = media.id?.replace(`${S3_BASE_URL}/`, '') ||
-                media.src?.replace(`${S3_BASE_URL}/`, '') ||
-                `${media.directory}/${media.filename}`.replace(/^\//, '')
+    const key =
+      media.id?.replace(`${S3_BASE_URL}/`, '') ||
+      media.src?.replace(`${S3_BASE_URL}/`, '') ||
+      `${media.directory}/${media.filename}`.replace(/^\//, '');
 
     const response = await fetch('/api/s3/delete', {
       method: 'DELETE',
@@ -83,60 +96,65 @@ export class S3MediaStore implements MediaStore {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ key }),
-    })
+    });
 
     if (!response.ok) {
-      throw new Error(`Failed to delete file: ${response.statusText}`)
+      throw new Error(`Failed to delete file: ${response.statusText}`);
     }
   }
 
   async list(options?: MediaListOptions): Promise<MediaList> {
-    const directory = options?.directory?.replace(/^\//, '') || ''
-    const limit = options?.limit || 500
-    const offset = options?.offset ? String(options.offset) : ''
+    const directory = options?.directory?.replace(/^\//, '') || '';
+    const limit = options?.limit || 500;
+    const offset = options?.offset ? String(options.offset) : '';
 
-    const params = new URLSearchParams()
-    params.set('directory', directory)
-    params.set('limit', String(limit))
+    const params = new URLSearchParams();
+    params.set('directory', directory);
+    params.set('limit', String(limit));
     if (offset) {
-      params.set('cursor', offset)
+      params.set('cursor', offset);
     }
 
-    const response = await fetch(`/api/s3/list?${params}`)
+    const response = await fetch(`/api/s3/list?${params}`);
 
     if (!response.ok) {
-      throw new Error(`Failed to list media: ${response.statusText}`)
+      throw new Error(`Failed to list media: ${response.statusText}`);
     }
 
-    const data = await response.json()
+    const data = await response.json();
 
     return {
-      items: data.items.map((item: {
-        id: string
-        filename: string
-        directory: string
-        src?: string
-        type: 'file' | 'dir'
-        size?: number
-      }): Media => ({
-        id: item.id,
-        type: item.type,
-        directory: item.directory || '/',
-        filename: item.filename,
-        src: item.type === 'file' ? item.src : undefined,
-        thumbnails: item.type === 'file' && item.src ? {
-          '75x75': getThumborUrl('75x75', item.src),
-          '400x400': getThumborUrl('400x400', item.src),
-          '1000x1000': getThumborUrl('1000x1000', item.src),
-        } : undefined,
-      })),
+      items: data.items.map(
+        (item: {
+          id: string;
+          filename: string;
+          directory: string;
+          src?: string;
+          type: 'file' | 'dir';
+          size?: number;
+        }): Media => ({
+          id: item.id,
+          type: item.type,
+          directory: item.directory || '/',
+          filename: item.filename,
+          src: item.type === 'file' ? item.src : undefined,
+          thumbnails:
+            item.type === 'file' && item.src
+              ? {
+                  '75x75': getThumborUrl('75x75', item.src),
+                  '400x400': getThumborUrl('400x400', item.src),
+                  '1000x1000': getThumborUrl('1000x1000', item.src),
+                }
+              : undefined,
+        })
+      ),
       nextOffset: data.offset || undefined,
-    }
+    };
   }
 
   async previewSrc(src: string): Promise<string> {
-    return src
+    return src;
   }
 }
 
-export default S3MediaStore
+export default S3MediaStore;
