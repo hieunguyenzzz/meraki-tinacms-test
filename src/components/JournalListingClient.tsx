@@ -1,15 +1,15 @@
 'use client';
 
-import { useTina, tinaField } from 'tinacms/dist/react';
-import { useState, useMemo, useEffect } from 'react';
-import Header from './Header';
+import { useEffect, useMemo, useState } from 'react';
+import { tinaField, useTina } from 'tinacms/dist/react';
+import type { JournalConnectionEdges, JournalListingQuery } from '../../tina/__generated__/types';
 import Footer from './Footer';
+import Header from './Header';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
-import type { PageQuery, JournalConnectionEdges } from '../../tina/__generated__/types';
 
 interface Props {
-  data: PageQuery;
+  data: JournalListingQuery;
   query: string;
   variables: { relativePath: string };
   lang: string;
@@ -28,7 +28,7 @@ export default function JournalListingClient({
   journals,
 }: Props) {
   const { data: tinaData } = useTina({ data, query, variables });
-  const page = tinaData.page;
+  const listing = tinaData.journalListing;
 
   // Location filter state
   const [activeLocation, setActiveLocation] = useState<string>('All');
@@ -39,14 +39,14 @@ export default function JournalListingClient({
 
   // Available locations
   const locations = useMemo(() => {
-    const filters = page.location_filters || [];
+    const filters = listing.location_filters || [];
     const allLabel = t({ en: 'All', vi: 'Tất cả' }, lang);
 
     return [
       { label: allLabel, value: 'All' },
       ...filters.map((f) => ({ label: f?.value, value: f?.value }))
     ];
-  }, [page, lang]);
+  }, [listing, lang]);
 
   // Filter journals by location
   const filteredJournals = useMemo(() => {
@@ -79,9 +79,9 @@ export default function JournalListingClient({
           {/* Left - Hero Image */}
           <div
             className='md:h-[500px] relative lg:h-full overflow-hidden'
-            data-tina-field={tinaField(page.hero, 'background_image')}>
+            data-tina-field={tinaField(listing.hero, 'background_image')}>
             <MerakiImage
-              src={page.hero?.background_image || '/images/journal/listing/hero-image.jpg'}
+              src={listing.hero?.background_image || '/images/journal/listing/hero-image.jpg'}
               alt='Hero Background'
               fill
               className='object-cover object-center'
@@ -94,17 +94,17 @@ export default function JournalListingClient({
             <h1
               className='text-display font-vocago uppercase tracking-wider'
               data-tina-field={tinaField(
-                page,
+                listing,
                 lang === 'en' ? 'title_en' : 'title_vi'
               )}>
-              {lang === 'en' ? page.title_en : page.title_vi}
+              {lang === 'en' ? listing.title_en : listing.title_vi}
             </h1>
 
             {/* Featured Journal Thumbnail */}
-            {page.hero?.featured_thumbnail && (
-              <div data-tina-field={tinaField(page.hero, 'featured_thumbnail')}>
+            {listing.hero?.featured_thumbnail && (
+              <div data-tina-field={tinaField(listing.hero, 'featured_thumbnail')}>
                 <MerakiImage
-                  src={page.hero.featured_thumbnail}
+                  src={listing.hero.featured_thumbnail}
                   alt='Featured'
                   className='w-[260px] h-auto object-cover'
                   width={260}
@@ -115,12 +115,12 @@ export default function JournalListingClient({
             <p
               className='text-body-md text-text-secondary max-w-[500px] leading-relaxed'
               data-tina-field={tinaField(
-                page.hero,
+                listing.hero,
                 lang === 'en' ? 'description_en' : 'description_vi'
               )}>
               {lang === 'en'
-                ? page.hero?.description_en
-                : page.hero?.description_vi}
+                ? listing.hero?.description_en
+                : listing.hero?.description_vi}
             </p>
           </div>
         </div>
@@ -135,8 +135,8 @@ export default function JournalListingClient({
                 key={location.value}
                 onClick={() => setActiveLocation(location?.value ?? 'All')}
                 className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${activeLocation === location.value
-                    ? 'text-text-primary bg-background-2'
-                    : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
+                  ? 'text-text-primary bg-background-2'
+                  : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
                   }`}>
                 {location.value}
               </button>
@@ -230,7 +230,7 @@ export default function JournalListingClient({
       />
 
       {/* Let's Connect Section */}
-      {page.lets_connect && (
+      {listing.lets_connect && (
         <section className='py-10 bg-background-1 bg-paper'>
           <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6'>
             <div className='flex items-center justify-center'>
@@ -245,36 +245,36 @@ export default function JournalListingClient({
             <h2
               className='text-h2 font-vocago'
               data-tina-field={tinaField(
-                page.lets_connect,
+                listing.lets_connect,
                 lang === 'en' ? 'title_en' : 'title_vi'
               )}>
               {lang === 'en'
-                ? page.lets_connect.title_en
-                : page.lets_connect.title_vi}
+                ? listing.lets_connect.title_en
+                : listing.lets_connect.title_vi}
             </h2>
 
             <p
               className='text-body-md text-text-secondary max-w-xl mx-auto'
               data-tina-field={tinaField(
-                page.lets_connect,
+                listing.lets_connect,
                 lang === 'en' ? 'description_en' : 'description_vi'
               )}>
               {lang === 'en'
-                ? page.lets_connect.description_en
-                : page.lets_connect.description_vi}
+                ? listing.lets_connect.description_en
+                : listing.lets_connect.description_vi}
             </p>
 
             <a
-              href={`/${lang}${page.lets_connect.button_link || '/lets-connect'
+              href={`/${lang}${listing.lets_connect.button_link || '/lets-connect'
                 }`}
               className='inline-block text-body-md text-text-primary hover:text-text-accent transition-colors border-b border-text-primary hover:border-text-accent'
               data-tina-field={tinaField(
-                page.lets_connect,
+                listing.lets_connect,
                 lang === 'en' ? 'button_text_en' : 'button_text_vi'
               )}>
               {lang === 'en'
-                ? page.lets_connect.button_text_en
-                : page.lets_connect.button_text_vi}
+                ? listing.lets_connect.button_text_en
+                : listing.lets_connect.button_text_vi}
             </a>
           </div>
         </section>

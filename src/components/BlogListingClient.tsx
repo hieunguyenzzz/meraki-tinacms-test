@@ -1,14 +1,14 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useTina, tinaField } from 'tinacms/dist/react';
-import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import Header from './Header';
+import { useEffect, useMemo, useState } from 'react';
+import { tinaField, useTina } from 'tinacms/dist/react';
+import type { BlogListingQuery } from '../../tina/__generated__/types';
 import Footer from './Footer';
+import Header from './Header';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
-import type { PageQuery } from '../../tina/__generated__/types';
 
 interface BlogNode {
   _sys: { filename: string; createdAt: string };
@@ -23,7 +23,7 @@ interface BlogNode {
 }
 
 interface Props {
-  data: PageQuery;
+  data: BlogListingQuery;
   query: string;
   variables: { relativePath: string };
   lang: string;
@@ -41,7 +41,7 @@ export default function BlogListingClient({
   blogs,
 }: Props) {
   const { data: tinaData } = useTina({ data, query, variables });
-  const page = tinaData.page;
+  const listing = tinaData.blogListing;
 
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -49,14 +49,24 @@ export default function BlogListingClient({
 
   // Derive unique categories from all blog posts
   const categories = useMemo(() => {
-    const all = new Set<string>();
-    blogs.forEach((b) => b.categories?.forEach((c) => all.add(c)));
+    const configured =
+      listing.category_filters
+        ?.map((filter) => filter?.value?.trim())
+        .filter((value): value is string => Boolean(value)) || [];
+
+    const derived = new Set<string>();
+    blogs.forEach((b) => b.categories?.forEach((c) => derived.add(c)));
+
+    const categoryValues =
+      configured.length > 0 ? configured : Array.from(derived);
+
     const allLabel = t({ en: 'All', vi: 'Tất cả' }, lang);
+
     return [
       { label: allLabel, value: 'All' },
-      ...Array.from(all).map((c) => ({ label: c, value: c })),
+      ...Array.from(new Set(categoryValues)).map((c) => ({ label: c, value: c })),
     ];
-  }, [blogs, lang]);
+  }, [blogs, lang, listing.category_filters]);
 
   const filteredBlogs = useMemo(() => {
     if (activeCategory === 'All') return blogs;
@@ -82,8 +92,16 @@ export default function BlogListingClient({
 
   const formatDate = (blog: BlogNode) => {
     const raw = blog.published_date || blog._sys.createdAt;
-    return new Date(raw).toLocaleDateString(lang === 'en' ? 'en-US' : 'vi-VN');
+    return new Date(raw).toLocaleDateString(
+      lang === 'en' ? 'en-US' : 'vi-VN',
+      { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
+    );
   };
+
+  const getDateIso = (blog: BlogNode) =>
+    new Date(blog.published_date || blog._sys.createdAt).toISOString();
+
+  const authorLabel = t({ en: 'Meraki Team', vi: 'Team Meraki' }, lang);
 
   return (
     <div className='bg-background-base'>
@@ -93,87 +111,89 @@ export default function BlogListingClient({
       <section className='relative'>
         <div className='grid sm:grid-cols-1 lg:grid-cols-2 items-stretch'>
           {/* Left - Hero Image */}
-          {page.hero?.background_image ? (
-            <div
-              className='md:h-[500px] relative lg:h-full overflow-hidden'
-              data-tina-field={tinaField(page.hero, 'background_image')}>
-              <MerakiImage
-                src={page.hero.background_image}
-                alt='Blog Hero'
-                fill
-                className='object-cover object-center'
-                priority
-              />
-            </div>
-          ) : (
-            <div className='md:h-[500px] bg-background-2 lg:h-full' />
-          )}
+          <div
+            className='md:h-[500px] relative lg:h-full overflow-hidden'
+            data-tina-field={tinaField(listing.hero, 'background_image')}>
+            <MerakiImage
+              src={listing.hero?.background_image || '/images/journal/listing/hero-image.jpg'}
+              alt='Blog Hero'
+              fill
+              className='object-cover object-center'
+              priority
+            />
+          </div>
 
           {/* Right - Hero Content */}
-          <div className='md:w-[540px] mx-auto md:-translate-y-20 lg:translate-y-0 lg:w-full p-20 flex flex-col gap-10 justify-center bg-background-1 items-center text-center'>
+          <div className='md:w-[540px] mx-auto md:-translate-y-20 lg:translate-y-0 lg:w-full p-20 flex flex-col gap-20 justify-between bg-paper bg-background-1 items-center text-center'>
             <h1
               className='text-display font-vocago uppercase tracking-wider'
               data-tina-field={tinaField(
-                page,
+                listing,
                 lang === 'en' ? 'title_en' : 'title_vi',
               )}>
-              {lang === 'en' ? page.title_en : page.title_vi}
+              {lang === 'en' ? listing.title_en : listing.title_vi}
             </h1>
+
+            {listing.hero?.featured_thumbnail && (
+              <div data-tina-field={tinaField(listing.hero, 'featured_thumbnail')}>
+                <MerakiImage
+                  src={listing.hero.featured_thumbnail}
+                  alt='Blog featured thumbnail'
+                  className='w-[260px] h-auto object-cover'
+                  width={260}
+                  height={260}
+                />
+              </div>
+            )}
 
             <p
               className='text-body-md text-text-secondary max-w-[500px] leading-relaxed'
               data-tina-field={tinaField(
-                page.hero,
+                listing.hero,
                 lang === 'en' ? 'description_en' : 'description_vi',
               )}>
               {lang === 'en'
-                ? page.hero?.description_en
-                : page.hero?.description_vi}
+                ? listing.hero?.description_en
+                : listing.hero?.description_vi}
             </p>
           </div>
         </div>
       </section>
 
       {/* Category Filter */}
-      {categories.length > 1 && (
-        <section className='md:py-0 lg:pt-20 lg:pb-10'>
-          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='flex gap-6 overflow-x-auto justify-center'>
-              {categories.map((cat) => (
-                <button
-                  key={cat.value}
-                  onClick={() => setActiveCategory(cat.value)}
-                  className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${
-                    activeCategory === cat.value
-                      ? 'text-text-primary bg-background-2'
-                      : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
+      <section className='md:py-0 lg:pt-20 lg:pb-10'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='flex gap-6 overflow-x-auto justify-center'>
+            {categories.map((cat) => (
+              <button
+                key={cat.value}
+                onClick={() => setActiveCategory(cat.value)}
+                className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${activeCategory === cat.value
+                  ? 'text-text-primary bg-background-2'
+                  : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
                   }`}>
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+                {cat.label}
+              </button>
+            ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* Blog Grid */}
       <section className='pb-10'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20'>
           {paginatedBlogs.length > 0 ? (
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16'>
-              {paginatedBlogs.map((blog, index) => {
-                const shouldTranslate = index % 3 === 1;
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16'>
+              {paginatedBlogs.map((blog) => {
                 const slug = getSlug(blog);
                 const title = getTitle(blog);
                 const excerpt = getExcerpt(blog);
 
                 return (
-                  <div
-                    key={slug}
-                    className={`group ${shouldTranslate ? 'lg:-translate-y-16' : ''}`}>
+                  <div key={slug} className='group'>
                     <Link href={`/${lang}/blog/${slug}`}>
                       {/* Image */}
-                      <div className='relative aspect-[3/4] overflow-hidden mb-6'>
+                      <div className='relative aspect-[3/2] overflow-hidden mb-6'>
                         {blog.featured_image ? (
                           <MerakiImage
                             src={blog.featured_image}
@@ -186,25 +206,32 @@ export default function BlogListingClient({
                         )}
                       </div>
 
-                      {/* Content */}
-                      <div className='text-center space-y-2'>
-                        {blog.categories && blog.categories.length > 0 && (
-                          <p className='text-body-sm text-text-secondary uppercase tracking-wider'>
+                      {/* Category tag */}
+                      {blog.categories && blog.categories.length > 0 && (
+                        <div className='mb-4'>
+                          <span className='text-body-sm text-text-primary border-b border-t border-text-primary pb-1'>
                             {blog.categories[0]}
-                          </p>
-                        )}
-                        <h2 className='text-h4 font-vocago tracking-wide'>
-                          {title}
-                        </h2>
-                        {excerpt && (
-                          <p className='text-body-sm text-text-secondary line-clamp-2'>
-                            {excerpt}
-                          </p>
-                        )}
-                        <p className='text-body-sm text-text-secondary'>
-                          {formatDate(blog)}
-                        </p>
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Title */}
+                      <h2 className='text-h2 font-vocago uppercase tracking-wide mb-4 leading-tight'>
+                        {title}
+                      </h2>
+
+                      {/* Author + Date */}
+                      <div className='flex items-center justify-between text-body-sm text-text-secondary uppercase tracking-wider mb-4'>
+                        <span>{authorLabel}</span>
+                        <time dateTime={getDateIso(blog)}>{formatDate(blog)}</time>
                       </div>
+
+                      {/* Excerpt */}
+                      {excerpt && (
+                        <p className='text-body-sm text-text-secondary line-clamp-3 leading-relaxed'>
+                          {excerpt}
+                        </p>
+                      )}
                     </Link>
                   </div>
                 );
@@ -215,19 +242,19 @@ export default function BlogListingClient({
               <p className='text-body-md text-text-secondary'>
                 {activeCategory === 'All'
                   ? t(
-                      {
-                        en: 'No blog posts available yet. Check back soon!',
-                        vi: 'Chưa có bài viết nào. Hãy quay lại sau!',
-                      },
-                      lang,
-                    )
+                    {
+                      en: 'No blog posts available yet. Check back soon!',
+                      vi: 'Chưa có bài viết nào. Hãy quay lại sau!',
+                    },
+                    lang,
+                  )
                   : t(
-                      {
-                        en: `No blog posts found for "${activeCategory}".`,
-                        vi: `Không tìm thấy bài viết nào cho "${activeCategory}".`,
-                      },
-                      lang,
-                    )}
+                    {
+                      en: `No blog posts found for "${activeCategory}".`,
+                      vi: `Không tìm thấy bài viết nào cho "${activeCategory}".`,
+                    },
+                    lang,
+                  )}
               </p>
             </div>
           )}
@@ -242,7 +269,7 @@ export default function BlogListingClient({
       />
 
       {/* Let's Connect Section */}
-      {page.lets_connect && (
+      {listing.lets_connect && (
         <section className='py-10 bg-background-1'>
           <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6'>
             <div className='flex items-center justify-center'>
@@ -258,35 +285,35 @@ export default function BlogListingClient({
             <h2
               className='text-h2 font-vocago'
               data-tina-field={tinaField(
-                page.lets_connect,
+                listing.lets_connect,
                 lang === 'en' ? 'title_en' : 'title_vi',
               )}>
               {lang === 'en'
-                ? page.lets_connect.title_en
-                : page.lets_connect.title_vi}
+                ? listing.lets_connect.title_en
+                : listing.lets_connect.title_vi}
             </h2>
 
             <p
               className='text-body-md text-text-secondary max-w-xl mx-auto'
               data-tina-field={tinaField(
-                page.lets_connect,
+                listing.lets_connect,
                 lang === 'en' ? 'description_en' : 'description_vi',
               )}>
               {lang === 'en'
-                ? page.lets_connect.description_en
-                : page.lets_connect.description_vi}
+                ? listing.lets_connect.description_en
+                : listing.lets_connect.description_vi}
             </p>
 
             <a
-              href={`/${lang}${page.lets_connect.button_link || '/lets-connect'}`}
+              href={`/${lang}${listing.lets_connect.button_link || '/lets-connect'}`}
               className='inline-block text-body-md text-text-primary hover:text-text-accent transition-colors border-b border-text-primary hover:border-text-accent'
               data-tina-field={tinaField(
-                page.lets_connect,
+                listing.lets_connect,
                 lang === 'en' ? 'button_text_en' : 'button_text_vi',
               )}>
               {lang === 'en'
-                ? page.lets_connect.button_text_en
-                : page.lets_connect.button_text_vi}
+                ? listing.lets_connect.button_text_en
+                : listing.lets_connect.button_text_vi}
             </a>
           </div>
         </section>

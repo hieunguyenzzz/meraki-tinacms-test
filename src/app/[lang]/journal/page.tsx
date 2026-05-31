@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { client } from "../../../../tina/__generated__/client";
-import JournalListingClient from '../../../components/JournalListingClient';
 import fs from 'fs';
 import path from 'path';
+import { client } from "../../../../tina/__generated__/client";
+import JournalListingClient from '../../../components/JournalListingClient';
 
 interface Props {
   params: { lang: string };
@@ -24,8 +24,8 @@ export default async function JournalPage({ params }: Props) {
   }
 
   // Fetch page content
-  const relativePath = 'journal-listing.mdx';
-  const pageResponse = await client.queries.page({
+  const relativePath = 'index.mdx';
+  const journalListingResponse = await client.queries.journalListing({
     relativePath,
   });
 
@@ -39,7 +39,7 @@ export default async function JournalPage({ params }: Props) {
         },
       },
     });
-    
+
     // Filter and Sort
     const edges = (journalList.data.journalConnection.edges || [])
       .filter((edge): edge is NonNullable<typeof edge> => edge?.node != null);
@@ -66,7 +66,7 @@ export default async function JournalPage({ params }: Props) {
         try {
           const fullPath = path.join(process.cwd(), 'content/journal', relativePath);
           const stats = fs.statSync(fullPath);
-          return stats.birthtimeMs; 
+          return stats.birthtimeMs;
         } catch (e) {
           return 0;
         }
@@ -84,8 +84,8 @@ export default async function JournalPage({ params }: Props) {
 
   return (
     <JournalListingClient
-      data={pageResponse.data}
-      query={pageResponse.query}
+      data={journalListingResponse.data}
+      query={journalListingResponse.query}
       variables={{ relativePath }}
       lang={lang}
       journals={journals}

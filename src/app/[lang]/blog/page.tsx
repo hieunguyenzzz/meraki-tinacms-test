@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Metadata } from 'next';
 import { client } from '../../../../tina/__generated__/client';
 import BlogListingClient from '../../../components/BlogListingClient';
-import type { Metadata } from 'next';
 
 interface Props {
   params: { lang: string };
@@ -17,12 +17,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
   try {
-    const pageResponse = await client.queries.page({
-      relativePath: 'blog-listing.mdx',
+    const listingResponse = await client.queries.blogListing({
+      relativePath: 'index.mdx',
     });
-    const page = pageResponse.data.page;
-    const seo = lang === 'en' ? page.seo_en : page.seo_vi;
-    const title = lang === 'en' ? page.title_en : page.title_vi;
+    const listing = listingResponse.data.blogListing;
+    const seo = lang === 'en' ? listing.seo_en : listing.seo_vi;
+    const title = lang === 'en' ? listing.title_en : listing.title_vi;
     return {
       title: seo?.title || `${title} - Meraki Wedding Planner`,
       description: seo?.description || '',
@@ -48,8 +48,8 @@ export default async function BlogPage({ params }: Props) {
     return <div>Not Found</div>;
   }
 
-  const relativePath = 'blog-listing.mdx';
-  const pageResponse = await client.queries.page({ relativePath });
+  const relativePath = 'index.mdx';
+  const listingResponse = await client.queries.blogListing({ relativePath });
 
   let blogs: any[] = [];
   try {
@@ -65,8 +65,8 @@ export default async function BlogPage({ params }: Props) {
 
   return (
     <BlogListingClient
-      data={pageResponse.data}
-      query={pageResponse.query}
+      data={listingResponse.data}
+      query={listingResponse.query}
       variables={{ relativePath }}
       lang={lang}
       blogs={blogs}

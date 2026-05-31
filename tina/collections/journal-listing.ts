@@ -1,19 +1,12 @@
 import type { Collection } from 'tinacms';
+import { JOURNAL_LOCATIONS } from '../constants';
 import { CustomImageField } from '../fields/CustomImageField';
 
-export const Page: Collection = {
-  label: 'Page Content',
-  name: 'page',
-  path: 'content/page',
+export const JournalListing: Collection = {
+  label: 'Journal Listing Page',
+  name: 'journalListing',
+  path: 'content/journal-listing',
   format: 'mdx',
-  ui: {
-    router: ({ document }) => {
-      if (document._sys.filename === 'index') {
-        return '/';
-      }
-      return undefined;
-    },
-  },
   fields: [
     {
       type: 'string',
@@ -26,18 +19,6 @@ export const Page: Collection = {
       name: 'title_vi',
       label: 'Title (Vietnamese)',
       required: true,
-    },
-    {
-      type: 'rich-text',
-      name: 'content_en',
-      label: 'Content (English)',
-      isBody: false,
-    },
-    {
-      type: 'rich-text',
-      name: 'content_vi',
-      label: 'Content (Vietnamese)',
-      isBody: false,
     },
     {
       type: 'object',
@@ -100,24 +81,43 @@ export const Page: Collection = {
     },
     {
       type: 'object',
-      name: 'services_section',
-      label: 'Services Section (Homapge Only)',
-      description: 'This section is only used on homepage',
+      name: 'location_filters',
+      label: 'Location Filters',
+      list: true,
+      ui: {
+        itemProps: (item) => {
+          return { label: item?.value };
+        },
+      },
+      fields: [
+        {
+          type: 'string',
+          name: 'value',
+          label: 'Location Tag',
+          options: JOURNAL_LOCATIONS,
+          required: true,
+        },
+      ],
+    },
+    {
+      type: 'object',
+      name: 'lets_connect',
+      label: "Let's Connect Section",
       fields: [
         {
           type: 'string',
           name: 'title_en',
-          label: 'Services Title (English)',
+          label: 'Title (English)',
         },
         {
           type: 'string',
           name: 'title_vi',
-          label: 'Services Title (Vietnamese)',
+          label: 'Title (Vietnamese)',
         },
         {
           type: 'string',
           name: 'description_en',
-          label: 'Services Description (English)',
+          label: 'Description (English)',
           ui: {
             component: 'textarea',
           },
@@ -125,10 +125,25 @@ export const Page: Collection = {
         {
           type: 'string',
           name: 'description_vi',
-          label: 'Services Description (Vietnamese)',
+          label: 'Description (Vietnamese)',
           ui: {
             component: 'textarea',
           },
+        },
+        {
+          type: 'string',
+          name: 'button_text_en',
+          label: 'Button Text (English)',
+        },
+        {
+          type: 'string',
+          name: 'button_text_vi',
+          label: 'Button Text (Vietnamese)',
+        },
+        {
+          type: 'string',
+          name: 'button_link',
+          label: 'Button Link',
         },
       ],
     },

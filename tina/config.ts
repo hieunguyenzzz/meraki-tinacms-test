@@ -1,21 +1,23 @@
-import { defineConfig } from "tinacms";
-import { Page } from "./collections/page";
-import { Journal } from "./collections/journal";
-import { Blog } from "./collections/blog";
-import { MdOutlinePhotoLibrary } from "react-icons/md";
-import { MediaManagerScreen } from "./components/MediaManagerScreen";
+import { MdOutlinePhotoLibrary } from 'react-icons/md';
+import { defineConfig } from 'tinacms';
+import { Blog } from './collections/blog';
+import { BlogListing } from './collections/blog-listing';
+import { Journal } from './collections/journal';
+import { JournalListing } from './collections/journal-listing';
+import { Page } from './collections/page';
+import { MediaManagerScreen } from './components/MediaManagerScreen';
 
 export const config = defineConfig({
   cmsCallback: (cms) => {
     // Remove the built-in "Media Manager" screen plugin
-    cms.plugins.getType("screen").remove("Media Manager");
+    cms.plugins.getType('screen').remove('Media Manager');
 
     // Add the custom media manager screen plugin
     cms.plugins.add({
-      __type: "screen",
-      name: "Media Manager",
+      __type: 'screen',
+      name: 'Media Manager',
       Icon: MdOutlinePhotoLibrary,
-      layout: "fullscreen",
+      layout: 'fullscreen',
       Component: MediaManagerScreen,
     });
 
@@ -24,34 +26,37 @@ export const config = defineConfig({
   // TinaCMS Cloud configuration
   clientId: process.env.TINA_CLIENT_ID || null,
   token: process.env.TINA_TOKEN || null,
-  branch: process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main',
-  
+  branch:
+    process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main',
+
   // Media storage configuration - AWS S3
   media: {
     loadCustomStore: async () => {
-      const { S3MediaStore } = await import('./media/S3MediaStore')
-      return S3MediaStore
+      const { S3MediaStore } = await import('./media/S3MediaStore');
+      return S3MediaStore;
     },
   },
-  
+
   build: {
     publicFolder: 'public',
     outputFolder: 'admin',
   },
-  
+
   schema: {
-    collections: [Page, Journal, Blog],
+    collections: [Page, Journal, Blog, JournalListing, BlogListing],
   },
 
   // Search configuration (optional - only enable if TINA_SEARCH_TOKEN is set)
-  ...(process.env.TINA_SEARCH_TOKEN ? {
-    search: {
-      tina: {
-        indexerToken: process.env.TINA_SEARCH_TOKEN,
-        stopwordLanguages: ['eng', 'vie'],
-      },
-    },
-  } : {}),
+  ...(process.env.TINA_SEARCH_TOKEN
+    ? {
+        search: {
+          tina: {
+            indexerToken: process.env.TINA_SEARCH_TOKEN,
+            stopwordLanguages: ['eng', 'vie'],
+          },
+        },
+      }
+    : {}),
 });
 
 export default config;
