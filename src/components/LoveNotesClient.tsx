@@ -1,6 +1,7 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import Footer from './Footer';
 import Header from './Header';
@@ -16,12 +17,22 @@ interface Props {
 const t = (text: { en?: string | null; vi?: string | null }, lang: string) =>
     lang === 'en' ? text.en : text.vi;
 
+const splitCoupleNames = (names?: string | null): [string, string] => {
+    if (!names) return ['', ''];
+
+    const [left, ...rightParts] = names.split(',');
+    const right = rightParts.join(',').trim();
+
+    return [left.trim(), right];
+};
+
 export default function LoveNotesClient({
     data,
     query,
     variables,
     lang,
 }: Props) {
+    const [openNotes, setOpenNotes] = useState<Record<number, boolean>>({});
     const { data: tinaData } = useTina({ data, query, variables });
     const listing = tinaData.loveNotesListing;
 
@@ -47,6 +58,13 @@ export default function LoveNotesClient({
         },
         lang,
     );
+
+    const toggleNote = (index: number) => {
+        setOpenNotes((prev) => ({
+            ...prev,
+            [index]: !prev[index],
+        }));
+    };
 
     return (
         <div className='bg-background-base'>
@@ -134,40 +152,60 @@ export default function LoveNotesClient({
                                 },
                                 lang,
                             );
-
-                            const isShifted = index % 2 === 1;
+                            const [leftName, rightName] = splitCoupleNames(coupleNames);
+                            const hasRightName = Boolean(rightName);
+                            const isOpen = Boolean(openNotes[index]);
+                            const notePanelId = `love-note-panel-${index}`;
 
                             return (
                                 <article
                                     key={`${coupleNames || 'note'}-${index}`}
-                                    className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center ${isShifted ? 'lg:pl-12' : 'lg:pr-12'}`}>
+                                    className='grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start'>
                                     <div
-                                        className={`lg:col-span-5 ${isShifted ? 'lg:order-2' : ''}`}
-                                        data-tina-field={tinaField(note, 'image')}>
-                                        <div className='relative overflow-hidden'>
-                                            <MerakiImage
-                                                src={note?.image || '/images/bg/love-notes-featured.jpg'}
-                                                alt={coupleNames || 'Couple note image'}
-                                                width={720}
-                                                height={900}
-                                                className='w-full h-auto object-cover'
-                                            />
-                                        </div>
-                                    </div>
+                                        className='lg:col-span-5'
+                                        data-tina-field={tinaField(
+                                            note,
+                                            lang === 'en' ? 'couple_names_en' : 'couple_names_vi',
+                                        )}>
+                                        <div className='max-w-[520px]'>
+                                            <h2 className='flex items-center justify-between gap-4 md:gap-5 text-h2 md:text-display font-vocago uppercase tracking-wide text-text-primary'>
+                                                <span>{leftName}</span>
 
-                                    <div className={`lg:col-span-7 ${isShifted ? 'lg:order-1' : ''}`}>
-                                        <div className='max-w-[620px]'>
-                                            <h2
-                                                className='text-h2 font-vocago uppercase tracking-wide mb-3'
-                                                data-tina-field={tinaField(
-                                                    note,
-                                                    lang === 'en' ? 'couple_names_en' : 'couple_names_vi',
-                                                )}>
-                                                {coupleNames}
+                                                <button
+                                                    type='button'
+                                                    onClick={() => toggleNote(index)}
+                                                    aria-expanded={isOpen}
+                                                    aria-controls={notePanelId}
+                                                    aria-label={
+                                                        isOpen
+                                                            ? lang === 'en'
+                                                                ? 'Hide love note details'
+                                                                : 'An chi tiet thu tinh'
+                                                            : lang === 'en'
+                                                                ? 'Show love note details'
+                                                                : 'Hien chi tiet thu tinh'
+                                                    }
+                                                    className='shrink-0 transition-transform duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/40 rounded-sm'>
+                                                    <img
+                                                        src={
+                                                            isOpen
+                                                                ? '/images/icons/envelope-open.png'
+                                                                : '/images/icons/envelope-closed.png'
+                                                        }
+                                                        alt='Envelope toggle'
+                                                        width={64}
+                                                        height={48}
+                                                        className='w-14 md:w-16 h-auto'
+                                                    />
+                                                </button>
+
+                                                <span className='text-right'>
+                                                    {hasRightName ? rightName : ''}
+                                                </span>
                                             </h2>
 
                                             <p
-                                                className='text-body-sm uppercase tracking-[0.16em] text-text-secondary mb-6'
+                                                className='text-body-sm uppercase tracking-[0.16em] text-text-secondary mt-6 mb-6'
                                                 data-tina-field={tinaField(
                                                     note,
                                                     lang === 'en'
@@ -179,7 +217,7 @@ export default function LoveNotesClient({
 
                                             {excerpt && (
                                                 <p
-                                                    className='text-body-md text-text-primary leading-relaxed mb-5'
+                                                    className='text-body-md text-text-primary leading-relaxed'
                                                     data-tina-field={tinaField(
                                                         note,
                                                         lang === 'en' ? 'excerpt_en' : 'excerpt_vi',
@@ -187,19 +225,47 @@ export default function LoveNotesClient({
                                                     {excerpt}
                                                 </p>
                                             )}
-
-                                            {fullNote && (
-                                                <p
-                                                    className='text-body-md text-text-secondary leading-relaxed'
-                                                    data-tina-field={tinaField(
-                                                        note,
-                                                        lang === 'en' ? 'note_en' : 'note_vi',
-                                                    )}>
-                                                    {fullNote}
-                                                </p>
-                                            )}
                                         </div>
                                     </div>
+
+                                    {isOpen && (
+                                        <div
+                                            id={notePanelId}
+                                            className='lg:col-span-7'>
+                                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 lg:gap-8'>
+                                                <div data-tina-field={tinaField(note, 'image')}>
+                                                    <div className='relative overflow-hidden'>
+                                                        <MerakiImage
+                                                            src={
+                                                                note?.image ||
+                                                                '/images/bg/love-notes-featured.jpg'
+                                                            }
+                                                            alt={
+                                                                coupleNames ||
+                                                                'Couple note image'
+                                                            }
+                                                            width={720}
+                                                            height={900}
+                                                            className='w-full h-auto object-cover'
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {fullNote && (
+                                                    <p
+                                                        className='text-body-md text-text-secondary leading-relaxed bg-background-1 bg-paper p-6 md:p-8'
+                                                        data-tina-field={tinaField(
+                                                            note,
+                                                            lang === 'en'
+                                                                ? 'note_en'
+                                                                : 'note_vi',
+                                                        )}>
+                                                        {fullNote}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
                                 </article>
                             );
                         })}
