@@ -82,8 +82,13 @@ export default function BlogListingClient({
 
   const formatDate = (blog: BlogNode) => {
     const raw = blog.published_date || blog._sys.createdAt;
-    return new Date(raw).toLocaleDateString(lang === 'en' ? 'en-US' : 'vi-VN');
+    return new Date(raw).toLocaleDateString(
+      lang === 'en' ? 'en-US' : 'vi-VN',
+      { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
+    );
   };
+
+  const authorLabel = t({ en: 'Author', vi: 'Tác giả' }, lang);
 
   return (
     <div className='bg-background-base'>
@@ -93,24 +98,20 @@ export default function BlogListingClient({
       <section className='relative'>
         <div className='grid sm:grid-cols-1 lg:grid-cols-2 items-stretch'>
           {/* Left - Hero Image */}
-          {page.hero?.background_image ? (
-            <div
-              className='md:h-[500px] relative lg:h-full overflow-hidden'
-              data-tina-field={tinaField(page.hero, 'background_image')}>
-              <MerakiImage
-                src={page.hero.background_image}
-                alt='Blog Hero'
-                fill
-                className='object-cover object-center'
-                priority
-              />
-            </div>
-          ) : (
-            <div className='md:h-[500px] bg-background-2 lg:h-full' />
-          )}
+          <div
+            className='md:h-[500px] relative lg:h-full overflow-hidden'
+            data-tina-field={tinaField(page.hero, 'background_image')}>
+            <MerakiImage
+              src={page.hero?.background_image || '/images/journal/listing/hero-image.jpg'}
+              alt='Blog Hero'
+              fill
+              className='object-cover object-center'
+              priority
+            />
+          </div>
 
           {/* Right - Hero Content */}
-          <div className='md:w-[540px] mx-auto md:-translate-y-20 lg:translate-y-0 lg:w-full p-20 flex flex-col gap-10 justify-center bg-background-1 items-center text-center'>
+          <div className='md:w-[540px] mx-auto md:-translate-y-20 lg:translate-y-0 lg:w-full p-20 flex flex-col gap-20 justify-between bg-paper bg-background-1 items-center text-center'>
             <h1
               className='text-display font-vocago uppercase tracking-wider'
               data-tina-field={tinaField(
@@ -119,6 +120,17 @@ export default function BlogListingClient({
               )}>
               {lang === 'en' ? page.title_en : page.title_vi}
             </h1>
+
+            {page.hero?.featured_thumbnail && (
+              <div data-tina-field={tinaField(page.hero, 'featured_thumbnail')}>
+                <MerakiImage
+                  src={page.hero.featured_thumbnail}
+                  alt='Featured'
+                  className='w-[260px] h-auto object-cover'
+                  width={260}
+                />
+              </div>
+            )}
 
             <p
               className='text-body-md text-text-secondary max-w-[500px] leading-relaxed'
@@ -135,45 +147,40 @@ export default function BlogListingClient({
       </section>
 
       {/* Category Filter */}
-      {categories.length > 1 && (
-        <section className='md:py-0 lg:pt-20 lg:pb-10'>
-          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='flex gap-6 overflow-x-auto justify-center'>
-              {categories.map((cat) => (
-                <button
-                  key={cat.value}
-                  onClick={() => setActiveCategory(cat.value)}
-                  className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${
-                    activeCategory === cat.value
-                      ? 'text-text-primary bg-background-2'
-                      : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
-                  }`}>
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+      <section className='md:py-0 lg:pt-20 lg:pb-10'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='flex gap-6 overflow-x-auto justify-center'>
+            {categories.map((cat) => (
+              <button
+                key={cat.value}
+                onClick={() => setActiveCategory(cat.value)}
+                className={`text-body-sm px-4 py-2 whitespace-nowrap transition-colors ${
+                  activeCategory === cat.value
+                    ? 'text-text-primary bg-background-2'
+                    : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
+                }`}>
+                {cat.label}
+              </button>
+            ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* Blog Grid */}
       <section className='pb-10'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20'>
           {paginatedBlogs.length > 0 ? (
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16'>
-              {paginatedBlogs.map((blog, index) => {
-                const shouldTranslate = index % 3 === 1;
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16'>
+              {paginatedBlogs.map((blog) => {
                 const slug = getSlug(blog);
                 const title = getTitle(blog);
                 const excerpt = getExcerpt(blog);
 
                 return (
-                  <div
-                    key={slug}
-                    className={`group ${shouldTranslate ? 'lg:-translate-y-16' : ''}`}>
+                  <div key={slug} className='group'>
                     <Link href={`/${lang}/blog/${slug}`}>
                       {/* Image */}
-                      <div className='relative aspect-[3/4] overflow-hidden mb-6'>
+                      <div className='relative aspect-[3/2] overflow-hidden mb-6'>
                         {blog.featured_image ? (
                           <MerakiImage
                             src={blog.featured_image}
@@ -186,25 +193,32 @@ export default function BlogListingClient({
                         )}
                       </div>
 
-                      {/* Content */}
-                      <div className='text-center space-y-2'>
-                        {blog.categories && blog.categories.length > 0 && (
-                          <p className='text-body-sm text-text-secondary uppercase tracking-wider'>
+                      {/* Category tag */}
+                      {blog.categories && blog.categories.length > 0 && (
+                        <div className='mb-4'>
+                          <span className='text-body-sm text-text-primary border-b border-text-primary pb-1'>
                             {blog.categories[0]}
-                          </p>
-                        )}
-                        <h2 className='text-h4 font-vocago tracking-wide'>
-                          {title}
-                        </h2>
-                        {excerpt && (
-                          <p className='text-body-sm text-text-secondary line-clamp-2'>
-                            {excerpt}
-                          </p>
-                        )}
-                        <p className='text-body-sm text-text-secondary'>
-                          {formatDate(blog)}
-                        </p>
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Title */}
+                      <h2 className='text-h2 font-vocago uppercase tracking-wide mb-4 leading-tight'>
+                        {title}
+                      </h2>
+
+                      {/* Author + Date */}
+                      <div className='flex items-center justify-between text-body-sm text-text-secondary uppercase tracking-wider mb-4'>
+                        <span>{authorLabel}</span>
+                        <time dateTime={blog.published_date}>{formatDate(blog)}</time>
                       </div>
+
+                      {/* Excerpt */}
+                      {excerpt && (
+                        <p className='text-body-sm text-text-secondary line-clamp-3 leading-relaxed'>
+                          {excerpt}
+                        </p>
+                      )}
                     </Link>
                   </div>
                 );
