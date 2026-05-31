@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { cn } from '@/lib/utils';
 import { tinaField } from 'tinacms/dist/react';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
-import { cn } from '@/lib/utils';
 import MerakiImage from '../ui/MerakiImage';
 
 interface TextImageBlockData extends Record<string, unknown> {
   layout?: string;
+  verticalAlignment?: string;
   title_en?: string;
   title_vi?: string;
   description_en?: any;
@@ -31,8 +32,10 @@ export default function TextImageBlock({
   onImageClick
 }: TextImageBlockProps) {
   const isTextLeft = data.layout === 'text-left';
+  const verticalAlignment = data.verticalAlignment || 'center';
   const title = lang === 'vi' ? data.title_vi : data.title_en;
   const description = lang === 'vi' ? data.description_vi : data.description_en;
+  const textAlignmentClass = verticalAlignment === 'top' ? 'md:self-start' : 'md:self-center';
 
   const handleImageClick = () => {
     if (onImageClick && indexMap && blockIndex !== undefined) {
@@ -50,7 +53,7 @@ export default function TextImageBlock({
         isTextLeft ? "md:flex-row" : "md:flex-row-reverse"
       )}>
         {/* Text Section */}
-        <div className="flex-1 w-full md:w-1/2">
+        <div className={cn("flex-1 w-full md:w-1/2", textAlignmentClass)}>
           <div className={cn("max-w-lg", isTextLeft ? "mr-auto" : "ml-auto")}>
             {title && (
               <h2
