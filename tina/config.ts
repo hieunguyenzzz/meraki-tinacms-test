@@ -4,6 +4,7 @@ import { Blog } from './collections/blog';
 import { BlogListing } from './collections/blog-listing';
 import { Journal } from './collections/journal';
 import { JournalListing } from './collections/journal-listing';
+import { LoveNotesListing } from './collections/love-notes-listing';
 import { Page } from './collections/page';
 import { MediaManagerScreen } from './components/MediaManagerScreen';
 
@@ -43,7 +44,14 @@ export const config = defineConfig({
   },
 
   schema: {
-    collections: [Page, Journal, Blog, JournalListing, BlogListing],
+    collections: [
+      Page,
+      Journal,
+      Blog,
+      JournalListing,
+      BlogListing,
+      LoveNotesListing,
+    ],
   },
 
   // Search configuration (optional - only enable if TINA_SEARCH_TOKEN is set)
