@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { tinaField } from 'tinacms/dist/react';
-import { TinaMarkdown } from 'tinacms/dist/rich-text';
+import { renderRichTextBlock } from './RichTextBlock';
 
 interface TextBlockData extends Record<string, unknown> {
   title_en?: string;
@@ -23,7 +23,7 @@ export default function TextBlock({ data, lang }: TextBlockProps) {
   const description = lang === 'vi' ? data.description_vi : data.description_en;
   const alignment = data.alignment || 'center';
   const columnLayout = data.columnLayout || '1';
-  
+
   const isTitleLeft = columnLayout === 'title-left';
   const columns = parseInt(columnLayout);
 
@@ -31,40 +31,22 @@ export default function TextBlock({ data, lang }: TextBlockProps) {
     alignment === 'left'
       ? 'text-left'
       : alignment === 'right'
-      ? 'text-right'
-      : 'text-center';
+        ? 'text-right'
+        : 'text-center';
   const columnClass =
     columns === 2
       ? 'md:columns-2'
       : columns === 3
-      ? 'md:columns-3'
-      : '';
-
-  const renderDescription = () => (
-    <TinaMarkdown 
-      content={description}
-      components={{
-        p: (props: any) => (
-          <p className="text-body-md text-text-secondary leading-relaxed mb-2 last:mb-0" {...props} />
-        ),
-        bold: (props: any) => <strong className="font-bold" {...props} />,
-        italic: (props: any) => <em className="italic" {...props} />,
-        a: ({url, children}: any) => (
-          <a className="underline hover:opacity-70 transition-opacity" target="_blank" href={url} rel="noopener noreferrer">
-            {children}
-          </a>
-        ),
-      }}
-    />
-  );
+        ? 'md:columns-3'
+        : '';
 
   return (
     <div className={`max-w-[968px] mx-auto px-6`}>
       {isTitleLeft ? (
         <div className="flex flex-col md:flex-row md:gap-12 md:items-center">
-           {title && (
+          {title && (
             <div className="md:flex-1 flex-shrink-0">
-               <h2
+              <h2
                 className={`text-h3 mb-4 md:mb-0 text-left`}
                 data-tina-field={tinaField(
                   data,
@@ -74,18 +56,18 @@ export default function TextBlock({ data, lang }: TextBlockProps) {
                 {title}
               </h2>
             </div>
-           )}
-           {!!description && (
-            <div 
+          )}
+          {!!description && (
+            <div
               className="md:flex-1"
               data-tina-field={tinaField(
                 data,
                 lang === 'vi' ? 'description_vi' : 'description_en'
               )}
             >
-              {renderDescription()}
+              {renderRichTextBlock(description)}
             </div>
-           )}
+          )}
         </div>
       ) : (
         <>
@@ -108,7 +90,7 @@ export default function TextBlock({ data, lang }: TextBlockProps) {
                 lang === 'vi' ? 'description_vi' : 'description_en'
               )}
             >
-              {renderDescription()}
+              {renderRichTextBlock(description)}
             </div>
           )}
         </>

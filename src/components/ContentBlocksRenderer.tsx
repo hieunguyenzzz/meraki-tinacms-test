@@ -2,11 +2,12 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ImageGalleryBlock from './blocks/ImageGalleryBlock';
-import TwoImagesAsymmetryBlock from './blocks/TwoImagesAsymmetryBlock';
-import TextBlock from './blocks/TextBlock';
+import RichTextBlock from './blocks/RichTextBlock';
 import SpacingBlock from './blocks/SpacingBlock';
-import TextImageBlock from './blocks/TextImageBlock';
 import TestimonialBlock from './blocks/TestimonialBlock';
+import TextBlock from './blocks/TextBlock';
+import TextImageBlock from './blocks/TextImageBlock';
+import TwoImagesAsymmetryBlock from './blocks/TwoImagesAsymmetryBlock';
 
 interface LightboxImage {
   image: string;
@@ -22,6 +23,7 @@ interface ContentBlocksRendererProps {
   typenamePrefix: string;
   indexMap: Record<string, number>;
   onImageClick: (index: number) => void;
+  wrapperClassName?: string;
 }
 
 export function collectLightboxImages(
@@ -77,9 +79,10 @@ export default function ContentBlocksRenderer({
   typenamePrefix,
   indexMap,
   onImageClick,
+  wrapperClassName = '',
 }: ContentBlocksRendererProps) {
   return (
-    <div className='py-16 space-y-16'>
+    <div className={`py-16 space-y-16 ${wrapperClassName}`}>
       {blocks.map((block: any, blockIndex: number) => {
         const blockType = block.__typename?.replace(typenamePrefix, '') || '';
 
@@ -105,6 +108,16 @@ export default function ContentBlocksRenderer({
               blockIndex={blockIndex}
               indexMap={indexMap}
               onImageClick={onImageClick}
+            />
+          );
+        }
+
+        if (blockType === 'RichTextBlock') {
+          return (
+            <RichTextBlock
+              key={blockIndex}
+              data={block}
+              lang={lang}
             />
           );
         }
