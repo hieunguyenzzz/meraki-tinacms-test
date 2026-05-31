@@ -88,6 +88,9 @@ export default function BlogListingClient({
     );
   };
 
+  const getDateIso = (blog: BlogNode) =>
+    new Date(blog.published_date || blog._sys.createdAt).toISOString();
+
   const authorLabel = t({ en: 'Author', vi: 'Tác giả' }, lang);
 
   return (
@@ -125,9 +128,10 @@ export default function BlogListingClient({
               <div data-tina-field={tinaField(page.hero, 'featured_thumbnail')}>
                 <MerakiImage
                   src={page.hero.featured_thumbnail}
-                  alt='Featured'
+                  alt='Blog featured thumbnail'
                   className='w-[260px] h-auto object-cover'
                   width={260}
+                  height={260}
                 />
               </div>
             )}
@@ -210,7 +214,7 @@ export default function BlogListingClient({
                       {/* Author + Date */}
                       <div className='flex items-center justify-between text-body-sm text-text-secondary uppercase tracking-wider mb-4'>
                         <span>{authorLabel}</span>
-                        <time dateTime={blog.published_date}>{formatDate(blog)}</time>
+                        <time dateTime={getDateIso(blog)}>{formatDate(blog)}</time>
                       </div>
 
                       {/* Excerpt */}
