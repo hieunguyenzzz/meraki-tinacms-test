@@ -23,6 +23,17 @@ export const Blog: Collection = {
   label: 'Blog Posts',
   path: 'content/blog',
   format: 'mdx',
+  ui: {
+    router: ({ document }) => {
+      const doc = document as {
+        slug?: string;
+        _sys?: { filename?: string };
+      };
+      const slug = doc.slug || doc._sys?.filename?.replace(/\.mdx$/, '');
+
+      return slug ? `/en/blog/${slug}` : '/en/blog';
+    },
+  },
   fields: [
     {
       type: 'string',
