@@ -13,13 +13,17 @@ interface Props {
 export const revalidate = 3600;
 
 const resolveBlogRelativePath = cache(async (slug: string) => {
-  const bySlug = await client.queries.blogConnection({
-    filter: { slug: { eq: slug } },
-    first: 1,
-  });
+  try {
+    const bySlug = await client.queries.blogConnection({
+      filter: { slug: { eq: slug } },
+      first: 1,
+    });
 
-  const slugMatch = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
-  return slugMatch || `${slug}.mdx`;
+    const slugMatch = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
+    return slugMatch || `${slug}.mdx`;
+  } catch {
+    return `${slug}.mdx`;
+  }
 });
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -57,8 +61,8 @@ export async function generateStaticParams() {
 
     blogList.data.blogConnection.edges?.forEach((edge) => {
       if (edge?.node?.slug) {
-        const slug = edge.node.slug;
-        slugs.push({ lang: 'en', slug }, { lang: 'vi', slug });
+        const blogSlug = edge.node.slug;
+        slugs.push({ lang: 'en', slug: blogSlug }, { lang: 'vi', slug: blogSlug });
       }
     });
 
