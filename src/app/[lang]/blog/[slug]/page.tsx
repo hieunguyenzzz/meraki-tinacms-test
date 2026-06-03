@@ -3,6 +3,7 @@ import { client } from '../../../../../tina/__generated__/client';
 import BlogClient from '../../../../components/BlogClient';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 
 interface Props {
   params: { lang: string; slug: string };
@@ -11,7 +12,7 @@ interface Props {
 // Enable static generation with revalidation
 export const revalidate = 3600;
 
-const resolveBlogRelativePath = async (slug: string) => {
+const resolveBlogRelativePath = cache(async (slug: string) => {
   const bySlug = await client.queries.blogConnection({
     filter: { slug: { eq: slug } },
     first: 1,
@@ -19,15 +20,13 @@ const resolveBlogRelativePath = async (slug: string) => {
 
   const slugMatch = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
   return slugMatch || `${slug}.mdx`;
-};
+});
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, slug } = params;
 
   try {
     const relativePath = await resolveBlogRelativePath(slug);
-    if (!relativePath) throw new Error('Blog not found');
-
     const blogPost = await client.queries.blog({
       relativePath,
     });
@@ -78,10 +77,6 @@ export default async function BlogPostPage({ params }: Props) {
 
   try {
     const relativePath = await resolveBlogRelativePath(slug);
-    if (!relativePath) {
-      notFound();
-    }
-
     const variables = { relativePath };
     const result = await client.queries.blog(variables);
 
