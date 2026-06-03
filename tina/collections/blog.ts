@@ -7,15 +7,37 @@ import { textBlock } from '../templates/text';
 import { textImageBlock } from '../templates/textImage';
 import { twoImagesAsymmetryBlock } from '../templates/twoImagesAsymmetry';
 
+type TextBlockField = NonNullable<typeof textBlock.fields>[number];
+
+const withAlignmentDefault = (
+  field: TextBlockField,
+  defaultValue: 'left' | 'center' | 'right',
+): TextBlockField => {
+  if (field.name !== 'alignment') {
+    return field;
+  }
+
+  const currentUi = 'ui' in field && field.ui ? field.ui : {};
+
+  return {
+    ...field,
+    ui: {
+      ...currentUi,
+      defaultValue,
+    },
+  } as unknown as TextBlockField;
+};
+
 const blogTextBlock = {
   ...textBlock,
-  fields: textBlock.fields?.filter(
-    (field) =>
-      field.name !== 'title_en' &&
-      field.name !== 'title_vi' &&
-      field.name !== 'alignment' &&
-      field.name !== 'columnLayout'
-  ),
+  fields: textBlock.fields
+    ?.filter(
+      (field) =>
+        field.name !== 'title_en' &&
+        field.name !== 'title_vi' &&
+        field.name !== 'columnLayout',
+    )
+    .map((field) => withAlignmentDefault(field, 'left')),
 };
 
 export const Blog: Collection = {

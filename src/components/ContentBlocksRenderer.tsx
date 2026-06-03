@@ -26,6 +26,16 @@ interface ContentBlocksRendererProps {
   wrapperClassName?: string;
 }
 
+const getDefaultTextAlignment = (
+  typenamePrefix: string,
+): 'left' | 'center' => {
+  if (typenamePrefix === 'BlogContent_blocks') {
+    return 'left';
+  }
+
+  return 'center';
+};
+
 export function collectLightboxImages(
   blocks: any[],
   typenamePrefix: string,
@@ -81,6 +91,8 @@ export default function ContentBlocksRenderer({
   onImageClick,
   wrapperClassName = '',
 }: ContentBlocksRendererProps) {
+  const defaultTextAlignment = getDefaultTextAlignment(typenamePrefix);
+
   return (
     <div className={`py-16 space-y-16 ${wrapperClassName}`}>
       {blocks.map((block: any, blockIndex: number) => {
@@ -123,7 +135,14 @@ export default function ContentBlocksRenderer({
         }
 
         if (blockType === 'TextBlock') {
-          return <TextBlock key={blockIndex} data={block} lang={lang} />;
+          return (
+            <TextBlock
+              key={blockIndex}
+              data={block}
+              lang={lang}
+              defaultAlignment={defaultTextAlignment}
+            />
+          );
         }
 
         if (blockType === 'Spacing') {

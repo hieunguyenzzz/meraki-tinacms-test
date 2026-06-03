@@ -16,12 +16,17 @@ interface TextBlockData extends Record<string, unknown> {
 interface TextBlockProps {
   data: TextBlockData;
   lang: string;
+  defaultAlignment?: 'left' | 'center' | 'right';
 }
 
-export default function TextBlock({ data, lang }: TextBlockProps) {
+export default function TextBlock({
+  data,
+  lang,
+  defaultAlignment = 'center',
+}: TextBlockProps) {
   const title = lang === 'vi' ? data.title_vi : data.title_en;
   const description = lang === 'vi' ? data.description_vi : data.description_en;
-  const alignment = data.alignment || 'center';
+  const alignment = data.alignment || defaultAlignment;
   const columnLayout = data.columnLayout || '1';
 
   const isTitleLeft = columnLayout === 'title-left';

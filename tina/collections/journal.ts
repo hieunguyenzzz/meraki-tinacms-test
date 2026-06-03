@@ -8,6 +8,32 @@ import { twoImagesAsymmetryBlock } from "../templates/twoImagesAsymmetry";
 import { testimonialBlock } from "../templates/testimonial";
 import { JOURNAL_LOCATIONS } from "../constants";
 
+type TextBlockField = NonNullable<typeof textBlock.fields>[number];
+
+const withAlignmentDefault = (
+  field: TextBlockField,
+  defaultValue: "left" | "center" | "right",
+): TextBlockField => {
+  if (field.name !== "alignment") {
+    return field;
+  }
+
+  const currentUi = "ui" in field && field.ui ? field.ui : {};
+
+  return {
+    ...field,
+    ui: {
+      ...currentUi,
+      defaultValue,
+    },
+  } as unknown as TextBlockField;
+};
+
+const journalTextBlock = {
+  ...textBlock,
+  fields: textBlock.fields?.map((field) => withAlignmentDefault(field, "center")),
+};
+
 export const Journal: Collection = {
   name: "journal",
   label: "Journal",
@@ -173,7 +199,7 @@ export const Journal: Collection = {
       templates: [
         imageGalleryBlock,
         twoImagesAsymmetryBlock,
-        textBlock,
+        journalTextBlock,
         textImageBlock,
         spacingBlock,
         testimonialBlock,
