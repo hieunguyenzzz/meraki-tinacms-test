@@ -19,9 +19,10 @@ const resolveBlogRelativePath = cache(async (slug: string) => {
       first: 1,
     });
 
-    const slugMatch = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
-    return slugMatch || `${slug}.mdx`;
-  } catch {
+    const matchedRelativePath = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
+    return matchedRelativePath || `${slug}.mdx`;
+  } catch (error) {
+    console.error('Error resolving blog slug:', error);
     return `${slug}.mdx`;
   }
 });
