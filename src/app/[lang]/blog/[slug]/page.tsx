@@ -3,6 +3,7 @@ import { client } from '../../../../../tina/__generated__/client';
 import BlogClient from '../../../../components/BlogClient';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 
 interface Props {
   params: { lang: string; slug: string };
@@ -11,12 +12,31 @@ interface Props {
 // Enable static generation with revalidation
 export const revalidate = 3600;
 
+const resolveBlogRelativePath = cache(async (slug: string) => {
+  try {
+    const bySlug = await client.queries.blogConnection({
+      filter: { slug: { eq: slug } },
+      first: 1,
+    });
+
+    const matchedPath = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
+    if (matchedPath) return matchedPath;
+
+    console.warn(`No blog found by slug "${slug}", falling back to filename path.`);
+    return `${slug}.mdx`;
+  } catch (error) {
+    console.error('Error resolving blog slug:', error);
+    return `${slug}.mdx`;
+  }
+});
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, slug } = params;
 
   try {
+    const relativePath = await resolveBlogRelativePath(slug);
     const blogPost = await client.queries.blog({
-      relativePath: `${slug}.mdx`,
+      relativePath,
     });
 
     const post = blogPost.data.blog;
@@ -44,9 +64,12 @@ export async function generateStaticParams() {
     const slugs: Array<{ lang: string; slug: string }> = [];
 
     blogList.data.blogConnection.edges?.forEach((edge) => {
-      if (edge?.node?._sys.filename) {
-        const slug = edge.node._sys.filename.replace('.mdx', '');
-        slugs.push({ lang: 'en', slug }, { lang: 'vi', slug });
+      const blogSlug =
+        edge?.node?.slug?.trim() ||
+        edge?.node?._sys?.filename?.replace('.mdx', '').trim();
+
+      if (blogSlug) {
+        slugs.push({ lang: 'en', slug: blogSlug }, { lang: 'vi', slug: blogSlug });
       }
     });
 
@@ -63,9 +86,9 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const variables = { relativePath: `${slug}.mdx` };
-
   try {
+    const relativePath = await resolveBlogRelativePath(slug);
+    const variables = { relativePath };
     const result = await client.queries.blog(variables);
 
     if (!result.data.blog.published) {
