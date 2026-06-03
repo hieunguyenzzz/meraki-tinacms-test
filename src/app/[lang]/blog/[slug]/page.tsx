@@ -11,12 +11,32 @@ interface Props {
 // Enable static generation with revalidation
 export const revalidate = 3600;
 
+const resolveBlogRelativePath = async (slug: string) => {
+  const bySlug = await client.queries.blogConnection({
+    filter: { slug: { eq: slug } },
+    first: 1,
+  });
+
+  const slugMatch = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
+  if (slugMatch) return slugMatch;
+
+  const byFilename = await client.queries.blogConnection({
+    filter: { _sys: { filename: { eq: slug } } },
+    first: 1,
+  });
+
+  return byFilename.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, slug } = params;
 
   try {
+    const relativePath = await resolveBlogRelativePath(slug);
+    if (!relativePath) throw new Error('Blog not found');
+
     const blogPost = await client.queries.blog({
-      relativePath: `${slug}.mdx`,
+      relativePath,
     });
 
     const post = blogPost.data.blog;
@@ -44,8 +64,8 @@ export async function generateStaticParams() {
     const slugs: Array<{ lang: string; slug: string }> = [];
 
     blogList.data.blogConnection.edges?.forEach((edge) => {
-      if (edge?.node?._sys.filename) {
-        const slug = edge.node._sys.filename.replace('.mdx', '');
+      if (edge?.node?.slug) {
+        const slug = edge.node.slug;
         slugs.push({ lang: 'en', slug }, { lang: 'vi', slug });
       }
     });
@@ -63,9 +83,13 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const variables = { relativePath: `${slug}.mdx` };
-
   try {
+    const relativePath = await resolveBlogRelativePath(slug);
+    if (!relativePath) {
+      notFound();
+    }
+
+    const variables = { relativePath };
     const result = await client.queries.blog(variables);
 
     if (!result.data.blog.published) {
