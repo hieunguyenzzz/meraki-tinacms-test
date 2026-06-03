@@ -18,14 +18,7 @@ const resolveBlogRelativePath = async (slug: string) => {
   });
 
   const slugMatch = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
-  if (slugMatch) return slugMatch;
-
-  const byFilename = await client.queries.blogConnection({
-    filter: { _sys: { filename: { eq: slug } } },
-    first: 1,
-  });
-
-  return byFilename.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
+  return slugMatch || `${slug}.mdx`;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
