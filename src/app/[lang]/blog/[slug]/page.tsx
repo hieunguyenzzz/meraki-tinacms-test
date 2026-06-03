@@ -20,7 +20,10 @@ const resolveBlogRelativePath = cache(async (slug: string) => {
     });
 
     const resolvedPath = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
-    return resolvedPath || `${slug}.mdx`;
+    if (resolvedPath) return resolvedPath;
+
+    console.warn(`No blog found by slug "${slug}", falling back to filename path.`);
+    return `${slug}.mdx`;
   } catch (error) {
     console.error('Error resolving blog slug:', error);
     return `${slug}.mdx`;
@@ -61,7 +64,10 @@ export async function generateStaticParams() {
     const slugs: Array<{ lang: string; slug: string }> = [];
 
     blogList.data.blogConnection.edges?.forEach((edge) => {
-      const blogSlug = edge?.node?.slug?.trim();
+      const blogSlug =
+        edge?.node?.slug?.trim() ||
+        edge?.node?._sys.filename.replace('.mdx', '').trim();
+
       if (blogSlug) {
         slugs.push({ lang: 'en', slug: blogSlug }, { lang: 'vi', slug: blogSlug });
       }
