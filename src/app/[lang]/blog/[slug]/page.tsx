@@ -19,8 +19,8 @@ const resolveBlogRelativePath = cache(async (slug: string) => {
       first: 1,
     });
 
-    const matchedRelativePath = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
-    return matchedRelativePath || `${slug}.mdx`;
+    const resolvedPath = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
+    return resolvedPath || `${slug}.mdx`;
   } catch (error) {
     console.error('Error resolving blog slug:', error);
     return `${slug}.mdx`;
@@ -61,8 +61,8 @@ export async function generateStaticParams() {
     const slugs: Array<{ lang: string; slug: string }> = [];
 
     blogList.data.blogConnection.edges?.forEach((edge) => {
-      if (edge?.node?.slug) {
-        const blogSlug = edge.node.slug;
+      const blogSlug = edge?.node?.slug?.trim();
+      if (blogSlug) {
         slugs.push({ lang: 'en', slug: blogSlug }, { lang: 'vi', slug: blogSlug });
       }
     });
