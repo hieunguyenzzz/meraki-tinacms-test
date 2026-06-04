@@ -241,9 +241,10 @@ export default function LoveNotesClient({
                                                     ? 'lg:col-span-7 lg:col-start-6'
                                                     : 'lg:col-span-7 lg:col-start-1'
                                             }>
-                                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 lg:gap-8'>
+                                            <div className='relative'>
+                                                {/* Image base layer */}
                                                 <div data-tina-field={tinaField(note, 'image')}>
-                                                    <div className='relative overflow-hidden'>
+                                                    <div className='relative overflow-visible'>
                                                         <MerakiImage
                                                             src={
                                                                 note?.image ||
@@ -260,9 +261,13 @@ export default function LoveNotesClient({
                                                     </div>
                                                 </div>
 
+                                                {/* Note card overlay */}
                                                 {fullNote && (
                                                     <p
-                                                        className='text-body-md text-text-secondary leading-relaxed bg-background-1 bg-paper p-6 md:p-8'
+                                                        className={`absolute w-[446px] max-w-[calc(100vw-2rem)] z-10 text-body-md text-text-secondary leading-relaxed bg-background-1 bg-paper p-6 md:p-8 ${isOddVisualRow
+                                                            ? 'top-[50%] left-[50%]'
+                                                            : 'top-[50%] right-[50%]'
+                                                            }`}
                                                         data-tina-field={tinaField(
                                                             note,
                                                             lang === 'en'
