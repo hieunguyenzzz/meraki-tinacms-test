@@ -156,13 +156,18 @@ export default function LoveNotesClient({
                             const hasRightName = Boolean(rightName);
                             const isOpen = Boolean(openNotes[index]);
                             const notePanelId = `love-note-panel-${index}`;
+                            const isOddVisualRow = (index + 1) % 2 === 1;
 
                             return (
                                 <article
                                     key={`${coupleNames || 'note'}-${index}`}
                                     className='grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start'>
                                     <div
-                                        className='lg:col-span-5'
+                                        className={
+                                            isOddVisualRow
+                                                ? 'lg:col-span-5 lg:col-start-1'
+                                                : 'lg:col-span-5 lg:col-start-8'
+                                        }
                                         data-tina-field={tinaField(
                                             note,
                                             lang === 'en' ? 'couple_names_en' : 'couple_names_vi',
@@ -231,7 +236,11 @@ export default function LoveNotesClient({
                                     {isOpen && (
                                         <div
                                             id={notePanelId}
-                                            className='lg:col-span-7'>
+                                            className={
+                                                isOddVisualRow
+                                                    ? 'lg:col-span-7 lg:col-start-6'
+                                                    : 'lg:col-span-7 lg:col-start-1'
+                                            }>
                                             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6 lg:gap-8'>
                                                 <div data-tina-field={tinaField(note, 'image')}>
                                                     <div className='relative overflow-hidden'>
