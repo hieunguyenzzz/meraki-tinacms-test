@@ -119,7 +119,7 @@ export default function LoveNotesClient({
 
             <section className='py-16 md:py-24'>
                 <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
-                    <div className='space-y-20 md:space-y-24'>
+                    <div className='space-y-32 md:space-y-32'>
                         {notes.map((note: any, index: number) => {
                             const coupleNames = t(
                                 {
@@ -166,7 +166,7 @@ export default function LoveNotesClient({
                                         className={
                                             isOddVisualRow
                                                 ? 'lg:col-span-5 lg:col-start-1'
-                                                : 'lg:col-span-5 lg:col-start-8'
+                                                : 'lg:col-span-5 lg:col-start-7'
                                         }
                                         data-tina-field={tinaField(
                                             note,
@@ -190,7 +190,7 @@ export default function LoveNotesClient({
                                                                 ? 'Show love note details'
                                                                 : 'Hien chi tiet thu tinh'
                                                     }
-                                                    className='shrink-0 transition-transform duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/40 rounded-sm'>
+                                                    className='shrink-0 transition-transform duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/40 rounded-sm flex w-[56px] h-[50px] items-end justify-center'>
                                                     <img
                                                         src={
                                                             isOpen
@@ -198,9 +198,9 @@ export default function LoveNotesClient({
                                                                 : '/images/icons/envelope-closed.png'
                                                         }
                                                         alt='Envelope toggle'
-                                                        width={64}
+                                                        width={isOpen ? 48 : 64}
                                                         height={48}
-                                                        className='w-14 md:w-16 h-auto'
+                                                        className={`w-[${isOpen ? 48 : 64}px] h-auto`}
                                                     />
                                                 </button>
 
@@ -238,8 +238,8 @@ export default function LoveNotesClient({
                                             id={notePanelId}
                                             className={
                                                 isOddVisualRow
-                                                    ? 'lg:col-span-7 lg:col-start-6'
-                                                    : 'lg:col-span-7 lg:col-start-1'
+                                                    ? 'lg:col-span-6 lg:col-start-7'
+                                                    : 'lg:col-span-6 lg:col-start-1'
                                             }>
                                             <div className='relative'>
                                                 {/* Image base layer */}
@@ -254,28 +254,70 @@ export default function LoveNotesClient({
                                                                 coupleNames ||
                                                                 'Couple note image'
                                                             }
-                                                            width={720}
-                                                            height={900}
-                                                            className='w-full h-auto object-cover'
+                                                            width={558}
+                                                            height={592}
+                                                            className='h-auto object-cover'
                                                         />
                                                     </div>
                                                 </div>
 
                                                 {/* Note card overlay */}
                                                 {fullNote && (
-                                                    <p
-                                                        className={`absolute w-[446px] max-w-[calc(100vw-2rem)] z-10 text-body-md text-text-secondary leading-relaxed bg-background-1 bg-paper p-6 md:p-8 ${isOddVisualRow
+                                                    <div
+                                                        className={`absolute w-[446px] max-w-[calc(100vw-2rem)] z-10 bg-background-1 bg-paper p-6 md:p-8 text-center ${isOddVisualRow
                                                             ? 'top-[50%] left-[50%]'
                                                             : 'top-[50%] right-[50%]'
-                                                            }`}
-                                                        data-tina-field={tinaField(
-                                                            note,
-                                                            lang === 'en'
-                                                                ? 'note_en'
-                                                                : 'note_vi',
-                                                        )}>
-                                                        {fullNote}
-                                                    </p>
+                                                            }`}>
+                                                        {/* Couple Names */}
+                                                        <h3
+                                                            className='text-h3 uppercase tracking-wide text-text-primary mb-2'
+                                                            data-tina-field={tinaField(
+                                                                note,
+                                                                lang === 'en' ? 'couple_names_en' : 'couple_names_vi',
+                                                            )}>
+                                                            <span>{leftName}</span>
+                                                            <span className='lowercase text-body-lg'> & </span>
+                                                            <span>{rightName}</span>
+                                                        </h3>
+
+                                                        {/* Excerpt in handwriting font */}
+                                                        {excerpt && (
+                                                            <p
+                                                                className='text-handwriting italic text-text-primary mb-4 leading-relaxed'
+                                                                data-tina-field={tinaField(
+                                                                    note,
+                                                                    lang === 'en' ? 'excerpt_en' : 'excerpt_vi',
+                                                                )}>
+                                                                {excerpt}
+                                                            </p>
+                                                        )}
+
+                                                        {/* Full Note Content */}
+                                                        <p
+                                                            className='text-body-sm text-text-secondary leading-relaxed'
+                                                            data-tina-field={tinaField(
+                                                                note,
+                                                                lang === 'en'
+                                                                    ? 'note_en'
+                                                                    : 'note_vi',
+                                                            )}>
+                                                            {fullNote}
+                                                        </p>
+
+                                                        {/* Wedding Location */}
+                                                        {location && (
+                                                            <p
+                                                                className='text-body-md uppercase tracking-[0.16em] text-text-secondary mt-8 mb-4'
+                                                                data-tina-field={tinaField(
+                                                                    note,
+                                                                    lang === 'en'
+                                                                        ? 'wedding_location_en'
+                                                                        : 'wedding_location_vi',
+                                                                )}>
+                                                                {lang === 'en' ? 'Wedding in ' : 'To chuc tai '} {location}
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
