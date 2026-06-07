@@ -74,8 +74,8 @@ export default function BlogClient({
             )}
           </div>
 
-          <div className='bg-background-base flex items-center justify-center px-8 py-14 md:px-14 md:py-20 lg:px-16'>
-            <div className='w-full max-w-[560px] text-center'>
+          <div className='bg-background-base flex items-center justify-center px-8 py-14 md:px-10 md:py-20'>
+            <div className='w-full text-center'>
               {blog.categories && blog.categories.length > 0 && (
                 <div className='mb-6'>
                   <p className='text-body-md text-text-secondary tracking-[0.16em] border-t-text-primary border-t-[1px] inline-block py-1 border-b-text-primary border-b-[1px]'>
@@ -103,7 +103,7 @@ export default function BlogClient({
 
               {excerpt && (
                 <p
-                  className='mt-12 text-body-lg text-text-secondary leading-relaxed mx-auto max-w-[520px]'
+                  className='mt-12 text-body-lg text-text-secondary leading-relaxed mx-auto text-justify'
                   data-tina-field={tinaField(
                     blog,
                     lang === 'en' ? 'excerpt_en' : 'excerpt_vi',
@@ -124,7 +124,7 @@ export default function BlogClient({
           typenamePrefix='BlogContent_blocks'
           indexMap={indexMap}
           onImageClick={() => { }}
-          wrapperClassName='py-16 space-y-4'
+          wrapperClassName='py-16 space-y-4 text-justify'
         />
       )}
 

@@ -8,10 +8,11 @@ import { textImageBlock } from '../templates/textImage';
 import { twoImagesAsymmetryBlock } from '../templates/twoImagesAsymmetry';
 
 type TextBlockField = NonNullable<typeof textBlock.fields>[number];
+type TextImageBlockField = NonNullable<typeof textImageBlock.fields>[number];
 
 const withAlignmentDefault = (
   field: TextBlockField,
-  defaultValue: 'left' | 'center' | 'right',
+  defaultValue: 'left' | 'center' | 'right' | 'justify',
 ): TextBlockField => {
   if (field.name !== 'alignment') {
     return field;
@@ -38,6 +39,20 @@ const blogTextBlock = {
         field.name !== 'columnLayout',
     )
     .map((field) => withAlignmentDefault(field, 'left')),
+};
+
+const blogTextImageBlock = {
+  ...textImageBlock,
+  ui: {
+    ...textImageBlock.ui,
+    itemProps: () => ({
+      label: 'Text + Image Block',
+    }),
+  },
+  fields: textImageBlock.fields?.filter(
+    (field: TextImageBlockField) =>
+      field.name !== 'title_en' && field.name !== 'title_vi',
+  ),
 };
 
 export const Blog: Collection = {
@@ -102,7 +117,7 @@ export const Blog: Collection = {
       templates: [
         blogTextBlock,
         richTextBlock,
-        textImageBlock,
+        blogTextImageBlock,
         imageGalleryBlock,
         twoImagesAsymmetryBlock,
         spacingBlock,

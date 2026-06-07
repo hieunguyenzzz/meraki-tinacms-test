@@ -16,7 +16,7 @@ interface TextBlockData extends Record<string, unknown> {
 interface TextBlockProps {
   data: TextBlockData;
   lang: string;
-  defaultAlignment?: 'left' | 'center' | 'right';
+  defaultAlignment?: 'left' | 'center' | 'right' | 'justify';
 }
 
 export default function TextBlock({
@@ -37,7 +37,9 @@ export default function TextBlock({
       ? 'text-left'
       : alignment === 'right'
         ? 'text-right'
-        : 'text-center';
+        : alignment === 'justify'
+          ? 'text-justify'
+          : 'text-center';
   const columnClass =
     columns === 2
       ? 'md:columns-2'
