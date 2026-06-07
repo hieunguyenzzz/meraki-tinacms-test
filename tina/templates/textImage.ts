@@ -1,5 +1,4 @@
 import { Template } from 'tinacms';
-import { CustomImageField } from '../fields/CustomImageField';
 
 export const textImageBlock: Template = {
   name: 'textImageBlock',
@@ -59,9 +58,6 @@ export const textImageBlock: Template = {
       type: 'image',
       name: 'image',
       label: 'Image',
-      ui: {
-        component: CustomImageField,
-      },
     },
   ],
 };

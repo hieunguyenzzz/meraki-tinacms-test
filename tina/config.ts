@@ -1,5 +1,6 @@
 import { MdOutlinePhotoLibrary } from 'react-icons/md';
 import { defineConfig } from 'tinacms';
+import type { Field, FieldPlugin } from 'tinacms';
 import { Blog } from './collections/blog';
 import { BlogListing } from './collections/blog-listing';
 import { Journal } from './collections/journal';
@@ -7,9 +8,28 @@ import { JournalListing } from './collections/journal-listing';
 import { LoveNotesListing } from './collections/love-notes-listing';
 import { Page } from './collections/page';
 import { MediaManagerScreen } from './components/MediaManagerScreen';
+import { CustomImageField } from './fields/CustomImageField';
+
+type RequiredField = Field & {
+  required?: boolean;
+};
+
+const CustomImageFieldPlugin: FieldPlugin = {
+  __type: 'field',
+  name: 'image',
+  Component: CustomImageField as unknown as FieldPlugin['Component'],
+  parse: (value?: string) => value || '',
+  validate(value, _values, _meta, field) {
+    if ((field as RequiredField).required && !value) {
+      return 'Required';
+    }
+  },
+};
 
 export const config = defineConfig({
   cmsCallback: (cms) => {
+    cms.plugins.add(CustomImageFieldPlugin);
+
     // Remove the built-in "Media Manager" screen plugin
     cms.plugins.getType('screen').remove('Media Manager');
 

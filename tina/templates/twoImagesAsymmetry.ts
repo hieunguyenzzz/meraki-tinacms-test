@@ -1,5 +1,4 @@
 import type { Template } from "tinacms";
-import { CustomImageField } from "../fields/CustomImageField";
 
 export const twoImagesAsymmetryBlock: Template = {
   name: "twoImagesAsymmetry",
@@ -14,17 +13,11 @@ export const twoImagesAsymmetryBlock: Template = {
       type: "image",
       name: "image_left",
       label: "Left Image",
-      ui: {
-        component: CustomImageField,
-      },
     },
     {
       type: "image",
       name: "image_right",
       label: "Right Image",
-      ui: {
-        component: CustomImageField,
-      },
     },
     {
       type: "string",

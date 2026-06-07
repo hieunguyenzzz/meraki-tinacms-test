@@ -1,6 +1,5 @@
 import type { Collection } from 'tinacms';
 import { JOURNAL_LOCATIONS } from '../constants';
-import { CustomImageField } from '../fields/CustomImageField';
 
 export const JournalListing: Collection = {
   label: 'Journal Listing Page',
@@ -49,17 +48,11 @@ export const JournalListing: Collection = {
           type: 'image',
           name: 'background_image',
           label: 'Background Image',
-          ui: {
-            component: CustomImageField,
-          },
         },
         {
           type: 'image',
           name: 'featured_thumbnail',
           label: 'Featured Thumbnail',
-          ui: {
-            component: CustomImageField,
-          },
         },
         {
           type: 'string',

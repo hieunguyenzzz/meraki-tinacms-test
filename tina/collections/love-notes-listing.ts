@@ -1,5 +1,4 @@
 import type { Collection } from 'tinacms';
-import { CustomImageField } from '../fields/CustomImageField';
 
 export const LoveNotesListing: Collection = {
   label: 'Love Notes Page',
@@ -29,18 +28,12 @@ export const LoveNotesListing: Collection = {
           name: 'background_image',
           label: 'Hero Background Image',
           required: true,
-          ui: {
-            component: CustomImageField,
-          },
         },
         {
           type: 'image',
           name: 'featured_image',
           label: 'Hero Featured Image',
           required: true,
-          ui: {
-            component: CustomImageField,
-          },
         },
         {
           type: 'string',
@@ -101,9 +94,6 @@ export const LoveNotesListing: Collection = {
           name: 'image',
           label: 'Couple Image',
           required: true,
-          ui: {
-            component: CustomImageField,
-          },
         },
         {
           type: 'string',
@@ -163,9 +153,6 @@ export const LoveNotesListing: Collection = {
           name: 'images',
           label: 'Gallery Images',
           list: true,
-          ui: {
-            component: CustomImageField,
-          },
         },
       ],
     },

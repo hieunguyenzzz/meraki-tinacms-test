@@ -1,6 +1,5 @@
 import { richTextBlock } from 'tina/templates/rich-text';
 import { Collection } from 'tinacms';
-import { CustomImageField } from '../fields/CustomImageField';
 import { imageGalleryBlock } from '../templates/ImageGallery';
 import { spacingBlock } from '../templates/spacing';
 import { textBlock } from '../templates/text';
@@ -88,9 +87,6 @@ export const Blog: Collection = {
       type: 'image',
       name: 'featured_image',
       label: 'Featured Image',
-      ui: {
-        component: CustomImageField,
-      },
     },
     {
       type: 'string',

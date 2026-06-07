@@ -1,10 +1,28 @@
 import React from "react";
 import { wrapFieldsWithMeta } from "tinacms";
+import type { InputFieldType, TinaField } from "tinacms";
 import { MediaPicker } from "../components/MediaPicker";
 import { getThumborUrl } from "../media/S3MediaStore";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const CustomImageField = wrapFieldsWithMeta(({ input }: any) => {
+type CustomImageFieldProps = InputFieldType<object, object>;
+type TinaImageComponentProps = {
+  field: TinaField & { namespace: string[] };
+  input: {
+    name: string;
+    onBlur: (event?: React.FocusEvent<string>) => void;
+    onChange: (event: React.ChangeEvent<string>) => void;
+    onFocus: (event?: React.FocusEvent<string>) => void;
+    type?: string;
+    value: string | string[];
+  };
+  meta: {
+    active?: boolean;
+    dirty?: boolean;
+    error?: unknown;
+  };
+};
+
+const CustomImageFieldComponent = wrapFieldsWithMeta<object, object>(({ input }: CustomImageFieldProps) => {
   const [showPicker, setShowPicker] = React.useState(false);
 
   const handleInsert = (selectedImages: Array<{ src: string; width: number; height: number }>) => {
@@ -44,6 +62,7 @@ export const CustomImageField = wrapFieldsWithMeta(({ input }: any) => {
         </div>
       ) : (
         <button
+          type="button"
           onClick={() => setShowPicker(true)}
           className="w-full h-32 border-2 border-dashed border-gray-300 rounded flex flex-col items-center justify-center text-gray-500 hover:border-blue-500 hover:text-blue-500 transition-colors"
         >
@@ -60,3 +79,7 @@ export const CustomImageField = wrapFieldsWithMeta(({ input }: any) => {
     </div>
   );
 });
+
+export const CustomImageField = CustomImageFieldComponent as unknown as (
+  props: TinaImageComponentProps
+) => React.ReactNode;
