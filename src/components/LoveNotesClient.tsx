@@ -238,7 +238,7 @@ export default function LoveNotesClient({
                                         <div className='relative'>
                                             {/* Image base layer */}
                                             <div data-tina-field={tinaField(note, 'image')}>
-                                                <div className='relative overflow-visible'>
+                                                <div className={`relative overflow-visible animate__animated animate__faster ${isOpen ? isRightAligned ? 'animate__fadeInRight' : 'animate__fadeInLeft' : ''}`}>
                                                     <MerakiImage
                                                         src={
                                                             note?.image ||
@@ -258,7 +258,7 @@ export default function LoveNotesClient({
                                             {/* Note card overlay */}
                                             {fullNote && (
                                                 <div
-                                                    className={`absolute z-10 w-[446px] max-w-[calc(100vw-2rem)] bg-background-1 bg-paper p-6 text-center md:p-8 ${!isRightAligned
+                                                    className={`absolute animate__animated animate__faster ${isOpen ? isRightAligned ? 'animate__fadeInLeft' : 'animate__fadeInRight' : ''} z-10 w-[446px] max-w-[calc(100vw-2rem)] bg-background-1 bg-paper p-6 text-center md:p-8 ${!isRightAligned
                                                         ? 'top-[50%] left-[50%]'
                                                         : 'top-[50%] right-[50%]'
                                                         }`}>

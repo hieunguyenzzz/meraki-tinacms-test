@@ -23,6 +23,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@tinacms/datalayer": "^1.4.0",
     "@types/pg": "^8.15.6",
+    "animate.css": "^4.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "imagesloaded": "^5.0.0",
