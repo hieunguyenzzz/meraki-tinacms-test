@@ -269,6 +269,7 @@
     position: relative;
   }
   .bg-paper:before {
+    pointer-events: none;
     content: '';
     position: absolute;
     width: 100%;
