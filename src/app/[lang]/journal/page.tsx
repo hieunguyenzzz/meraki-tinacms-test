@@ -40,43 +40,27 @@ export default async function JournalPage({ params }: Props) {
       },
     });
 
-    // Filter and Sort
-    const edges = (journalList.data.journalConnection.edges || [])
-      .filter((edge): edge is NonNullable<typeof edge> => edge?.node != null);
-
-    journals = edges.sort((a, b) => {
-      const nodeA = a.node as any;
-      const nodeB = b.node as any;
-
-      // 1. Priority check (Ascending: 1 -> 100)
-      const priorityA = nodeA.listing_priority;
-      const priorityB = nodeB.listing_priority;
-
-      // Both have priority -> Compare them
-      if (typeof priorityA === 'number' && typeof priorityB === 'number') {
-        return priorityA - priorityB;
+    // Map edges and attach fileDate
+    const getFileDate = (relativePath: string) => {
+      try {
+        const fullPath = path.join(process.cwd(), 'content/journal', relativePath);
+        const stats = fs.statSync(fullPath);
+        return stats.birthtimeMs;
+      } catch (e) {
+        return 0;
       }
-      // Only A has priority -> A comes first
-      if (typeof priorityA === 'number') return -1;
-      // Only B has priority -> B comes first
-      if (typeof priorityB === 'number') return 1;
+    };
 
-      // 2. Date check (Filesystem birthtime - Descending ie Newest First)
-      const getFileDate = (relativePath: string) => {
-        try {
-          const fullPath = path.join(process.cwd(), 'content/journal', relativePath);
-          const stats = fs.statSync(fullPath);
-          return stats.birthtimeMs;
-        } catch (e) {
-          return 0;
-        }
-      };
-
-      const dateA = getFileDate(nodeA._sys.relativePath);
-      const dateB = getFileDate(nodeB._sys.relativePath);
-
-      return dateB - dateA;
-    });
+    journals = (journalList.data.journalConnection.edges || [])
+      .filter((edge): edge is NonNullable<typeof edge> => edge?.node != null)
+      .map((edge) => {
+        const node = edge.node as any;
+        const relativePath = node._sys?.relativePath || '';
+        return {
+          ...edge,
+          fileDate: getFileDate(relativePath),
+        };
+      });
   } catch (error) {
     console.error('Error fetching journals:', error);
     // journals will remain empty array

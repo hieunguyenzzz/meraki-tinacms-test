@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -48,15 +49,77 @@ export default function JournalListingClient({
     ];
   }, [listing, lang]);
 
-  // Filter journals by location
+  // Filter and sort journals by location and custom ordering
   const filteredJournals = useMemo(() => {
+    // 1. Filter pool by location
+    const pool =
+      activeLocation === 'All'
+        ? journals
+        : journals.filter(
+            (journal) => journal.node?.location === activeLocation
+          );
+
+    // 2. Extract saved order array for active location
+    const ordering = (listing as any)?.journal_ordering;
+    let customOrderSlugs: string[] = [];
+
     if (activeLocation === 'All') {
-      return journals;
+      customOrderSlugs =
+        (ordering?.order_all?.filter(Boolean) as string[]) || [];
+    } else {
+      const locObj = (ordering?.location_orders || []).find(
+        (l: any) => l?.location === activeLocation
+      );
+      customOrderSlugs = (locObj?.order?.filter(Boolean) as string[]) || [];
     }
-    return journals.filter(
-      (journal) => journal.node?.location === activeLocation
+
+    // Map for fast index lookup
+    const slugOrderMap = new Map<string, number>();
+    customOrderSlugs.forEach((slug, index) => {
+      slugOrderMap.set(slug, index);
+    });
+
+    const explicitlyOrdered: typeof pool = [];
+    const unlisted: typeof pool = [];
+
+    pool.forEach((item) => {
+      const slug = item.node?.slug || item.node?._sys?.filename || '';
+      const relativePath = item.node?._sys?.relativePath || '';
+
+      let orderIdx = slugOrderMap.get(slug);
+      if (orderIdx === undefined && relativePath) {
+        orderIdx = slugOrderMap.get(relativePath);
+      }
+
+      if (orderIdx !== undefined) {
+        explicitlyOrdered.push(item);
+      } else {
+        unlisted.push(item);
+      }
+    });
+
+    // Sort explicitly ordered items according to position in customOrderSlugs
+    explicitlyOrdered.sort((a, b) => {
+      const slugA = a.node?.slug || a.node?._sys?.filename || '';
+      const slugB = b.node?.slug || b.node?._sys?.filename || '';
+      const idxA =
+        slugOrderMap.get(slugA) ??
+        slugOrderMap.get(a.node?._sys?.relativePath || '') ??
+        9999;
+      const idxB =
+        slugOrderMap.get(slugB) ??
+        slugOrderMap.get(b.node?._sys?.relativePath || '') ??
+        9999;
+      return idxA - idxB;
+    });
+
+    // Sort unlisted items by fileDate descending (newest date first)
+    unlisted.sort(
+      (a, b) => ((b as any).fileDate || 0) - ((a as any).fileDate || 0)
     );
-  }, [activeLocation, journals]);
+
+    return [...explicitlyOrdered, ...unlisted];
+  }, [activeLocation, journals, listing]);
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredJournals.length / itemsPerPage);

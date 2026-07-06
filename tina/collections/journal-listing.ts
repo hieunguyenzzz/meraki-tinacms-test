@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Collection } from 'tinacms';
 import { JOURNAL_LOCATIONS } from '../constants';
+import { JournalOrderField } from '../fields/JournalOrderField';
 
 export const JournalListing: Collection = {
   label: 'Journal Listing Page',
@@ -89,6 +91,42 @@ export const JournalListing: Collection = {
           label: 'Location Tag',
           options: JOURNAL_LOCATIONS,
           required: true,
+        },
+      ],
+    },
+    {
+      type: 'object',
+      name: 'journal_ordering',
+      label: 'Journal Listing Ordering',
+      description: 'Arrange custom display order for All tab and each location filter tab.',
+      ui: {
+        component: JournalOrderField as any,
+      },
+      fields: [
+        {
+          type: 'string',
+          name: 'order_all',
+          label: 'Order for All Tab',
+          list: true,
+        },
+        {
+          type: 'object',
+          name: 'location_orders',
+          label: 'Location Orders',
+          list: true,
+          fields: [
+            {
+              type: 'string',
+              name: 'location',
+              label: 'Location',
+            },
+            {
+              type: 'string',
+              name: 'order',
+              label: 'Order Slugs',
+              list: true,
+            },
+          ],
         },
       ],
     },
