@@ -1,10 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useMemo, useState } from 'react';
 import type { InputFieldType } from 'tinacms';
-import { wrapFieldsWithMeta } from 'tinacms';
+import { wrapFieldsWithMeta, useCMS } from 'tinacms';
 import { client } from '../__generated__/client';
 import { JOURNAL_LOCATIONS } from '../constants';
 import { getThumborUrl } from '../media/S3MediaStore';
+
+// Raw GraphQL query for fetching journals.
+// cms.api.tina only exposes .request() (not .queries), so we need this.
+const JOURNAL_CONNECTION_QUERY = `
+  query journalConnection($first: Float) {
+    journalConnection(first: $first) {
+      edges {
+        node {
+          _sys {
+            filename
+            relativePath
+          }
+          slug
+          couple_names
+          location
+          featured_image
+          published
+        }
+      }
+    }
+  }
+`;
 
 export interface LocationOrder {
   location: string;
@@ -28,6 +50,7 @@ type JournalOrderFieldProps = InputFieldType<object, object>;
 
 const JournalOrderFieldComponent = wrapFieldsWithMeta<object, object>(
   ({ input }) => {
+    const cms = useCMS();
     const [journals, setJournals] = useState<JournalItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -43,26 +66,42 @@ const JournalOrderFieldComponent = wrapFieldsWithMeta<object, object>(
       return { order_all: [], location_orders: [] };
     }, [input.value]);
 
-    // Fetch published journals on mount
-    // Uses the generated client which has .queries and is configured
-    // with the correct GraphQL URL at build time (local or cloud).
-    // Fetches all journals without GraphQL-side filter (filter requires
-    // Tina search indexer on cloud), then filters published in JS.
+    // Fetch published journals on mount.
+    // In production the generated client points to localhost:4001 (broken),
+    // so we prefer cms.api.tina.request() which uses the runtime endpoint.
+    // In local dev, cms.api.tina.request() also works (same local server).
+    // Falls back to generated client.queries only if cms is unavailable.
     useEffect(() => {
       let isMounted = true;
       async function loadJournals() {
         try {
-          const res = await client.queries.journalConnection({
-            first: 250,
-          });
+          let edges: any[] = [];
+
+          const tinaApi = cms?.api?.tina;
+          if (tinaApi && typeof tinaApi.request === 'function') {
+            // Use runtime CMS client (works in both local and production)
+            const res: any = await tinaApi.request(
+              JOURNAL_CONNECTION_QUERY,
+              { variables: { first: 250 } }
+            );
+            
+            // tinaApi.request might return the data directly or wrapped in { data: ... }
+            const responseData = res?.data || res;
+            edges = responseData?.journalConnection?.edges || [];
+          } else {
+            // Fallback: generated client (local dev only)
+            const res = await client.queries.journalConnection({
+              first: 250,
+            });
+            edges = res?.data?.journalConnection?.edges || [];
+          }
 
           if (!isMounted) return;
 
-          const edges = res?.data?.journalConnection?.edges || [];
           const items: JournalItem[] = edges
-            .filter((e): e is NonNullable<typeof e> => e?.node != null)
-            .map((e) => {
-              const node = e.node as any;
+            .filter((e: any) => e?.node != null)
+            .map((e: any) => {
+              const node = e.node;
               return {
                 slug: node.slug || node._sys?.filename || '',
                 couple_names: node.couple_names || 'Untitled Journal',
@@ -89,7 +128,7 @@ const JournalOrderFieldComponent = wrapFieldsWithMeta<object, object>(
       return () => {
         isMounted = false;
       };
-    }, []);
+    }, [cms]);
 
     // Filter locations present in journals + default constant locations
     const availableLocations = useMemo(() => {
