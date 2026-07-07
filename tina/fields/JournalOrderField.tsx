@@ -30,6 +30,7 @@ const JournalOrderFieldComponent = wrapFieldsWithMeta<object, object>(
   ({ input }) => {
     const [journals, setJournals] = useState<JournalItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<string>('All');
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -43,12 +44,16 @@ const JournalOrderFieldComponent = wrapFieldsWithMeta<object, object>(
     }, [input.value]);
 
     // Fetch published journals on mount
+    // Uses the generated client which has .queries and is configured
+    // with the correct GraphQL URL at build time (local or cloud).
+    // Fetches all journals without GraphQL-side filter (filter requires
+    // Tina search indexer on cloud), then filters published in JS.
     useEffect(() => {
       let isMounted = true;
       async function loadJournals() {
         try {
           const res = await client.queries.journalConnection({
-            filter: { published: { eq: true } },
+            first: 250,
           });
 
           if (!isMounted) return;
@@ -64,12 +69,17 @@ const JournalOrderFieldComponent = wrapFieldsWithMeta<object, object>(
                 location: node.location || 'Unknown',
                 featured_image: node.featured_image || '',
                 relativePath: node._sys?.relativePath || '',
+                published: node.published,
               };
-            });
+            })
+            .filter((item: any) => item.published === true);
 
           setJournals(items);
-        } catch (err) {
+        } catch (err: any) {
           console.error('Failed to load journals for reordering field:', err);
+          if (isMounted) {
+            setError(err?.message || String(err));
+          }
         } finally {
           if (isMounted) setLoading(false);
         }
@@ -254,6 +264,14 @@ const JournalOrderFieldComponent = wrapFieldsWithMeta<object, object>(
       return (
         <div className='p-4 bg-gray-50 rounded border border-gray-200 text-center text-sm text-gray-500'>
           Loading journals for reordering...
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className='p-4 bg-red-50 rounded border border-red-200 text-center text-sm text-red-600 font-medium'>
+          Error loading journals: {error}
         </div>
       );
     }
