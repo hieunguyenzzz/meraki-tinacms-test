@@ -3,6 +3,7 @@ import { defineConfig } from 'tinacms';
 import type { Field, FieldPlugin } from 'tinacms';
 import { Blog } from './collections/blog';
 import { BlogListing } from './collections/blog-listing';
+import { About } from './collections/about';
 import { Journal } from './collections/journal';
 import { JournalListing } from './collections/journal-listing';
 import { LoveNotesListing } from './collections/love-notes-listing';
@@ -66,6 +67,7 @@ export const config = defineConfig({
   schema: {
     collections: [
       Page,
+      About,
       Journal,
       Blog,
       JournalListing,

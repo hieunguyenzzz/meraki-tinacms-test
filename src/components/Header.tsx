@@ -11,7 +11,7 @@ const navItems = [
   { path: '', key: 'home', en: 'Home', vi: 'Trang chủ' },
   { path: '/journal', key: 'journal', en: 'Journal', vi: 'Nhật ký' },
   { path: '/service', key: 'service', en: 'Service', vi: 'Dịch vụ' },
-  { path: '/about-us', key: 'about', en: 'About Us', vi: 'Gặp gỡ' },
+  { path: '/about', key: 'about', en: 'About Us', vi: 'Gặp gỡ' },
   { path: '/blog', key: 'blog', en: 'Blogs', vi: 'Chia sẻ' },
   { path: '/love-notes', key: 'loveNotes', en: 'Love Notes', vi: 'Tri ân' },
   { path: '/lets-connect', key: 'connect', en: "Let's Connect", vi: 'Liên hệ' },
@@ -51,18 +51,18 @@ export default function Header({ lang }: HeaderProps) {
   };
 
   return (
-    <header className='sticky top-0 z-50 bg-background-base shadow-sm flex items-center justify-between px-6'>
+    <header className="sticky top-0 z-50 bg-background-base shadow-sm flex items-center justify-between px-6">
       {/* Logo */}
-      <div className='flex-shrink-0'>
-        <a href={`/${lang}`} className='block'>
-          <img src='/logo.svg' alt='Meraki' className='h-8 w-auto' />
+      <div className="flex-shrink-0">
+        <a href={`/${lang}`} className="block">
+          <img src="/logo.svg" alt="Meraki" className="h-8 w-auto" />
         </a>
       </div>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='flex justify-between items-center h-16'>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
           {/* Navigation */}
-          <nav className='hidden md:block'>
-            <div className='ml-10 flex items-baseline space-x-4'>
+          <nav className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
               {navItems.map((item) => {
                 const active = isActive(item.path);
                 return (
@@ -73,7 +73,8 @@ export default function Header({ lang }: HeaderProps) {
                       active
                         ? 'text-text-primary underline'
                         : 'text-text-secondary hover:underline hover:-translate-y-[2px]'
-                    }`}>
+                    }`}
+                  >
                     {t({ en: item.en, vi: item.vi }, lang)}
                   </a>
                 );
@@ -82,21 +83,23 @@ export default function Header({ lang }: HeaderProps) {
           </nav>
 
           {/* Mobile menu button (for future mobile implementation) */}
-          <div className='md:hidden'>
+          <div className="md:hidden">
             <button
-              type='button'
-              className='text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition-colors'
-              aria-label='Toggle navigation'>
+              type="button"
+              className="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition-colors"
+              aria-label="Toggle navigation"
+            >
               <svg
-                className='h-6 w-6'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'>
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   strokeWidth={2}
-                  d='M4 6h16M4 12h16M4 18h16'
+                  d="M4 6h16M4 12h16M4 18h16"
                 />
               </svg>
             </button>
@@ -104,7 +107,7 @@ export default function Header({ lang }: HeaderProps) {
         </div>
       </div>
       {/* Language Switcher */}
-      <div className='flex items-center space-x-2'>
+      <div className="flex items-center space-x-2">
         {['en', 'vi'].map((l) => (
           <a
             key={l}
@@ -113,7 +116,8 @@ export default function Header({ lang }: HeaderProps) {
               lang === l
                 ? 'bg-gray-900 text-white'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-            }`}>
+            }`}
+          >
             {l.toUpperCase()}
           </a>
         ))}
