@@ -177,7 +177,7 @@ export default function ImageGalleryBlock({
   }, [data.images, columns]);
 
   return (
-    <div className='max-w-[968px] mx-auto px-6 image-gallery-block [&+.image-gallery-block]:!mt-0'>
+    <div className='max-w-[968px] mx-auto px-6 image-gallery-block !mt-0'>
       <div ref={containerRef} className="w-full relative">
         {/* Sizer element for Masonry */}
         <div className={`grid-sizer ${itemWidthClass} absolute invisible`} />
@@ -190,7 +190,7 @@ export default function ImageGalleryBlock({
               key={`${img.src}-${imgIndex}`}
               data-index={imgIndex}
               type='button'
-              className={`masonry-item ${itemWidthClass} cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary block mb-6`}
+              className={`masonry-item ${itemWidthClass} cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary block mt-6`}
               onClick={() => onImageClick(globalIndex)}
               aria-label={altText || 'View image in gallery'}
             >

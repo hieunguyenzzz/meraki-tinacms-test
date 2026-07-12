@@ -94,7 +94,7 @@ export default function ContentBlocksRenderer({
   const defaultTextAlignment = getDefaultTextAlignment(typenamePrefix);
 
   return (
-    <div className={`py-16 space-y-16 ${wrapperClassName}`}>
+    <div className={`py-16 space-y-6 ${wrapperClassName}`}>
       {blocks.map((block: any, blockIndex: number) => {
         const blockType = block.__typename?.replace(typenamePrefix, '') || '';
 
