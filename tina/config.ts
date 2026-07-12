@@ -8,6 +8,7 @@ import { Journal } from './collections/journal';
 import { JournalListing } from './collections/journal-listing';
 import { LoveNotesListing } from './collections/love-notes-listing';
 import { Page } from './collections/page';
+import { Service } from './collections/service';
 import { MediaManagerScreen } from './components/MediaManagerScreen';
 import { CustomImageField } from './fields/CustomImageField';
 
@@ -67,6 +68,7 @@ export const config = defineConfig({
   schema: {
     collections: [
       Page,
+      Service,
       About,
       Journal,
       Blog,

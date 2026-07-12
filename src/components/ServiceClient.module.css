@@ -1,0 +1,90 @@
+.weddingTypesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.typePanel {
+  position: relative;
+  min-height: 720px;
+  overflow: hidden;
+}
+
+.panelMedia {
+  position: absolute;
+  inset: 0;
+}
+
+.panelSurface {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 720px;
+  width: 78%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem 3rem 5rem;
+  text-align: center;
+}
+
+.destinationPanel .panelSurface {
+  background: var(--color-bg-2);
+  padding: 3rem 5rem 3rem 2rem;
+  -webkit-mask-image: radial-gradient(
+    circle 60px at 100% 50%,
+    transparent 0 58px,
+    #000 60px
+  );
+  mask-image: radial-gradient(
+    circle 60px at 100% 50%,
+    transparent 0 58px,
+    #000 60px
+  );
+}
+
+.cityPanel .panelSurface {
+  margin-left: auto;
+  background: var(--color-bg-1);
+  -webkit-mask-image: radial-gradient(
+    circle 60px at 0 50%,
+    transparent 0 58px,
+    #000 60px
+  );
+  mask-image: radial-gradient(
+    circle 60px at 0 50%,
+    transparent 0 58px,
+    #000 60px
+  );
+}
+
+@media (max-width: 743px) {
+  .weddingTypesGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .typePanel {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .panelMedia {
+    position: relative;
+    min-height: 280px;
+  }
+
+  .panelSurface {
+    min-height: 0;
+    width: 100%;
+    padding: 3rem 1.5rem;
+  }
+
+  .destinationPanel .panelSurface,
+  .cityPanel .panelSurface {
+    margin-left: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
