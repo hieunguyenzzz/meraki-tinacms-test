@@ -1,10 +1,10 @@
 'use client';
 
-import { tinaField } from 'tinacms/dist/react';
 import { useState } from 'react';
+import { tinaField } from 'tinacms/dist/react';
 
 interface TestimonialBlockData extends Record<string, unknown> {
-//   heading?: string;
+  //   heading?: string;
   decorative_text_en?: string;
   decorative_text_vi?: string;
   quote_en?: string;
@@ -19,11 +19,11 @@ interface TestimonialBlockProps {
 
 export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   const text = (lang === 'vi' ? data.quote_vi : data.quote_en) || '';
   const decorativeText = (lang === 'vi' ? data.decorative_text_vi : data.decorative_text_en) || '';
   // Approx char limit (~5 lines on mobile/desktop) to allow inline "Read more"
-  const MAX_LENGTH = 280; 
+  const MAX_LENGTH = 520;
   const shouldTruncate = text.length > MAX_LENGTH;
 
   const truncateText = (str: string) => {
@@ -37,20 +37,20 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
 
   return (
     <div className='bg-paper px-12 py-20'>
-      <div className='max-w-[446px] mx-auto text-center relative'>
+      <div className='max-w-[920px] mx-auto text-center relative'>
         {/* Testimonial Heading */}
-        <div 
-        className='text-h3 mb-3'
-        data-tina-field={tinaField(data, 'heading')}
+        <div
+          className='text-h3 mb-3'
+          data-tina-field={tinaField(data, 'heading')}
         >
-        {/* {data.heading} */}
-        Testimonial
+          {/* {data.heading} */}
+          Testimonial
         </div>
 
         {/* Decorative Script Text */}
         {decorativeText && (
           <div
-            className='text-handwriting text-h4 mb-3 text-center'
+            className='text-handwriting text-h4 mb-3 text-center max-w-[640px] mx-auto'
             data-tina-field={tinaField(data, lang === 'vi' ? 'decorative_text_vi' : 'decorative_text_en')}>
             {decorativeText}
           </div>
@@ -59,7 +59,7 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
         {/* Quote */}
         {text && (
           <p
-            className='text-center text-text-secondary text-body-sm'
+            className='text-justify text-text-secondary text-body-sm'
             data-tina-field={tinaField(
               data,
               lang === 'vi' ? 'quote_vi' : 'quote_en'
