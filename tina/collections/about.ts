@@ -69,17 +69,17 @@ export const About: Collection = {
       label: 'Statement Section',
       fields: [
         {
-          type: 'string',
+          type: 'rich-text',
           name: 'text_en',
           label: 'Statement (English)',
-          ui: { component: 'textarea' },
+          toolbarOverride: ['italic'],
           required: true,
         },
         {
-          type: 'string',
+          type: 'rich-text',
           name: 'text_vi',
           label: 'Statement (Vietnamese)',
-          ui: { component: 'textarea' },
+          toolbarOverride: ['italic'],
           required: true,
         },
       ],

@@ -1,6 +1,8 @@
 'use client';
 
+import type { ReactElement } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
+import { TinaMarkdown, TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import type { AboutQuery } from '../../tina/__generated__/types';
 import Footer from './Footer';
 import Header from './Header';
@@ -19,11 +21,22 @@ const localized = (
   lang = 'en'
 ) => (lang === 'en' ? english : vietnamese);
 
+const localizedRichText = (
+  english?: TinaMarkdownContent | TinaMarkdownContent[] | null,
+  vietnamese?: TinaMarkdownContent | TinaMarkdownContent[] | null,
+  lang = 'en'
+) => (lang === 'en' ? english : vietnamese);
+
+type RichTextComponentProps = { children: ReactElement } | undefined;
+
 export default function AboutClient({ data, query, variables, lang }: Props) {
   const { data: tinaData } = useTina({ data, query, variables });
   const about = tinaData.about;
   const hero = about.hero;
   const statement = about.statement;
+  const statementText = statement
+    ? localizedRichText(statement.text_en, statement.text_vi, lang)
+    : undefined;
   const mission = about.mission;
   const team = about.team_members || [];
 
@@ -107,15 +120,29 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
         </section>
 
         <section className="bg-background-1 px-6 py-20 text-center md:px-12 lg:py-28">
-          <p
+          <div
             className="mx-auto max-w-3xl text-body-lg leading-relaxed text-text-secondary md:text-h2"
             data-tina-field={tinaField(
               statement,
               lang === 'en' ? 'text_en' : 'text_vi'
             )}
           >
-            {localized(statement?.text_en, statement?.text_vi, lang)}
-          </p>
+            {statementText && (
+              <TinaMarkdown
+                content={statementText}
+                components={{
+                  p: (props: RichTextComponentProps) => (
+                    <p>{props?.children}</p>
+                  ),
+                  italic: (props: RichTextComponentProps) => (
+                    <em className="text-handwriting text-[1.25em] not-italic">
+                      {props?.children}
+                    </em>
+                  ),
+                }}
+              />
+            )}
+          </div>
 
           <div className="my-12 flex justify-center -rotate-90">
             <MerakiImage
