@@ -165,7 +165,7 @@ export default async function LangHomePage({ params }: Props) {
   `;
 
   try {
-    const data = await client.queries.page(variables);
+    const { data } = await client.queries.page(variables);
 
     return (
       <HomeClient data={data} variables={variables} query={query} lang={lang} />
