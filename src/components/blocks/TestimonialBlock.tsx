@@ -59,7 +59,7 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
         {/* Quote */}
         {text && (
           <p
-            className='text-justify text-text-secondary text-body-sm'
+            className='text-justify text-text-secondary text-body-sm whitespace-pre-line'
             data-tina-field={tinaField(
               data,
               lang === 'vi' ? 'quote_vi' : 'quote_en'
