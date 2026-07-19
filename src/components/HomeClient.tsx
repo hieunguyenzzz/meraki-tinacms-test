@@ -1,10 +1,13 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useTina, tinaField } from 'tinacms/dist/react';
-import Header from './Header';
+import Link from 'next/link';
+import type { ReactElement } from 'react';
+import { tinaField, useTina } from 'tinacms/dist/react';
+import { TinaMarkdown, type TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import Footer from './Footer';
-import { Button } from './ui';
+import Header from './Header';
+import MerakiImage from './ui/MerakiImage';
 
 interface HomeClientProps {
   data: any;
@@ -13,144 +16,617 @@ interface HomeClientProps {
   lang: string;
 }
 
-// Helper function to get localized text
-const t = (text: { en: string; vi: string }, lang: string) =>
+const t = (text: { en?: string | null; vi?: string | null }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
-// Default content
-const defaultContent = {
-  title: 'Meraki Wedding Planner',
-  description: {
-    en: 'Professional wedding planning services in Vietnam',
-    vi: 'Dịch vụ tổ chức tiệc cưới chuyên nghiệp tại Việt Nam',
-  },
-  hero: {
-    subtitle: {
-      en: 'Creating unforgettable moments with love and passion',
-      vi: 'Tạo nên những khoảnh khắc khó quên với tình yêu và đam mê',
-    },
-  },
+const localizedRichText = (
+  english?: TinaMarkdownContent | TinaMarkdownContent[] | null,
+  vietnamese?: TinaMarkdownContent | TinaMarkdownContent[] | null,
+  lang = 'en'
+) => (lang === 'en' ? english : vietnamese);
+
+type RichTextComponentProps = { children: ReactElement } | undefined;
+
+const splitCoupleNames = (names?: string | null): [string, string] => {
+  if (!names) return ['', ''];
+
+  const [left, ...rightParts] = names.split(',');
+  return [left.trim(), rightParts.join(',').trim()];
 };
 
-// Hero Section Component
-function HeroSection({ lang, page }: { lang: string; page: any }) {
-  const title = page?.hero
-    ? t({ en: page.hero.title_en || '', vi: page.hero.title_vi || '' }, lang) ||
-      defaultContent.title
-    : defaultContent.title;
+const buttonLabel = {
+  explore: { en: 'Explore More', vi: 'Khám phá thêm' },
+  read: { en: 'Read All', vi: 'Đọc tất cả' },
+  team: { en: 'Meet Meraki Team', vi: 'Gặp gỡ team Meraki' },
+  contact: { en: 'Contact Us', vi: 'Liên hệ với chúng tôi' },
+};
 
-  const subtitle = page?.hero
-    ? t(
-        { en: page.hero.subtitle_en || '', vi: page.hero.subtitle_vi || '' },
-        lang
-      ) || t(defaultContent.hero.subtitle, lang)
-    : t(defaultContent.hero.subtitle, lang);
-
+function EditorialLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className='relative h-screen flex items-center justify-center  '>
-      <div className='text-center'>
-        <h1
-          className='text-5xl md:text-6xl font-light text-gray-900 mb-6'
-          data-tina-field={
-            page?.hero
-              ? tinaField(page.hero, lang === 'en' ? 'title_en' : 'title_vi')
-              : undefined
-          }>
-          {title}
-        </h1>
-        <p
-          className='text-xl text-gray-600 mb-8 max-w-2xl mx-auto'
-          data-tina-field={
-            page?.hero
-              ? tinaField(
-                  page.hero,
-                  lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
-                )
-              : undefined
-          }>
-          {subtitle}
-        </p>
-        <div className='space-x-4'>
-          <Button>{t({ en: 'Get Started', vi: 'Bắt đầu' }, lang)}</Button>
-          <a
-            href={`/${lang}/journal`}
-            className='inline-block bg-gray-900 text-white px-8 py-3 rounded-md hover:bg-gray-800 transition-colors'>
-            {t({ en: 'View Our Work', vi: 'Xem tác phẩm' }, lang)}
-          </a>
-          <a
-            href={`/${lang}/about`}
-            className='inline-block border border-gray-900 text-gray-900 px-8 py-3 rounded-md hover:bg-gray-900 hover:text-white transition-colors'>
-            {t({ en: 'About Us', vi: 'Về chúng tôi' }, lang)}
-          </a>
-        </div>
-      </div>
-    </section>
+    <Link
+      href={href}
+      className="inline-block border-b border-line-primary px-4 pb-1 text-body-sm text-text-primary transition-all hover:-translate-y-0.5 hover:border-text-accent hover:text-text-accent"
+    >
+      {children}
+    </Link>
   );
 }
 
-// Services Section Component
-function ServicesSection({ lang, page }: { lang: string; page: any }) {
-  // Check if services are defined in the CMS, otherwise use default
-  const services = page?.services || [
-    { en: 'Full Planning', vi: 'Tổ chức trọn gói', desc: { en: 'Complete wedding planning from start to finish', vi: 'Tổ chức tiệc cưới hoàn chỉnh từ đầu đến cuối' }},
-    { en: 'Partial Planning', vi: 'Tổ chức một phần', desc: { en: 'Assistance with specific aspects of your wedding', vi: 'Hỗ trợ các khía cạnh cụ thể của đám cưới' }},
-    { en: 'Day Coordination', vi: 'Điều phối ngày cưới', desc: { en: 'Ensuring everything runs smoothly on your wedding day', vi: 'Đảm bảo mọi thứ diễn ra suôn sẻ trong ngày cưới' }},
-  ];
+function AccentRichText({
+  content,
+}: {
+  content?: TinaMarkdownContent | TinaMarkdownContent[] | null;
+}) {
+  if (!content) return null;
 
   return (
-    <section className='py-16 bg-background-1'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='text-center mb-12'>
-          <h2 
-            className='text-3xl font-light text-gray-900 mb-4'
-            data-tina-field={page?.services_section ? tinaField(page.services_section, lang === 'en' ? 'title_en' : 'title_vi') : undefined}>
-            {page?.services_section 
-              ? t({ en: page.services_section.title_en || 'Our Services', vi: page.services_section.title_vi || 'Dịch vụ của chúng tôi' }, lang)
-              : t({ en: 'Our Services', vi: 'Dịch vụ của chúng tôi' }, lang)
-            }
-          </h2>
-          <p 
-            className='text-gray-600 max-w-2xl mx-auto'
-            data-tina-field={page?.services_section ? tinaField(page.services_section, lang === 'en' ? 'description_en' : 'description_vi') : undefined}>
-            {page?.services_section
-              ? t({ 
-                  en: page.services_section.description_en || 'We offer comprehensive wedding planning services to make your special day perfect',
-                  vi: page.services_section.description_vi || 'Chúng tôi cung cấp dịch vụ tổ chức tiệc cưới toàn diện để ngày đặc biệt của bạn trở nên hoàn hảo'
-                }, lang)
-              : t({ 
-                  en: 'We offer comprehensive wedding planning services to make your special day perfect',
-                  vi: 'Chúng tôi cung cấp dịch vụ tổ chức tiệc cưới toàn diện để ngày đặc biệt của bạn trở nên hoàn hảo'
-                }, lang)
-            }
-          </p>
-        </div>
+    <TinaMarkdown
+      content={content}
+      components={{
+        p: (props: RichTextComponentProps) => (
+          <p className="whitespace-pre-line">{props?.children}</p>
+        ),
+        italic: (props: RichTextComponentProps) => (
+          <em className="text-handwriting text-[1.5em] text-text-accent not-italic">
+            {props?.children}
+          </em>
+        ),
+      }}
+    />
+  );
+}
 
-        <div className='grid md:grid-cols-3 gap-8'>
-          {services.map((service: any, index: number) => (
-            <div key={index} className='text-center'>
-              <h3 className='text-xl font-medium text-gray-900 mb-3'>
-                {t({ en: service.en, vi: service.vi }, lang)}
-              </h3>
-              <p className='text-gray-600'>
-                {t(service.desc, lang)}
+export default function HomeClient({
+  data,
+  variables,
+  query,
+  lang,
+}: HomeClientProps) {
+  const { data: tinaData } = useTina({ data, variables, query });
+  const page = tinaData?.page;
+  const hero = page?.hero;
+  const introduction = page?.introduction;
+  const journals = page?.featured_journals || [];
+  const services = page?.services_section;
+  const loveNotes = page?.love_notes_section;
+  const team = page?.team_section;
+  const connect = page?.connect_section;
+  const instagram = page?.instagram_section;
+  const heroImages = hero?.gallery || [];
+
+  const heroTitle =
+    t({ en: hero?.title_en, vi: hero?.title_vi }, lang) ||
+    t({ en: page?.title_en, vi: page?.title_vi }, lang);
+  const heroSubtitle = t(
+    { en: hero?.subtitle_en, vi: hero?.subtitle_vi },
+    lang
+  );
+  const introductionText = localizedRichText(
+    introduction?.text_en,
+    introduction?.text_vi,
+    lang
+  );
+  const teamText = localizedRichText(team?.text_en, team?.text_vi, lang);
+  const loveNoteCoupleNames = t(
+    {
+      en: loveNotes?.couple_names_en,
+      vi: loveNotes?.couple_names_vi,
+    },
+    lang
+  );
+  const loveNoteLocation = t(
+    {
+      en: loveNotes?.wedding_location_en,
+      vi: loveNotes?.wedding_location_vi,
+    },
+    lang
+  );
+  const loveNoteExcerpt = t(
+    { en: loveNotes?.excerpt_en, vi: loveNotes?.excerpt_vi },
+    lang
+  );
+  const loveNoteBody = t(
+    { en: loveNotes?.note_en, vi: loveNotes?.note_vi },
+    lang
+  );
+  const [loveNoteLeftName, loveNoteRightName] =
+    splitCoupleNames(loveNoteCoupleNames);
+
+  const journalRows: any[][] = [];
+  for (let index = 0; index < journals.length; index += 2) {
+    journalRows.push(journals.slice(index, index + 2));
+  }
+
+  return (
+    <div className="overflow-hidden bg-background-base text-text-primary">
+      <Header lang={lang} />
+
+      <main>
+        <section className="flex min-h-[220px] items-center justify-center px-6 py-16 text-center md:min-h-[300px] md:py-20">
+          <div>
+            <h1
+              className="font-vocago text-h1 uppercase tracking-[0.04em] text-text-accent md:text-display"
+              data-tina-field={
+                hero
+                  ? tinaField(hero, lang === 'en' ? 'title_en' : 'title_vi')
+                  : undefined
+              }
+            >
+              {heroTitle}
+            </h1>
+            {heroSubtitle && (
+              <p
+                className="mt-4 text-body-sm uppercase tracking-[0.18em] text-text-secondary"
+                data-tina-field={
+                  hero
+                    ? tinaField(
+                      hero,
+                      lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
+                    )
+                    : undefined
+                }
+              >
+                {heroSubtitle}
               </p>
+            )}
+          </div>
+        </section>
+
+        <section
+          className="grid h-[320px] grid-cols-2 md:h-[520px] md:grid-cols-4 xl:h-[650px]"
+          data-tina-field={hero ? tinaField(hero, 'gallery') : undefined}
+        >
+          {heroImages.map((image: string, index: number) => (
+            <div key={`${image}-${index}`} className="relative overflow-hidden">
+              <MerakiImage
+                src={image}
+                alt={`${heroTitle || 'Meraki wedding'} ${index + 1}`}
+                fill
+                sizes="(min-width: 744px) 25vw, 50vw"
+                className="object-cover object-center"
+              />
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+        </section>
 
-export default function HomeClient({ data, variables, query, lang }: HomeClientProps) {
-  const { data: tinaData } = useTina({ data, variables, query });
-  const page = tinaData.page;
+        <section className="px-6 py-24 text-center md:py-36">
+          <div className="mx-auto max-w-[620px]">
+            <div
+              className="whitespace-pre-line text-body-lg leading-relaxed text-text-secondary"
+              data-tina-field={
+                introduction
+                  ? tinaField(
+                    introduction,
+                    lang === 'en' ? 'text_en' : 'text_vi'
+                  )
+                  : undefined
+              }
+            >
+              <AccentRichText content={introductionText} />
+            </div>
+            <div className="mt-7">
+              <EditorialLink href={`/${lang}/journal`}>
+                {t(buttonLabel.explore, lang)}
+              </EditorialLink>
+            </div>
+          </div>
+        </section>
 
-  return (
-    <div className='  bg-background-1'>
-      <Header lang={lang} />
-      <HeroSection lang={lang} page={page} />
-      <ServicesSection lang={lang} page={page} />
+        <section className="px-6 pb-24 md:px-10 md:pb-36">
+          <div className="mx-auto max-w-[1380px] space-y-14 md:space-y-20">
+            {journalRows.map((row, rowIndex) => (
+              <div
+                key={rowIndex}
+                className={`flex flex-col gap-10 md:flex-row md:gap-5 ${rowIndex % 2 === 1 ? 'md:justify-end' : 'md:justify-start'
+                  }`}
+              >
+                {row.map((journal: any, journalIndex: number) => {
+                  const title =
+                    t(
+                      {
+                        en: journal?.headline_en,
+                        vi: journal?.headline_vi,
+                      },
+                      lang
+                    ) || journal?.couple_names;
+
+                  return (
+                    <article
+                      key={`${journal?.slug}-${journalIndex}`}
+                      className="group w-full md:w-[32%]"
+                      data-tina-field={tinaField(journal, 'image')}
+                    >
+                      <Link href={`/${lang}/journal/${journal?.slug}`}>
+                        <div className="relative aspect-[2/3] overflow-hidden bg-background-1">
+                          <MerakiImage
+                            src={journal?.image}
+                            alt={`${title} — ${journal?.couple_names}`}
+                            fill
+                            sizes="(min-width: 744px) 32vw, 100vw"
+                            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                          />
+                        </div>
+                        <div className="px-3 pt-5 text-center">
+                          <h2
+                            className="font-vocago text-h4 uppercase leading-tight tracking-[0.04em] text-text-accent"
+                            data-tina-field={tinaField(
+                              journal,
+                              lang === 'en' ? 'headline_en' : 'headline_vi'
+                            )}
+                          >
+                            {title}
+                          </h2>
+                          <p
+                            className="mt-2 text-body-sm text-text-secondary"
+                            data-tina-field={tinaField(journal, 'couple_names')}
+                          >
+                            {journal?.couple_names}
+                          </p>
+                        </div>
+                      </Link>
+                    </article>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-background-1 bg-paper px-6 py-16 text-center md:py-20">
+          <h2
+            className="font-vocago text-h2 text-text-primary md:text-h3"
+            data-tina-field={
+              services
+                ? tinaField(services, lang === 'en' ? 'title_en' : 'title_vi')
+                : undefined
+            }
+          >
+            {t({ en: services?.title_en, vi: services?.title_vi }, lang)}
+          </h2>
+          <p
+            className="mx-auto mt-3 max-w-[600px] text-body-sm text-text-secondary"
+            data-tina-field={
+              services
+                ? tinaField(
+                  services,
+                  lang === 'en' ? 'description_en' : 'description_vi'
+                )
+                : undefined
+            }
+          >
+            {t(
+              {
+                en: services?.description_en,
+                vi: services?.description_vi,
+              },
+              lang
+            )}
+          </p>
+          <div className="mt-7">
+            <EditorialLink href={`/${lang}/service`}>
+              {t(buttonLabel.explore, lang)}
+            </EditorialLink>
+          </div>
+        </section>
+
+        <section className="grid grid-cols-1 md:grid-cols-2">
+          {(services?.items || []).map((service: any, index: number) => (
+            <Link
+              key={`${service?.title_en}-${index}`}
+              href={`/${lang}${service?.link}`}
+              className="group relative aspect-[4/3] overflow-hidden bg-background-brand md:aspect-square"
+              data-tina-field={tinaField(service, 'image')}
+            >
+              <MerakiImage
+                src={service?.image}
+                alt={
+                  t({ en: service?.title_en, vi: service?.title_vi }, lang) ||
+                  'Meraki wedding service'
+                }
+                fill
+                sizes="(min-width: 744px) 50vw, 100vw"
+                className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.03] group-hover:grayscale-0"
+              />
+              <div className="absolute inset-0 bg-background-brand/20 transition-colors group-hover:bg-background-brand/5" />
+              <h3
+                className="absolute inset-0 flex items-center justify-center px-8 text-center font-vocago text-h1 uppercase tracking-[0.04em] text-background-base drop-shadow-sm"
+                data-tina-field={tinaField(
+                  service,
+                  lang === 'en' ? 'title_en' : 'title_vi'
+                )}
+              >
+                {t({ en: service?.title_en, vi: service?.title_vi }, lang)}
+              </h3>
+            </Link>
+          ))}
+        </section>
+
+        <section className="bg-background-support1 px-6 py-20 md:px-12 md:py-28 lg:px-20">
+          <div className="mx-auto grid max-w-[1480px] items-center gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+            <div className="text-center">
+              <h2
+                className="font-vocago text-h3 md:text-h3"
+                data-tina-field={
+                  loveNotes
+                    ? tinaField(
+                      loveNotes,
+                      lang === 'en' ? 'title_en' : 'title_vi'
+                    )
+                    : undefined
+                }
+              >
+                {t({ en: loveNotes?.title_en, vi: loveNotes?.title_vi }, lang)}
+              </h2>
+              <p
+                className="mx-auto mt-5 max-w-[470px] text-body-md leading-relaxed text-text-secondary"
+                data-tina-field={
+                  loveNotes
+                    ? tinaField(
+                      loveNotes,
+                      lang === 'en' ? 'description_en' : 'description_vi'
+                    )
+                    : undefined
+                }
+              >
+                {t(
+                  {
+                    en: loveNotes?.description_en,
+                    vi: loveNotes?.description_vi,
+                  },
+                  lang
+                )}
+              </p>
+              <div className="mt-7">
+                <EditorialLink href={`/${lang}/love-notes`}>
+                  {t(buttonLabel.read, lang)}
+                </EditorialLink>
+              </div>
+            </div>
+
+            <div className="relative mx-auto w-full max-w-[720px] pb-72 md:pb-80">
+              <div
+                className="relative aspect-[5/4] overflow-hidden"
+                data-tina-field={
+                  loveNotes ? tinaField(loveNotes, 'image') : undefined
+                }
+              >
+                <MerakiImage
+                  src={loveNotes?.image}
+                  alt={loveNoteCoupleNames || 'Meraki couple'}
+                  fill
+                  sizes="(min-width: 1280px) 45vw, 90vw"
+                  className="object-cover"
+                />
+              </div>
+              <div className="bg-paper absolute bottom-0 left-1/2 w-[70%] max-w-[442px] -translate-x-1/2 bg-background-1 px-6 py-8 text-center shadow-sm md:p-6">
+                <h3
+                  className="font-vocago uppercase tracking-[0.04em] md:text-h3"
+                  data-tina-field={
+                    loveNotes
+                      ? tinaField(
+                        loveNotes,
+                        lang === 'en' ? 'couple_names_en' : 'couple_names_vi'
+                      )
+                      : undefined
+                  }
+                >
+                  <span>{loveNoteLeftName}</span>
+                  {loveNoteRightName && (
+                    <>
+                      <span className="px-2 text-body-lg font-normal lowercase">
+                        &
+                      </span>
+                      <span>{loveNoteRightName}</span>
+                    </>
+                  )}
+                </h3>
+
+                <img
+                  src="/images/botanical/2.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                  loading="lazy"
+                  className="mx-auto mt-3 h-6 w-auto opacity-75"
+                />
+
+                {loveNoteExcerpt && (
+                  <p
+                    className="mt-5 text-handwriting text-[28px] leading-relaxed text-text-primary md:text-[24px]"
+                    data-tina-field={
+                      loveNotes
+                        ? tinaField(
+                          loveNotes,
+                          lang === 'en' ? 'excerpt_en' : 'excerpt_vi'
+                        )
+                        : undefined
+                    }
+                  >
+                    {loveNoteExcerpt}
+                  </p>
+                )}
+
+                {loveNoteBody && (
+                  <p
+                    className="mt-6 overflow-hidden text-body-md leading-relaxed text-text-secondary"
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 8,
+                      WebkitBoxOrient: 'vertical',
+                    }}
+                    data-tina-field={
+                      loveNotes
+                        ? tinaField(
+                          loveNotes,
+                          lang === 'en' ? 'note_en' : 'note_vi'
+                        )
+                        : undefined
+                    }
+                  >
+                    {loveNoteBody}
+                  </p>
+                )}
+                {loveNoteLocation && (
+                  <p
+                    className="mt-5 text-body-sm font-medium uppercase tracking-[0.16em] text-text-secondary"
+                    data-tina-field={
+                      loveNotes
+                        ? tinaField(
+                          loveNotes,
+                          lang === 'en'
+                            ? 'wedding_location_en'
+                            : 'wedding_location_vi'
+                        )
+                        : undefined
+                    }
+                  >
+                    {lang === 'en' ? 'Wedding in ' : ''}
+                    {loveNoteLocation}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-6 py-24 text-center md:py-32">
+          <div
+            className="mx-auto max-w-[620px] whitespace-pre-line text-h4 leading-relaxed text-text-secondary md:text-h2"
+            data-tina-field={
+              team
+                ? tinaField(team, lang === 'en' ? 'text_en' : 'text_vi')
+                : undefined
+            }
+          >
+            <AccentRichText content={teamText} />
+          </div>
+          <div className="mt-8">
+            <EditorialLink href={`/${lang}/about`}>
+              {t(buttonLabel.team, lang)}
+            </EditorialLink>
+          </div>
+          <div
+            className="relative mx-auto mt-16 aspect-[3/2] max-w-[680px] overflow-hidden"
+            data-tina-field={team ? tinaField(team, 'image') : undefined}
+          >
+            <MerakiImage
+              src={team?.image}
+              alt="Meraki wedding planning team"
+              fill
+              sizes="(min-width: 744px) 680px, 90vw"
+              className="object-cover"
+            />
+          </div>
+        </section>
+
+        <section className="bg-paper bg-background-1 px-6 py-20 text-center md:py-24">
+          <div className="relative mx-auto max-w-[580px]">
+            <img
+              src="/images/botanical/3.svg"
+              alt=""
+              width={28}
+              height={28}
+              loading="lazy"
+              className="mx-auto mb-5 h-7 w-7 opacity-70"
+            />
+            <h2
+              className="font-vocago text-h2 md:text-h3"
+              data-tina-field={
+                connect
+                  ? tinaField(connect, lang === 'en' ? 'title_en' : 'title_vi')
+                  : undefined
+              }
+            >
+              {t({ en: connect?.title_en, vi: connect?.title_vi }, lang)}
+            </h2>
+            <p
+              className="mt-4 text-body-sm leading-relaxed text-text-secondary"
+              data-tina-field={
+                connect
+                  ? tinaField(
+                    connect,
+                    lang === 'en' ? 'description_en' : 'description_vi'
+                  )
+                  : undefined
+              }
+            >
+              {t(
+                {
+                  en: connect?.description_en,
+                  vi: connect?.description_vi,
+                },
+                lang
+              )}
+            </p>
+            <div className="mt-7">
+              <EditorialLink href={`/${lang}/lets-connect`}>
+                {t(buttonLabel.contact, lang)}
+              </EditorialLink>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-5 py-16 md:px-10 md:py-20">
+          <h2
+            className="text-center font-vocago text-h2 text-text-accent md:text-h3"
+            data-tina-field={
+              instagram ? tinaField(instagram, 'title') : undefined
+            }
+          >
+            {instagram?.title || 'Instagram'}
+          </h2>
+          <div
+            className="mx-auto mt-8 grid max-w-[1450px] grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6"
+            data-tina-field={
+              instagram ? tinaField(instagram, 'images') : undefined
+            }
+          >
+            {(instagram?.images || []).map((item: any, index: number) => {
+              const image = item?.image;
+              const imageContent = (
+                <MerakiImage
+                  src={image}
+                  alt={`Meraki wedding inspiration ${index + 1}`}
+                  fill
+                  sizes="(min-width: 1280px) 16vw, (min-width: 744px) 33vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              );
+              const className =
+                'group relative aspect-square overflow-hidden bg-background-1';
+
+              return item?.link ? (
+                <a
+                  key={`${image}-${index}`}
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={className}
+                  aria-label={`View Instagram feature ${index + 1}`}
+                  data-tina-field={tinaField(item, 'image')}
+                >
+                  {imageContent}
+                </a>
+              ) : (
+                <div
+                  key={`${image}-${index}`}
+                  className={className}
+                  data-tina-field={tinaField(item, 'image')}
+                >
+                  {imageContent}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </main>
+
       <Footer lang={lang} />
     </div>
   );

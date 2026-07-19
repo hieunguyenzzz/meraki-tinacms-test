@@ -1,4 +1,4 @@
-import { client } from "../../../tina/__generated__/client";
+import { client } from '../../../tina/__generated__/client';
 import type { Metadata } from 'next';
 import HomeClient from '../../components/HomeClient';
 
@@ -30,10 +30,7 @@ export const revalidate = 3600; // Revalidate every hour (ISR)
 
 // Pre-generate both language versions
 export function generateStaticParams() {
-  return [
-    { lang: 'en' },
-    { lang: 'vi' },
-  ];
+  return [{ lang: 'en' }, { lang: 'vi' }];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -82,12 +79,63 @@ export default async function LangHomePage({ params }: Props) {
           subtitle_en
           subtitle_vi
           background_image
+          gallery
+        }
+        introduction {
+          text_en
+          text_vi
+        }
+        featured_journals {
+          headline_en
+          headline_vi
+          couple_names
+          slug
+          image
         }
         services_section {
           title_en
           title_vi
           description_en
           description_vi
+          items {
+            title_en
+            title_vi
+            image
+            link
+          }
+        }
+        love_notes_section {
+          title_en
+          title_vi
+          description_en
+          description_vi
+          image
+          couple_names_en
+          couple_names_vi
+          wedding_location_en
+          wedding_location_vi
+          excerpt_en
+          excerpt_vi
+          note_en
+          note_vi
+        }
+        team_section {
+          text_en
+          text_vi
+          image
+        }
+        connect_section {
+          title_en
+          title_vi
+          description_en
+          description_vi
+        }
+        instagram_section {
+          title
+          images {
+            image
+            link
+          }
         }
         seo_en {
           title
