@@ -208,7 +208,7 @@ export default function LoveNotesClient({
                               ? 'wedding_location_en'
                               : 'wedding_location_vi',
                           )}>
-                          {lang === 'en' ? 'Wedding in ' : 'Venue '} {location}
+                          {lang === 'en' ? 'Wedding in ' : ''} {location}
                         </p>
 
                         {excerpt && (
