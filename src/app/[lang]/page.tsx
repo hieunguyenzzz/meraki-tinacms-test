@@ -86,11 +86,12 @@ export default async function LangHomePage({ params }: Props) {
           text_vi
         }
         featured_journals {
-          headline_en
-          headline_vi
-          couple_names
-          slug
-          image
+          first { ...JournalCard }
+          second { ...JournalCard }
+          third { ...JournalCard }
+          fourth { ...JournalCard }
+          fifth { ...JournalCard }
+          sixth { ...JournalCard }
         }
         services_section {
           title_en
@@ -145,6 +146,18 @@ export default async function LangHomePage({ params }: Props) {
           title
           description
         }
+      }
+    }
+
+    fragment JournalCard on Journal {
+      id
+      couple_names
+      slug
+      featured_image
+      published
+      template_layout {
+        main_headline_en
+        main_headline_vi
       }
     }
   `;

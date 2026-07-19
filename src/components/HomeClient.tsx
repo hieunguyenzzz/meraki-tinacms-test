@@ -92,7 +92,14 @@ export default function HomeClient({
   const page = tinaData?.page;
   const hero = page?.hero;
   const introduction = page?.introduction;
-  const journals = page?.featured_journals || [];
+  const journals = [
+    page?.featured_journals?.first,
+    page?.featured_journals?.second,
+    page?.featured_journals?.third,
+    page?.featured_journals?.fourth,
+    page?.featured_journals?.fifth,
+    page?.featured_journals?.sixth,
+  ].filter((journal) => Boolean(journal?.published));
   const services = page?.services_section;
   const loveNotes = page?.love_notes_section;
   const team = page?.team_section;
@@ -166,9 +173,9 @@ export default function HomeClient({
                 data-tina-field={
                   hero
                     ? tinaField(
-                      hero,
-                      lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
-                    )
+                        hero,
+                        lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
+                      )
                     : undefined
                 }
               >
@@ -202,9 +209,9 @@ export default function HomeClient({
               data-tina-field={
                 introduction
                   ? tinaField(
-                    introduction,
-                    lang === 'en' ? 'text_en' : 'text_vi'
-                  )
+                      introduction,
+                      lang === 'en' ? 'text_en' : 'text_vi'
+                    )
                   : undefined
               }
             >
@@ -223,29 +230,33 @@ export default function HomeClient({
             {journalRows.map((row, rowIndex) => (
               <div
                 key={rowIndex}
-                className={`flex flex-col gap-10 md:flex-row md:gap-5 ${rowIndex % 2 === 1 ? 'md:justify-end' : 'md:justify-start'
-                  }`}
+                className={`flex flex-col gap-10 md:flex-row md:gap-5 ${
+                  rowIndex % 2 === 1 ? 'md:justify-end' : 'md:justify-start'
+                }`}
               >
                 {row.map((journal: any, journalIndex: number) => {
                   const title =
                     t(
                       {
-                        en: journal?.headline_en,
-                        vi: journal?.headline_vi,
+                        en: journal?.template_layout?.main_headline_en,
+                        vi: journal?.template_layout?.main_headline_vi,
                       },
                       lang
-                    ) || journal?.couple_names;
+                    ) ||
+                    journal?.template_layout?.main_headline_en ||
+                    journal?.template_layout?.main_headline_vi ||
+                    journal?.couple_names;
 
                   return (
                     <article
-                      key={`${journal?.slug}-${journalIndex}`}
+                      key={journal?.id || `${journal?.slug}-${journalIndex}`}
                       className="group w-full md:w-[32%]"
-                      data-tina-field={tinaField(journal, 'image')}
+                      data-tina-field={tinaField(journal, 'featured_image')}
                     >
                       <Link href={`/${lang}/journal/${journal?.slug}`}>
                         <div className="relative aspect-[2/3] overflow-hidden bg-background-1">
                           <MerakiImage
-                            src={journal?.image}
+                            src={journal?.featured_image}
                             alt={`${title} — ${journal?.couple_names}`}
                             fill
                             sizes="(min-width: 744px) 32vw, 100vw"
@@ -255,10 +266,16 @@ export default function HomeClient({
                         <div className="px-3 pt-5 text-center">
                           <h2
                             className="font-vocago text-h4 uppercase leading-tight tracking-[0.04em] text-text-accent"
-                            data-tina-field={tinaField(
-                              journal,
-                              lang === 'en' ? 'headline_en' : 'headline_vi'
-                            )}
+                            data-tina-field={
+                              journal?.template_layout
+                                ? tinaField(
+                                    journal.template_layout,
+                                    lang === 'en'
+                                      ? 'main_headline_en'
+                                      : 'main_headline_vi'
+                                  )
+                                : undefined
+                            }
                           >
                             {title}
                           </h2>
@@ -294,9 +311,9 @@ export default function HomeClient({
             data-tina-field={
               services
                 ? tinaField(
-                  services,
-                  lang === 'en' ? 'description_en' : 'description_vi'
-                )
+                    services,
+                    lang === 'en' ? 'description_en' : 'description_vi'
+                  )
                 : undefined
             }
           >
@@ -355,9 +372,9 @@ export default function HomeClient({
                 data-tina-field={
                   loveNotes
                     ? tinaField(
-                      loveNotes,
-                      lang === 'en' ? 'title_en' : 'title_vi'
-                    )
+                        loveNotes,
+                        lang === 'en' ? 'title_en' : 'title_vi'
+                      )
                     : undefined
                 }
               >
@@ -368,9 +385,9 @@ export default function HomeClient({
                 data-tina-field={
                   loveNotes
                     ? tinaField(
-                      loveNotes,
-                      lang === 'en' ? 'description_en' : 'description_vi'
-                    )
+                        loveNotes,
+                        lang === 'en' ? 'description_en' : 'description_vi'
+                      )
                     : undefined
                 }
               >
@@ -410,9 +427,9 @@ export default function HomeClient({
                   data-tina-field={
                     loveNotes
                       ? tinaField(
-                        loveNotes,
-                        lang === 'en' ? 'couple_names_en' : 'couple_names_vi'
-                      )
+                          loveNotes,
+                          lang === 'en' ? 'couple_names_en' : 'couple_names_vi'
+                        )
                       : undefined
                   }
                 >
@@ -442,9 +459,9 @@ export default function HomeClient({
                     data-tina-field={
                       loveNotes
                         ? tinaField(
-                          loveNotes,
-                          lang === 'en' ? 'excerpt_en' : 'excerpt_vi'
-                        )
+                            loveNotes,
+                            lang === 'en' ? 'excerpt_en' : 'excerpt_vi'
+                          )
                         : undefined
                     }
                   >
@@ -463,9 +480,9 @@ export default function HomeClient({
                     data-tina-field={
                       loveNotes
                         ? tinaField(
-                          loveNotes,
-                          lang === 'en' ? 'note_en' : 'note_vi'
-                        )
+                            loveNotes,
+                            lang === 'en' ? 'note_en' : 'note_vi'
+                          )
                         : undefined
                     }
                   >
@@ -478,11 +495,11 @@ export default function HomeClient({
                     data-tina-field={
                       loveNotes
                         ? tinaField(
-                          loveNotes,
-                          lang === 'en'
-                            ? 'wedding_location_en'
-                            : 'wedding_location_vi'
-                        )
+                            loveNotes,
+                            lang === 'en'
+                              ? 'wedding_location_en'
+                              : 'wedding_location_vi'
+                          )
                         : undefined
                     }
                   >
@@ -550,9 +567,9 @@ export default function HomeClient({
               data-tina-field={
                 connect
                   ? tinaField(
-                    connect,
-                    lang === 'en' ? 'description_en' : 'description_vi'
-                  )
+                      connect,
+                      lang === 'en' ? 'description_en' : 'description_vi'
+                    )
                   : undefined
               }
             >
