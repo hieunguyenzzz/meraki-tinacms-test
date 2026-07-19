@@ -151,6 +151,22 @@ export const Page: Collection = {
               label: 'Title (Vietnamese)',
             },
             {
+              type: 'string',
+              name: 'description_en',
+              label: 'Description (English)',
+              ui: {
+                component: 'textarea',
+              },
+            },
+            {
+              type: 'string',
+              name: 'description_vi',
+              label: 'Description (Vietnamese)',
+              ui: {
+                component: 'textarea',
+              },
+            },
+            {
               type: 'image',
               name: 'image',
               label: 'Image',

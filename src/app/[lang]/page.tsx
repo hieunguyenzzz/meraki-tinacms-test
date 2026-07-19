@@ -101,6 +101,8 @@ export default async function LangHomePage({ params }: Props) {
           items {
             title_en
             title_vi
+            description_en
+            description_vi
             image
             link
           }
