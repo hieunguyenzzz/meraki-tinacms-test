@@ -179,15 +179,6 @@ export default function LoveNotesClient({
                           onClick={() => toggleNote(index)}
                           aria-expanded={isOpen}
                           aria-controls={notePanelId}
-                          aria-label={
-                            isOpen
-                              ? lang === 'en'
-                                ? 'Hide love note details'
-                                : 'An chi tiet thu tinh'
-                              : lang === 'en'
-                                ? 'Show love note details'
-                                : 'Hien chi tiet thu tinh'
-                          }
                           className='flex h-[38px] w-[58px] shrink-0 items-end justify-center rounded-sm transition-transform duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/40 md:h-[54px] md:w-[82px] lg:h-[62px] lg:w-[94px]'>
                           <img
                             src={
@@ -217,7 +208,7 @@ export default function LoveNotesClient({
                               ? 'wedding_location_en'
                               : 'wedding_location_vi',
                           )}>
-                          {lang === 'en' ? 'Wedding in ' : 'To chuc tai '} {location}
+                          {lang === 'en' ? 'Wedding in ' : 'Venue '} {location}
                         </p>
 
                         {excerpt && (

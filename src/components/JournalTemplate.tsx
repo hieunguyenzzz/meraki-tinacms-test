@@ -62,7 +62,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                           'nationality'
                         )}>
                         <div className='text-body-sm mb-1 uppercase text-text-secondary'>
-                          NATIONALITY
+                          {lang === 'vi' ? 'QUỐC TỊCH' : 'NATIONALITY'}
                         </div>
                         <div className='text-body-md'>
                           {journal.wedding_details.nationality}
@@ -94,7 +94,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                           'venue'
                         )}>
                         <div className='text-body-sm mb-1 uppercase text-text-secondary'>
-                          WEDDING VENUE
+                          {lang === 'vi' ? 'ĐỊA ĐIỂM' : 'WEDDING VENUE'}
                         </div>
                         <div className='text-body-md'>
                           {journal.wedding_details.venue}
