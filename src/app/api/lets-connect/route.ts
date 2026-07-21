@@ -19,6 +19,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
+  // Honeypot: real users never fill the hidden "company" field; bots do.
+  // Pretend success without processing so bots can't tell they were caught.
+  if (String(body.company || '').trim() !== '') {
+    console.warn(`[lets-connect:${correlationId}] honeypot triggered, dropping submission`);
+    return NextResponse.json({ ok: true });
+  }
+
   const firstName = String(body.firstName || '').trim();
   const lastName = String(body.lastName || '').trim();
   const email = String(body.email || '').trim();
@@ -55,6 +62,25 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error(`[lets-connect:${correlationId}] failed to save submission`, error);
     return NextResponse.json({ error: 'Failed to submit, please try again' }, { status: 500 });
+  }
+
+  // Best-effort sync to the ERP CRM (creates a Lead). Never block the couple's
+  // submission on it — the submission is already persisted above.
+  try {
+    const erpUrl = process.env.ERP_INQUIRY_URL;
+    const erpSecret = process.env.ERP_INQUIRY_SECRET;
+    if (erpUrl && erpSecret) {
+      const res = await fetch(erpUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Inquiry-Secret': erpSecret },
+        body: JSON.stringify(submission),
+      });
+      if (!res.ok) {
+        console.error(`[lets-connect:${correlationId}] ERP lead create failed`, res.status);
+      }
+    }
+  } catch (error) {
+    console.error(`[lets-connect:${correlationId}] ERP lead create error`, error);
   }
 
   try {

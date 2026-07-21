@@ -165,6 +165,7 @@ export default function LetsConnectForm({ lang }: { lang: string }) {
 
     const payload = {
       lang,
+      company: formData.get('company'),
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
       role: formData.get('role'),
@@ -213,6 +214,15 @@ export default function LetsConnectForm({ lang }: { lang: string }) {
       onSubmit={handleSubmit}
       className="bg-paper relative z-10 -mt-8 bg-background-1 px-5 py-7 shadow-sm md:-mt-16 md:px-8 md:py-9 lg:-mt-40 lg:px-9 lg:py-10"
     >
+      {/* Honeypot: hidden from real users; bots that fill it are silently dropped server-side. */}
+      <input
+        type="text"
+        name="company"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute left-[-9999px] h-0 w-0 opacity-0"
+      />
       <div className="relative z-[1]">
         <fieldset>
           <legend className="font-vocago text-h4 text-text-primary">
