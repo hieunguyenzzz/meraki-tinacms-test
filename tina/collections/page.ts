@@ -168,8 +168,15 @@ export const Page: Collection = {
             },
             {
               type: 'image',
-              name: 'image',
-              label: 'Image',
+              name: 'preview_image',
+              label: 'Preview Image',
+              description: 'Shown on the service panel before it is hovered.',
+            },
+            {
+              type: 'image',
+              name: 'hover_image',
+              label: 'Hover Image',
+              description: 'Shown in the service panel detail card on hover.',
             },
           ],
         },

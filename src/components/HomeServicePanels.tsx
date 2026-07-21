@@ -30,10 +30,10 @@ export default function HomeServicePanels({
           <div
             key={`${service?.title_en}-${index}`}
             className="group relative aspect-[4/3] overflow-hidden bg-background-brand"
-            data-tina-field={tinaField(service, 'image')}
+            data-tina-field={tinaField(service, 'preview_image')}
           >
             <MerakiImage
-              src={service?.image}
+              src={service?.preview_image}
               alt={
                 localized(
                   { en: service?.title_en, vi: service?.title_vi },
@@ -74,6 +74,8 @@ export default function HomeServicePanels({
           const serviceTitle =
             localized({ en: service?.title_en, vi: service?.title_vi }, lang) ||
             'Meraki wedding service';
+          const previewImage = service?.preview_image;
+          const hoverImage = service?.hover_image || previewImage;
 
           return (
             <div
@@ -84,10 +86,10 @@ export default function HomeServicePanels({
             >
               <div
                 className="absolute inset-0"
-                data-tina-field={tinaField(service, 'image')}
+                data-tina-field={tinaField(service, 'preview_image')}
               >
                 <MerakiImage
-                  src={service?.image}
+                  src={previewImage}
                   alt={serviceTitle}
                   fill
                   sizes={isActive ? '66vw' : '34vw'}
@@ -140,9 +142,12 @@ export default function HomeServicePanels({
                   {serviceTitle}
                 </h3>
 
-                <div className="relative mt-6 aspect-[4/5] w-[clamp(128px,11.7vw,168px)] overflow-hidden lg:mt-0">
+                <div
+                  className="relative mt-6 aspect-[4/5] w-[clamp(128px,11.7vw,168px)] overflow-hidden lg:mt-0"
+                  data-tina-field={tinaField(service, 'hover_image')}
+                >
                   <MerakiImage
-                    src={service?.image}
+                    src={hoverImage}
                     alt=""
                     fill
                     sizes="168px"
