@@ -154,7 +154,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
             />
           </div>
 
-          <div className="mx-auto max-w-2xl space-y-5 text-left text-body-md leading-relaxed text-text-secondary">
+          <div className="mx-auto max-w-2xl space-y-5 text-body-md leading-relaxed text-text-secondary text-justify">
             <p
               data-tina-field={tinaField(
                 mission,
