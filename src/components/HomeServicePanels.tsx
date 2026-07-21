@@ -1,7 +1,6 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Link from 'next/link';
 import { useState } from 'react';
 import { tinaField } from 'tinacms/dist/react';
 import MerakiImage from './ui/MerakiImage';
@@ -28,9 +27,8 @@ export default function HomeServicePanels({
     <>
       <section className="grid grid-cols-1 md:hidden">
         {(services?.items || []).map((service: any, index: number) => (
-          <Link
+          <div
             key={`${service?.title_en}-${index}`}
-            href={`/${lang}${service?.link}`}
             className="group relative aspect-[4/3] overflow-hidden bg-background-brand"
             data-tina-field={tinaField(service, 'image')}
           >
@@ -59,14 +57,13 @@ export default function HomeServicePanels({
                 lang
               )}
             </h3>
-          </Link>
+          </div>
         ))}
       </section>
 
       <section
         className="hidden h-[clamp(520px,49.2vw,760px)] overflow-hidden md:flex"
         onMouseLeave={() => setActiveServiceIndex(null)}
-        onBlur={() => setActiveServiceIndex(null)}
         aria-label={
           localized({ en: services?.title_en, vi: services?.title_vi }, lang) ||
           'Wedding services'
@@ -79,14 +76,11 @@ export default function HomeServicePanels({
             'Meraki wedding service';
 
           return (
-            <Link
+            <div
               key={`${service?.title_en}-${index}`}
-              href={`/${lang}${service?.link}`}
               className="group relative min-w-0 overflow-hidden bg-background-brand transition-[flex-grow] duration-700 ease-in-out motion-reduce:transition-none"
               style={{ flexGrow: isActive ? 1.9 : 1 }}
               onMouseEnter={() => setActiveServiceIndex(index)}
-              onFocus={() => setActiveServiceIndex(index)}
-              aria-label={serviceTitle}
             >
               <div
                 className="absolute inset-0"
@@ -172,7 +166,7 @@ export default function HomeServicePanels({
                   )}
                 </p>
               </article>
-            </Link>
+            </div>
           );
         })}
       </section>

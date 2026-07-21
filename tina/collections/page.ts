@@ -171,11 +171,6 @@ export const Page: Collection = {
               name: 'image',
               label: 'Image',
             },
-            {
-              type: 'string',
-              name: 'link',
-              label: 'Link',
-            },
           ],
         },
       ],

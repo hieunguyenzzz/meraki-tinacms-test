@@ -104,7 +104,6 @@ export default async function LangHomePage({ params }: Props) {
             description_en
             description_vi
             image
-            link
           }
         }
         love_notes_section {
