@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type { ServiceQuery } from '../../tina/__generated__/types';
 import Footer from './Footer';
@@ -35,6 +35,15 @@ export default function ServiceClient({
   const { data: tinaData } = useTina({ data, query, variables });
   const service = tinaData.service;
   const [openFaqs, setOpenFaqs] = useState<Set<number>>(() => new Set([0]));
+  const [activeWeddingPanel, setActiveWeddingPanel] = useState<
+    'destination' | 'city' | null
+  >(null);
+  const [leavingWeddingPanel, setLeavingWeddingPanel] = useState<
+    'destination' | 'city' | null
+  >(null);
+  const weddingPanelExitTimer = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   const hero = service.hero;
   const introduction = service.introduction;
@@ -59,6 +68,44 @@ export default function ServiceClient({
 
       return next;
     });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (weddingPanelExitTimer.current) {
+        clearTimeout(weddingPanelExitTimer.current);
+      }
+    };
+  }, []);
+
+  const activateWeddingPanel = (panel: 'destination' | 'city') => {
+    setLeavingWeddingPanel((current) => {
+      if (current !== panel) {
+        return current;
+      }
+
+      if (weddingPanelExitTimer.current) {
+        clearTimeout(weddingPanelExitTimer.current);
+        weddingPanelExitTimer.current = null;
+      }
+
+      return null;
+    });
+    setActiveWeddingPanel(panel);
+  };
+
+  const deactivateWeddingPanel = (panel: 'destination' | 'city') => {
+    setActiveWeddingPanel((current) => (current === panel ? null : current));
+    setLeavingWeddingPanel(panel);
+
+    if (weddingPanelExitTimer.current) {
+      clearTimeout(weddingPanelExitTimer.current);
+    }
+
+    weddingPanelExitTimer.current = setTimeout(() => {
+      setLeavingWeddingPanel((current) => (current === panel ? null : current));
+      weddingPanelExitTimer.current = null;
+    }, 700);
   };
 
   return (
@@ -143,13 +190,29 @@ export default function ServiceClient({
 
         {weddingTypes && (
           <section className="px-4 pb-16 md:px-12 lg:pb-28">
-            <div className={`mx-auto max-w-[1408px] ${styles.weddingTypesGrid}`}>
+            <div
+              className={`mx-auto max-w-[1408px] ${styles.weddingTypesGrid} ${
+                activeWeddingPanel === 'destination'
+                  ? styles.destinationActive
+                  : activeWeddingPanel === 'city'
+                  ? styles.cityActive
+                  : ''
+              } ${
+                leavingWeddingPanel === 'destination'
+                  ? styles.destinationLeaving
+                  : leavingWeddingPanel === 'city'
+                  ? styles.cityLeaving
+                  : ''
+              }`}
+            >
               {weddingTypes.destination && (
                 <WeddingPanel
                   className={`${styles.typePanel} ${styles.destinationPanel}`}
                   panel={weddingTypes.destination}
                   panelName="destination"
                   lang={lang}
+                  onActivate={activateWeddingPanel}
+                  onDeactivate={deactivateWeddingPanel}
                 />
               )}
 
@@ -159,6 +222,8 @@ export default function ServiceClient({
                   panel={weddingTypes.city}
                   panelName="city"
                   lang={lang}
+                  onActivate={activateWeddingPanel}
+                  onDeactivate={deactivateWeddingPanel}
                 />
               )}
             </div>
@@ -362,6 +427,8 @@ type WeddingPanelProps = {
   };
   panelName: 'destination' | 'city';
   lang: string;
+  onActivate: (panel: 'destination' | 'city') => void;
+  onDeactivate: (panel: 'destination' | 'city') => void;
 };
 
 function WeddingPanel({
@@ -369,9 +436,21 @@ function WeddingPanel({
   panel,
   panelName,
   lang,
+  onActivate,
+  onDeactivate,
 }: WeddingPanelProps) {
   return (
-    <div className={className}>
+    <div
+      className={className}
+      onMouseEnter={() => onActivate(panelName)}
+      onMouseLeave={() => onDeactivate(panelName)}
+      onFocus={() => onActivate(panelName)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          onDeactivate(panelName);
+        }
+      }}
+    >
       <div
         className={styles.panelMedia}
         data-tina-field={tinaField(panel, 'background_image')}

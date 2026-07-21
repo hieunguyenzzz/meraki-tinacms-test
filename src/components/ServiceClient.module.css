@@ -2,17 +2,97 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
+  isolation: isolate;
 }
 
 .typePanel {
   position: relative;
   min-height: 720px;
-  overflow: hidden;
+  transition: opacity 500ms ease;
 }
 
 .panelMedia {
   position: absolute;
   inset: 0;
+  transition: box-shadow 600ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+@keyframes slideDestinationMedia {
+  from {
+    transform: translateX(0) rotate(0);
+  }
+
+  to {
+    transform: translateX(50%) rotate(5deg);
+  }
+}
+
+@keyframes slideCityMedia {
+  from {
+    transform: translateX(0) rotate(0);
+  }
+
+  to {
+    transform: translateX(-50%) rotate(-5deg);
+  }
+}
+
+@keyframes returnDestinationMedia {
+  from {
+    transform: translateX(50%) rotate(5deg);
+  }
+
+  to {
+    transform: translateX(0) rotate(0);
+  }
+}
+
+@keyframes returnCityMedia {
+  from {
+    transform: translateX(-50%) rotate(-5deg);
+  }
+
+  to {
+    transform: translateX(0) rotate(0);
+  }
+}
+
+@media (min-width: 744px) and (hover: hover) {
+  .destinationActive .destinationPanel,
+  .cityActive .cityPanel,
+  .destinationLeaving .destinationPanel,
+  .cityLeaving .cityPanel {
+    z-index: 1;
+  }
+
+  .destinationActive .cityPanel,
+  .cityActive .destinationPanel {
+    opacity: 0.32;
+  }
+
+  .destinationActive .destinationPanel .panelMedia {
+    transform-origin: 50% 50%;
+    box-shadow: 0 18px 35px rgb(55 66 32 / 20%);
+    animation: slideDestinationMedia 700ms cubic-bezier(0.22, 1, 0.36, 1)
+      forwards;
+  }
+
+  .cityActive .cityPanel .panelMedia {
+    transform-origin: 50% 50%;
+    box-shadow: 0 18px 35px rgb(55 66 32 / 20%);
+    animation: slideCityMedia 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .destinationLeaving .destinationPanel .panelMedia {
+    animation: returnDestinationMedia 700ms cubic-bezier(0.22, 1, 0.36, 1)
+      forwards;
+  }
+
+  .cityLeaving .cityPanel .panelMedia {
+    animation: returnCityMedia 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
 }
 
 .panelSurface {
@@ -68,6 +148,7 @@
     display: flex;
     min-height: 0;
     flex-direction: column;
+    overflow: hidden;
   }
 
   .panelMedia {
@@ -86,5 +167,17 @@
     margin-left: 0;
     -webkit-mask-image: none;
     mask-image: none;
+  }
+
+  .panelMedia {
+    will-change: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typePanel,
+  .panelMedia {
+    transition: none;
+    animation: none;
   }
 }
