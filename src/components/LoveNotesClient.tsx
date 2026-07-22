@@ -1,7 +1,7 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { type TransitionEvent, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import Footer from './Footer';
 import Header from './Header';
@@ -35,6 +35,8 @@ export default function LoveNotesClient({
 }: Props) {
   const [openNotes, setOpenNotes] = useState<Record<number, boolean>>({});
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null);
+  const noteImageRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const pendingScrollIndex = useRef<number | null>(null);
   const { data: tinaData } = useTina({ data, query, variables });
   const listing = tinaData.loveNotesListing;
 
@@ -61,11 +63,62 @@ export default function LoveNotesClient({
     lang,
   );
 
+  const scrollToNoteImage = (index: number) => {
+    const image = noteImageRefs.current[index];
+    if (!image) return;
+
+    const headerHeight =
+      document.querySelector('header')?.getBoundingClientRect().height || 0;
+    const imageTop = image.getBoundingClientRect().top + window.scrollY;
+
+    window.scrollTo({
+      top: Math.max(0, imageTop - headerHeight),
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth',
+    });
+  };
+
   const toggleNote = (index: number) => {
+    const isOpening = !openNotes[index];
+    if (isOpening) {
+      pendingScrollIndex.current = index;
+    } else if (pendingScrollIndex.current === index) {
+      pendingScrollIndex.current = null;
+    }
+
     setOpenNotes((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
+
+    if (
+      isOpening &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      requestAnimationFrame(() => {
+        if (pendingScrollIndex.current === index) {
+          pendingScrollIndex.current = null;
+          scrollToNoteImage(index);
+        }
+      });
+    }
+  };
+
+  const handleNotePanelTransitionEnd = (
+    index: number,
+    event: TransitionEvent<HTMLDivElement>,
+  ) => {
+    if (
+      event.target !== event.currentTarget ||
+      event.propertyName !== 'max-height' ||
+      pendingScrollIndex.current !== index
+    ) {
+      return;
+    }
+
+    pendingScrollIndex.current = null;
+    scrollToNoteImage(index);
   };
 
   return (
@@ -121,7 +174,7 @@ export default function LoveNotesClient({
 
       <section className=''>
         <div className='mx-auto max-w-[1728px] px-6 md:px-10'>
-          <div className='-space-y-10'>
+          <div className='space-y-4 md:space-y-16 mt-16'>
             {notes.map((note: any, index: number) => {
               const coupleNames = t(
                 {
@@ -163,7 +216,7 @@ export default function LoveNotesClient({
               return (
                 <article
                   key={`${coupleNames || 'note'}-${index}`}
-                  className={`flex items-center ${isRightAligned ? 'flex-row-reverse' : ''}`}>
+                  className={`flex flex-col items-center lg:flex-row ${isRightAligned ? 'lg:flex-row-reverse' : ''}`}>
                   <div
                     className={`w-full ${isRightAligned ? 'lg:max-w-[1000px]' : 'lg:max-w-[980px]'}`}
                     data-tina-field={tinaField(
@@ -190,7 +243,7 @@ export default function LoveNotesClient({
                             width={isOpen ? 80 : 94}
                             height={62}
                             loading='lazy'
-                            className={`w-[${isOpen ? 80 : 94}px] h-auto`}
+                            className={`${isOpen ? 'w-[80px]' : 'w-[94px]'} h-auto`}
                           />
                         </button>
 
@@ -227,10 +280,21 @@ export default function LoveNotesClient({
 
                   <div
                     id={notePanelId}
-                    className={`my-10 ${isRightAligned ? 'translate-x-1/3' : '-translate-x-1/3'} ${isOpen ? 'visible' : 'invisible opacity-0'}`}>
+                    aria-hidden={!isOpen}
+                    onTransitionEnd={(event) =>
+                      handleNotePanelTransitionEnd(index, event)
+                    }
+                    className={`w-full max-w-[558px] shrink-0 transition-[max-height,margin,opacity,transform] duration-700 ease-in-out motion-reduce:transition-none ${isOpen
+                        ? `visible mt-8 mb-[28rem] max-h-[900px] opacity-100 md:mb-[20rem] ${isRightAligned ? 'lg:translate-x-1/3' : 'lg:-translate-x-1/3'}`
+                        : 'invisible my-0 max-h-0 overflow-hidden opacity-0'
+                      }`}>
                     <div className='relative'>
                       {/* Image base layer */}
-                      <div data-tina-field={tinaField(note, 'image')}>
+                      <div
+                        ref={(element) => {
+                          noteImageRefs.current[index] = element;
+                        }}
+                        data-tina-field={tinaField(note, 'image')}>
                         <div className={`relative overflow-visible animate__animated animate__faster ${isOpen ? isRightAligned ? 'animate__fadeInRight' : 'animate__fadeInLeft' : ''}`}>
                           <MerakiImage
                             src={
