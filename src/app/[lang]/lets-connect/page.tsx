@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
+import { client } from '../../../../tina/__generated__/client';
 import Footer from '../../../components/Footer';
-import Header from '../../../components/Header';
 import MerakiImage from '../../../components/ui/MerakiImage';
 import LetsConnectForm from './LetsConnectForm';
-import { client } from '../../../../tina/__generated__/client';
 
 interface Props {
   params: { lang: string };
@@ -155,8 +154,6 @@ export default async function LetsConnectPage({ params }: Props) {
 
   return (
     <div className="overflow-hidden bg-background-base text-text-primary">
-      <Header lang={lang} />
-
       <main>
         <section className="relative h-[460px] overflow-hidden md:h-[620px] lg:h-[760px]">
           <MerakiImage
@@ -187,7 +184,7 @@ export default async function LetsConnectPage({ params }: Props) {
                 <h2 className="font-vocago text-h3 text-text-accent">
                   {t(copy.introTitle, lang)}
                 </h2>
-                <div className="mt-5 space-y-4 text-body-md leading-relaxed text-text-secondary">
+                <div className="mt-5 space-y-4 text-body-md leading-relaxed text-text-secondary text-justify">
                   {copy.introParagraphs[lang as 'en' | 'vi'].map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}

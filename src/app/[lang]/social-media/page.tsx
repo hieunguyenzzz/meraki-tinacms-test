@@ -1,4 +1,3 @@
-import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import type { Metadata } from 'next';
 
@@ -85,8 +84,6 @@ export default function SocialMediaPage({ params }: Props) {
 
   return (
     <div className="  bg-background-1">
-      <Header lang={lang} />
-
       {/* Hero Section */}
       <section className="py-20  ">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -6,7 +6,6 @@ import type { ReactElement } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import { TinaMarkdown, type TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import Footer from './Footer';
-import Header from './Header';
 import HomeServicePanels from './HomeServicePanels';
 import MerakiImage from './ui/MerakiImage';
 
@@ -153,8 +152,6 @@ export default function HomeClient({
 
   return (
     <div className="overflow-hidden bg-background-base text-text-primary">
-      <Header lang={lang} />
-
       <main>
         <section className="flex min-h-[220px] items-center justify-center px-6 py-16 text-center md:min-h-[300px] md:py-20">
           <div>

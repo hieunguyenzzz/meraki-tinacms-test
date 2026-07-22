@@ -4,7 +4,6 @@
 import { type TransitionEvent, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import Footer from './Footer';
-import Header from './Header';
 import LoveNoteLightbox from './LoveNoteLightbox';
 import MerakiImage from './ui/MerakiImage';
 
@@ -123,8 +122,6 @@ export default function LoveNotesClient({
 
   return (
     <div className='bg-background-base'>
-      <Header lang={lang} />
-
       <section className='relative'>
         <div className='grid grid-cols-1 lg:grid-cols-2 items-stretch'>
           <div

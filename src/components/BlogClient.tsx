@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import ContentBlocksRenderer, { collectLightboxImages } from './ContentBlocksRenderer';
 import Footer from './Footer';
-import Header from './Header';
 import MerakiImage from './ui/MerakiImage';
 
 interface BlogClientProps {
@@ -53,8 +52,6 @@ export default function BlogClient({
 
   return (
     <div className='bg-background-1'>
-      <Header lang={lang} />
-
       {/* Article Hero Banner */}
       <article>
         <section className='grid grid-cols-1 lg:grid-cols-2'>

@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type { JournalConnectionEdges, JournalListingQuery } from '../../tina/__generated__/types';
 import Footer from './Footer';
-import Header from './Header';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
 
@@ -134,8 +133,6 @@ export default function JournalListingClient({
 
   return (
     <div className='  bg-background-base'>
-      <Header lang={lang} />
-
       {/* Hero Section */}
       <section className='relative'>
         <div className='grid sm:grid-cols-1 lg:grid-cols-2 items-stretch'>

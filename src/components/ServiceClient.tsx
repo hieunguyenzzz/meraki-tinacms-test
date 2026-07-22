@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type { ServiceQuery } from '../../tina/__generated__/types';
 import Footer from './Footer';
-import Header from './Header';
 import styles from './ServiceClient.module.css';
 import MerakiImage from './ui/MerakiImage';
 
@@ -110,8 +109,6 @@ export default function ServiceClient({
 
   return (
     <div className="bg-background-base">
-      <Header lang={lang} />
-
       <main>
         {hero && (
           <section className="relative">

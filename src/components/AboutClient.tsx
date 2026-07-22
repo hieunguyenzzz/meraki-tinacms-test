@@ -5,7 +5,6 @@ import { tinaField, useTina } from 'tinacms/dist/react';
 import { TinaMarkdown, TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import type { AboutQuery } from '../../tina/__generated__/types';
 import Footer from './Footer';
-import Header from './Header';
 import MerakiImage from './ui/MerakiImage';
 
 interface Props {
@@ -42,8 +41,6 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
 
   return (
     <div className="bg-background-base">
-      <Header lang={lang} />
-
       <main>
         <section className="relative">
           <div className="grid lg:grid-cols-2 lg:min-h-[760px]">

@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react';
 import { useTina } from 'tinacms/dist/react';
-import Header from './Header';
 import Footer from './Footer';
 import JournalTemplate from './JournalTemplate';
 import Lightbox from './Lightbox';
@@ -52,8 +51,6 @@ export default function JournalClient({
 
   return (
     <div className='bg-background-1'>
-      <Header lang={lang} />
-
       <JournalTemplate journal={journal} lang={lang} />
 
       {/* Content Blocks */}
