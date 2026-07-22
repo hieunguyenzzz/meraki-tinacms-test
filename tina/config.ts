@@ -7,6 +7,7 @@ import { About } from './collections/about';
 import { Journal } from './collections/journal';
 import { JournalListing } from './collections/journal-listing';
 import { LoveNotesListing } from './collections/love-notes-listing';
+import { LetsConnect } from './collections/lets-connect';
 import { Page } from './collections/page';
 import { Service } from './collections/service';
 import { MediaManagerScreen } from './components/MediaManagerScreen';
@@ -75,6 +76,7 @@ export const config = defineConfig({
       JournalListing,
       BlogListing,
       LoveNotesListing,
+      LetsConnect,
     ],
   },
 
