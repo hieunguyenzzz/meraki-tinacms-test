@@ -47,7 +47,7 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                   <h1
                     className='text-h1 tracking-wider text-center'
                     data-tina-field={tinaField(journal, 'couple_names')}>
-                    {journal.couple_names}
+                    {journal.couple_names?.toUpperCase()}
                   </h1>
                 </div>
 
