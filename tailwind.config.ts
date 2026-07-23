@@ -114,9 +114,14 @@ export default {
           '55%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(-100%)' },
         },
+        'hero-carousel': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         wave: 'wave 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite',
+        'hero-carousel': 'hero-carousel 32s linear infinite',
       },
       backgroundImage: {
         'footer-gradient-light': `linear-gradient(

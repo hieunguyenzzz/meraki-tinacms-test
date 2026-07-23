@@ -185,20 +185,37 @@ export default function HomeClient({
         </section>
 
         <section
-          className="grid h-[320px] grid-cols-2 md:h-[520px] md:grid-cols-4 xl:h-[650px]"
+          className="h-[320px] overflow-hidden md:h-[520px] xl:h-[650px]"
           data-tina-field={hero ? tinaField(hero, 'gallery') : undefined}
         >
-          {heroImages.map((image: string, index: number) => (
-            <div key={`${image}-${index}`} className="relative overflow-hidden">
-              <MerakiImage
-                src={image}
-                alt={`${heroTitle || 'Meraki wedding'} ${index + 1}`}
-                fill
-                sizes="(min-width: 744px) 25vw, 50vw"
-                className="object-cover object-center"
-              />
-            </div>
-          ))}
+          <div
+            className="flex h-full w-max animate-hero-carousel motion-reduce:animate-none"
+            style={{
+              animationDuration: `${Math.max(heroImages.length * 8, 24)}s`,
+            }}
+          >
+            {[...heroImages, ...heroImages].map(
+              (image: string, index: number) => (
+                <div
+                  key={`${image}-${index}`}
+                  className="relative h-full w-[50vw] shrink-0 overflow-hidden md:w-[25vw]"
+                  aria-hidden={index >= heroImages.length}
+                >
+                  <MerakiImage
+                    src={image}
+                    alt={
+                      index < heroImages.length
+                        ? `${heroTitle || 'Meraki wedding'} ${index + 1}`
+                        : ''
+                    }
+                    fill
+                    sizes="(min-width: 744px) 25vw, 50vw"
+                    className="object-cover object-center"
+                  />
+                </div>
+              )
+            )}
+          </div>
         </section>
 
         <section className="px-6 py-24 text-center md:py-36">
