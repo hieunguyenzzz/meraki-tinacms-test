@@ -7,6 +7,7 @@ import { tinaField, useTina } from 'tinacms/dist/react';
 import { TinaMarkdown, type TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import Footer from './Footer';
 import HomeServicePanels from './HomeServicePanels';
+import FadeInOnScroll from './ui/FadeInOnScroll';
 import MerakiImage from './ui/MerakiImage';
 
 interface HomeClientProps {
@@ -246,46 +247,56 @@ export default function HomeClient({
                     journal?.couple_names;
 
                   return (
-                    <article
+                    <FadeInOnScroll
                       key={journal?.id || `${journal?.slug}-${journalIndex}`}
-                      className="group w-full md:w-[32%]"
-                      data-tina-field={tinaField(journal, 'featured_image')}
+                      className="w-full md:w-[32%]"
                     >
-                      <Link href={`/${lang}/journal/${journal?.slug}`}>
-                        <div className="relative aspect-[2/3] overflow-hidden bg-background-1">
-                          <MerakiImage
-                            src={journal?.featured_image}
-                            alt={`${title} — ${journal?.couple_names}`}
-                            fill
-                            sizes="(min-width: 744px) 32vw, 100vw"
-                            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                          />
-                        </div>
-                        <div className="px-3 pt-5 text-center">
-                          <h2
-                            className="font-vocago text-h4 uppercase leading-tight tracking-[0.04em] text-text-accent"
-                            data-tina-field={
-                              journal?.template_layout
-                                ? tinaField(
-                                    journal.template_layout,
-                                    lang === 'en'
-                                      ? 'main_headline_en'
-                                      : 'main_headline_vi'
-                                  )
-                                : undefined
-                            }
-                          >
-                            {title}
-                          </h2>
-                          <p
-                            className="mt-2 text-body-sm text-text-secondary"
-                            data-tina-field={tinaField(journal, 'couple_names')}
-                          >
-                            {journal?.couple_names}
-                          </p>
-                        </div>
-                      </Link>
-                    </article>
+                      <article
+                        className="group"
+                        data-tina-field={tinaField(
+                          journal,
+                          'featured_image'
+                        )}
+                      >
+                        <Link href={`/${lang}/journal/${journal?.slug}`}>
+                          <div className="relative aspect-[2/3] overflow-hidden bg-background-1">
+                            <MerakiImage
+                              src={journal?.featured_image}
+                              alt={`${title} — ${journal?.couple_names}`}
+                              fill
+                              sizes="(min-width: 744px) 32vw, 100vw"
+                              className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                            />
+                          </div>
+                          <div className="px-3 pt-5 text-center">
+                            <h2
+                              className="font-vocago text-h4 uppercase leading-tight tracking-[0.04em] text-text-accent"
+                              data-tina-field={
+                                journal?.template_layout
+                                  ? tinaField(
+                                      journal.template_layout,
+                                      lang === 'en'
+                                        ? 'main_headline_en'
+                                        : 'main_headline_vi'
+                                    )
+                                  : undefined
+                              }
+                            >
+                              {title}
+                            </h2>
+                            <p
+                              className="mt-2 text-body-sm text-text-secondary"
+                              data-tina-field={tinaField(
+                                journal,
+                                'couple_names'
+                              )}
+                            >
+                              {journal?.couple_names}
+                            </p>
+                          </div>
+                        </Link>
+                      </article>
+                    </FadeInOnScroll>
                   );
                 })}
               </div>

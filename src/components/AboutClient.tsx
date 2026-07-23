@@ -5,6 +5,7 @@ import { tinaField, useTina } from 'tinacms/dist/react';
 import { TinaMarkdown, TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import type { AboutQuery } from '../../tina/__generated__/types';
 import Footer from './Footer';
+import FadeInOnScroll from './ui/FadeInOnScroll';
 import MerakiImage from './ui/MerakiImage';
 
 interface Props {
@@ -197,46 +198,49 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
               const role = localized(member?.role_en, member?.role_vi, lang);
 
               return (
-                <article
+                <FadeInOnScroll
                   key={`${member?.name_en || 'planner'}-${index}`}
-                  className={`group mx-auto w-full max-w-[300px] ${isRaised ? 'lg:-translate-y-8' : ''
-                    }`}
+                  className="mx-auto w-full max-w-[300px]"
                 >
-                  <div
-                    className="relative aspect-[3/4] overflow-hidden bg-background-2"
-                    data-tina-field={tinaField(member, 'image')}
+                  <article
+                    className={`group ${isRaised ? 'lg:-translate-y-8' : ''}`}
                   >
-                    {member?.image && (
-                      <MerakiImage
-                        src={member.image}
-                        alt={name || 'Meraki wedding planner'}
-                        fill
-                        sizes="(min-width: 1280px) 300px, (min-width: 744px) 50vw, 100vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    )}
-                  </div>
-                  <div className="border-b border-line-secondary px-2 py-3 text-center">
-                    <p
-                      className="text-body-md text-text-primary"
-                      data-tina-field={tinaField(
-                        member,
-                        lang === 'en' ? 'name_en' : 'name_vi'
-                      )}
+                    <div
+                      className="relative aspect-[3/4] overflow-hidden bg-background-2"
+                      data-tina-field={tinaField(member, 'image')}
                     >
-                      {name}
-                    </p>
-                    <p
-                      className="text-body-sm text-text-secondary"
-                      data-tina-field={tinaField(
-                        member,
-                        lang === 'en' ? 'role_en' : 'role_vi'
+                      {member?.image && (
+                        <MerakiImage
+                          src={member.image}
+                          alt={name || 'Meraki wedding planner'}
+                          fill
+                          sizes="(min-width: 1280px) 300px, (min-width: 744px) 50vw, 100vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
                       )}
-                    >
-                      {role}
-                    </p>
-                  </div>
-                </article>
+                    </div>
+                    <div className="border-b border-line-secondary px-2 py-3 text-center">
+                      <p
+                        className="text-body-md text-text-primary"
+                        data-tina-field={tinaField(
+                          member,
+                          lang === 'en' ? 'name_en' : 'name_vi'
+                        )}
+                      >
+                        {name}
+                      </p>
+                      <p
+                        className="text-body-sm text-text-secondary"
+                        data-tina-field={tinaField(
+                          member,
+                          lang === 'en' ? 'role_en' : 'role_vi'
+                        )}
+                      >
+                        {role}
+                      </p>
+                    </div>
+                  </article>
+                </FadeInOnScroll>
               );
             })}
           </div>
