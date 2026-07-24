@@ -31,13 +31,16 @@ const COPY = {
   },
 };
 
-function greetingName(submission: LetsConnectSubmission) {
-  return submission.firstName || (submission.lang === 'vi' ? 'bạn' : 'there');
+function greetingName(submission: LetsConnectSubmission, lang: 'en' | 'vi') {
+  return submission.firstName || (lang === 'vi' ? 'bạn' : 'there');
 }
 
-export function buildLetsConnectThankYouEmail(submission: LetsConnectSubmission) {
-  const lang = submission.lang === 'vi' ? 'vi' : 'en';
-  const name = greetingName(submission);
+export function buildLetsConnectThankYouEmail(
+  submission: LetsConnectSubmission,
+  langOverride?: 'en' | 'vi'
+) {
+  const lang = langOverride ?? (submission.lang === 'vi' ? 'vi' : 'en');
+  const name = greetingName(submission, lang);
   const subject = COPY.subject[lang](name);
   const paragraphs = COPY.body[lang]
     .map(
