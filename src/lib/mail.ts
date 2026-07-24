@@ -28,8 +28,11 @@ export async function sendLetsConnectNotification(submission: LetsConnectSubmiss
   });
 }
 
-export async function sendLetsConnectThankYou(submission: LetsConnectSubmission) {
-  const { subject, html, text } = buildLetsConnectThankYouEmail(submission);
+export async function sendLetsConnectThankYou(
+  submission: LetsConnectSubmission,
+  lang?: 'en' | 'vi'
+) {
+  const { subject, html, text } = buildLetsConnectThankYouEmail(submission, lang);
 
   await transporter.sendMail({
     from: `"Meraki Wedding Planner" <${process.env.ZOHO_EMAIL}>`,
