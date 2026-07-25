@@ -27,7 +27,7 @@ export default function Footer({ lang }: FooterProps) {
                 )}
               </p>
               <p>Tel: (+82) 965492092</p>
-              <p>Email: contact@merakiwp.com</p>
+              <p>Email: contact@merakiweddingplanner.com</p>
             </div>
             {/* Social Icons */}
             <div className="flex gap-4 mt-6">

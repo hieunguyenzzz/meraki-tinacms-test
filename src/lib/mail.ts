@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const CONTACT_EMAIL_TO = process.env.CONTACT_EMAIL_TO || 'contact@merakiwp.com';
+const CONTACT_EMAIL_TO = process.env.CONTACT_EMAIL_TO || 'contact@merakiweddingplanner.com';
 
 export async function sendLetsConnectNotification(submission: LetsConnectSubmission) {
   const { html, text } = buildLetsConnectNotificationEmail(submission);

@@ -78,7 +78,7 @@ export function buildLetsConnectThankYouEmail(
             <tr>
               <td style="padding:20px 32px;background-color:#374220;text-align:center;font-family:Arial,Helvetica,sans-serif;">
                 <p style="margin:0;font-size:12px;color:#fef5e3;">
-                  ${SITE_URL.replace('https://', '')} &middot; contact@merakiwp.com &middot; (+82) 965492092
+                  ${SITE_URL.replace('https://', '')} &middot; contact@merakiweddingplanner.com &middot; (+82) 965492092
                 </p>
               </td>
             </tr>
