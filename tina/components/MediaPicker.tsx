@@ -10,6 +10,7 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { getThumborUrl } from "../media/S3MediaStore";
+import { getMediaKind, type MediaKind } from "../media/mediaType";
 
 interface MediaPickerBaseProps {
   open: boolean;
@@ -17,11 +18,19 @@ interface MediaPickerBaseProps {
   initialDirectory?: string;
   multiple?: boolean;
   embedded?: boolean;
+  mediaType?: 'image' | 'video' | 'all';
+}
+
+export interface SelectedMedia {
+  src: string;
+  width: number;
+  height: number;
+  type: MediaKind;
 }
 
 type MediaPickerPickerModeProps = {
   mode?: "picker";
-  onInsert: (selectedImages: Array<{ src: string; width: number; height: number }>) => void;
+  onInsert: (selectedMedia: SelectedMedia[]) => void;
 };
 
 type MediaPickerManagerModeProps = {
@@ -43,6 +52,7 @@ export const MediaPicker = (props: MediaPickerProps) => {
     embedded = false,
   } = props;
   const mode = props.mode ?? "picker";
+  const mediaType = props.mediaType ?? (mode === "manager" ? "all" : "image");
   const cms = useCMS();
   const [directory, setDirectory] = React.useState(initialDirectory);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,6 +68,12 @@ export const MediaPicker = (props: MediaPickerProps) => {
   const LIMIT = 20;
   const loaderRef = React.useRef<HTMLDivElement>(null);
   const uploadInputRef = React.useRef<HTMLInputElement>(null);
+  const uploadAccept =
+    mediaType === 'video'
+      ? 'video/mp4,video/webm,video/quicktime'
+      : mediaType === 'image'
+        ? 'image/*'
+        : 'image/*,video/*,application/pdf';
 
   const handleCreateFolder = () => {
     const folderName = prompt("Enter folder name:");
@@ -164,17 +180,21 @@ export const MediaPicker = (props: MediaPickerProps) => {
     }
   };
 
-  const imageItems = items.filter(item => item.type !== 'dir');
-  const allImageSrcs = imageItems.map(item => item.src as string);
-  const allBulkSelected = allImageSrcs.length > 0 && allImageSrcs.every(src => bulkDeleteItems.includes(src));
+  const visibleItems = items.filter(item => {
+    if (item.type === 'dir' || mediaType === 'all') return true;
+    return getMediaKind(item.filename || item.src || '') === mediaType;
+  });
+  const fileItems = visibleItems.filter(item => item.type !== 'dir');
+  const allFileSrcs = fileItems.map(item => item.src as string);
+  const allBulkSelected = allFileSrcs.length > 0 && allFileSrcs.every(src => bulkDeleteItems.includes(src));
 
   const handleSelectAll = () => {
     if (allBulkSelected) {
-      setBulkDeleteItems(prev => prev.filter(src => !allImageSrcs.includes(src)));
+      setBulkDeleteItems(prev => prev.filter(src => !allFileSrcs.includes(src)));
     } else {
       setBulkDeleteItems(prev => {
         const merged = [...prev];
-        for (const src of allImageSrcs) {
+        for (const src of allFileSrcs) {
           if (!merged.includes(src)) merged.push(src);
         }
         return merged;
@@ -200,7 +220,7 @@ export const MediaPicker = (props: MediaPickerProps) => {
 
   const handleDeleteSelected = async () => {
     if (bulkDeleteItems.length === 0) return;
-    const confirmed = confirm(`Delete ${bulkDeleteItems.length} selected image${bulkDeleteItems.length > 1 ? 's' : ''}? This cannot be undone.`);
+    const confirmed = confirm(`Delete ${bulkDeleteItems.length} selected file${bulkDeleteItems.length > 1 ? 's' : ''}? This cannot be undone.`);
     if (!confirmed) return;
 
     setDeleting(true);
@@ -276,11 +296,12 @@ export const MediaPicker = (props: MediaPickerProps) => {
             ref={uploadInputRef}
             type="file"
             multiple
+            accept={uploadAccept}
             className="hidden"
             onChange={handleUpload}
           />
 
-          {!bulkDeleteMode && imageItems.length > 0 && (
+          {!bulkDeleteMode && fileItems.length > 0 && (
             <button
               onClick={handleEnterBulkDelete}
               className="px-3 py-1.5 bg-red-50 border border-red-300 text-red-700 rounded text-sm font-medium hover:bg-red-100 flex items-center gap-1"
@@ -289,7 +310,7 @@ export const MediaPicker = (props: MediaPickerProps) => {
             </button>
           )}
 
-          {bulkDeleteMode && imageItems.length > 0 && (
+          {bulkDeleteMode && fileItems.length > 0 && (
             <button
               onClick={handleSelectAll}
               className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded text-sm font-medium hover:bg-gray-200 flex items-center gap-1"
@@ -325,7 +346,7 @@ export const MediaPicker = (props: MediaPickerProps) => {
 
         {/* Grid */}
         <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-          {items.length === 0 && !loading ? (
+          {visibleItems.length === 0 && !loading ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-400">
               <p>No items found</p>
             </div>
@@ -334,7 +355,7 @@ export const MediaPicker = (props: MediaPickerProps) => {
               className="grid gap-4"
               style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
             >
-              {items.map((item) => {
+              {visibleItems.map((item) => {
                 if (item.type === 'dir') {
                   return (
                     <div
@@ -350,7 +371,12 @@ export const MediaPicker = (props: MediaPickerProps) => {
 
                 const isSelected = selectedItems.includes(item.src);
                 const isBulkSelected = bulkDeleteItems.includes(item.src);
-                const thumbnailSrc = item.thumbnails?.['400x400'] || getThumborUrl('400x400', item.src);
+                const itemKind = getMediaKind(item.filename || item.src || '');
+                const thumbnailSrc =
+                  itemKind === 'image'
+                    ? item.thumbnails?.['400x400'] ||
+                      getThumborUrl('400x400', item.src)
+                    : undefined;
 
                 return (
                   <div
@@ -364,7 +390,27 @@ export const MediaPicker = (props: MediaPickerProps) => {
                           : 'cursor-default'
                     }`}
                   >
-                    <img src={thumbnailSrc} alt={item.filename} className="w-full h-full object-contain" loading="lazy" />
+                    {itemKind === 'image' && thumbnailSrc ? (
+                      <img src={thumbnailSrc} alt={item.filename} className="w-full h-full object-contain" loading="lazy" />
+                    ) : itemKind === 'video' ? (
+                      <>
+                        <video
+                          src={item.src}
+                          className="h-full w-full object-cover"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                        <span className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/65 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                          Video
+                        </span>
+                      </>
+                    ) : (
+                      <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gray-100 px-3 text-center text-gray-500">
+                        <span className="text-3xl">{itemKind === 'pdf' ? 'PDF' : 'FILE'}</span>
+                        <span className="w-full truncate text-xs">{item.filename}</span>
+                      </div>
+                    )}
 
                     {/* Selection Indicator */}
                     {bulkDeleteMode ? (
@@ -426,22 +472,48 @@ export const MediaPicker = (props: MediaPickerProps) => {
             <button onClick={() => onOpenChange(false)} className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors">Cancel</button>
             <button
               onClick={async () => {
-                const imagesWithDimensions = await Promise.all(
+                const mediaWithDimensions = await Promise.all(
                   selectedItems.map((src) => {
-                    return new Promise<{ src: string; width: number; height: number }>((resolve) => {
+                    const type = getMediaKind(src);
+
+                    if (type === 'video') {
+                      return new Promise<SelectedMedia>((resolve) => {
+                        const video = document.createElement('video');
+                        video.preload = 'metadata';
+                        video.onloadedmetadata = () => {
+                          resolve({
+                            src,
+                            width: video.videoWidth,
+                            height: video.videoHeight,
+                            type,
+                          });
+                        };
+                        video.onerror = () => {
+                          resolve({ src, width: 0, height: 0, type });
+                        };
+                        video.src = src;
+                      });
+                    }
+
+                    return new Promise<SelectedMedia>((resolve) => {
                       const img = new Image();
                       img.onload = () => {
-                        resolve({ src, width: img.naturalWidth, height: img.naturalHeight });
+                        resolve({
+                          src,
+                          width: img.naturalWidth,
+                          height: img.naturalHeight,
+                          type,
+                        });
                       };
                       img.onerror = () => {
-                        resolve({ src, width: 0, height: 0 });
+                        resolve({ src, width: 0, height: 0, type });
                       };
                       img.src = getThumborUrl('0x0', src);
                     });
                   })
                 );
                 if (isPickerProps(props)) {
-                  props.onInsert(imagesWithDimensions);
+                  props.onInsert(mediaWithDimensions);
                 }
               }}
               disabled={selectedItems.length === 0}
@@ -463,7 +535,13 @@ export const MediaPicker = (props: MediaPickerProps) => {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="w-[80vw] sm:max-w-[1280px] p-0 flex flex-col gap-0">
         <SheetHeader className="p-4 border-b bg-gray-50">
-          <SheetTitle>Select Images</SheetTitle>
+          <SheetTitle>
+            {mediaType === 'video'
+              ? 'Select Video'
+              : mediaType === 'image'
+                ? 'Select Images'
+                : 'Select Media'}
+          </SheetTitle>
         </SheetHeader>
         {mediaContent}
       </SheetContent>

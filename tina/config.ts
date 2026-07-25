@@ -12,6 +12,7 @@ import { Page } from './collections/page';
 import { Service } from './collections/service';
 import { MediaManagerScreen } from './components/MediaManagerScreen';
 import { CustomImageField } from './fields/CustomImageField';
+import { CustomVideoField } from './fields/CustomVideoField';
 
 type RequiredField = Field & {
   required?: boolean;
@@ -29,9 +30,22 @@ const CustomImageFieldPlugin: FieldPlugin = {
   },
 };
 
+const CustomVideoFieldPlugin: FieldPlugin = {
+  __type: 'field',
+  name: 'video',
+  Component: CustomVideoField as unknown as FieldPlugin['Component'],
+  parse: (value?: string) => value || '',
+  validate(value, _values, _meta, field) {
+    if ((field as RequiredField).required && !value) {
+      return 'Required';
+    }
+  },
+};
+
 export const config = defineConfig({
   cmsCallback: (cms) => {
     cms.plugins.add(CustomImageFieldPlugin);
+    cms.plugins.add(CustomVideoFieldPlugin);
 
     // Remove the built-in "Media Manager" screen plugin
     cms.plugins.getType('screen').remove('Media Manager');

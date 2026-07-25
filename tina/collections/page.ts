@@ -64,15 +64,14 @@ export const Page: Collection = {
           label: 'Hero Subtitle (Vietnamese)',
         },
         {
-          type: 'image',
-          name: 'background_image',
-          label: 'Background Image',
-        },
-        {
-          type: 'image',
-          name: 'gallery',
-          label: 'Homepage Image Ribbon',
-          list: true,
+          type: 'string',
+          name: 'background_video_url',
+          label: 'Background Video',
+          description:
+            'Upload or select an MP4, WebM, or MOV file for the homepage hero.',
+          ui: {
+            component: 'video',
+          },
         },
         {
           type: 'image',

@@ -2,7 +2,12 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from 'next/link';
-import type { ReactElement } from 'react';
+import {
+  type ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import { TinaMarkdown, type TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import Footer from './Footer';
@@ -10,12 +15,58 @@ import HomeServicePanels from './HomeServicePanels';
 import FadeInOnScroll from './ui/FadeInOnScroll';
 import MerakiImage from './ui/MerakiImage';
 
+const DEFAULT_HERO_VIDEO_URL = 'https://www.youtube.com/watch?v=EQYj649dx3g';
+
 interface HomeClientProps {
   data: any;
   variables: any;
   query: string;
   lang: string;
 }
+
+interface YouTubePlayer {
+  destroy: () => void;
+  getIframe: () => HTMLIFrameElement;
+  mute: () => void;
+  playVideo: () => void;
+}
+
+interface YouTubePlayerEvent {
+  target: YouTubePlayer;
+}
+
+interface YouTubePlayerStateEvent extends YouTubePlayerEvent {
+  data: number;
+}
+
+interface YouTubeApi {
+  Player: new (
+    element: HTMLElement,
+    options: {
+      videoId: string;
+      host: string;
+      width: number;
+      height: number;
+      playerVars: Record<string, number | string>;
+      events: {
+        onReady: (event: YouTubePlayerEvent) => void;
+        onStateChange: (event: YouTubePlayerStateEvent) => void;
+      };
+    }
+  ) => YouTubePlayer;
+  PlayerState: {
+    PLAYING: number;
+  };
+}
+
+declare global {
+  interface Window {
+    YT?: YouTubeApi;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
+let youtubeApiPromise: Promise<YouTubeApi> | null = null;
 
 const t = (text: { en?: string | null; vi?: string | null }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
@@ -34,6 +85,192 @@ const splitCoupleNames = (names?: string | null): [string, string] => {
   const [left, ...rightParts] = names.split(',');
   return [left.trim(), rightParts.join(',').trim()];
 };
+
+const getYouTubeVideoId = (videoUrl?: string | null) => {
+  if (!videoUrl) return null;
+
+  let videoId: string | null = null;
+
+  try {
+    const url = new URL(videoUrl);
+
+    if (url.hostname === 'youtu.be') {
+      videoId = url.pathname.split('/').filter(Boolean)[0] || null;
+    }
+
+    if (
+      url.hostname === 'youtube.com' ||
+      url.hostname === 'www.youtube.com' ||
+      url.hostname === 'm.youtube.com'
+    ) {
+      if (url.pathname === '/watch') {
+        videoId = url.searchParams.get('v');
+      }
+
+      const [, route, pathVideoId] = url.pathname.split('/');
+      if (
+        !videoId &&
+        (route === 'embed' || route === 'shorts' || route === 'live')
+      ) {
+        videoId = pathVideoId || null;
+      }
+    }
+  } catch {
+    return null;
+  }
+
+  return videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId) ? videoId : null;
+};
+
+const isDirectVideoUrl = (videoUrl?: string | null) =>
+  Boolean(videoUrl && /\.(m4v|mov|mp4|mpeg|mpg|ogv|webm)(?:[?#].*)?$/i.test(videoUrl));
+
+const loadYouTubeApi = () => {
+  if (window.YT?.Player) return Promise.resolve(window.YT);
+
+  if (!youtubeApiPromise) {
+    youtubeApiPromise = new Promise<YouTubeApi>((resolve, reject) => {
+      const previousReadyHandler = window.onYouTubeIframeAPIReady;
+
+      window.onYouTubeIframeAPIReady = () => {
+        previousReadyHandler?.();
+
+        if (window.YT?.Player) {
+          resolve(window.YT);
+        } else {
+          reject(new Error('YouTube iframe API did not initialize.'));
+        }
+      };
+
+      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+        const script = document.createElement('script');
+        script.src = 'https://www.youtube.com/iframe_api';
+        script.async = true;
+        script.onerror = () =>
+          reject(new Error('Unable to load the YouTube iframe API.'));
+        document.head.appendChild(script);
+      }
+    });
+  }
+
+  return youtubeApiPromise;
+};
+
+function YouTubeHeroBackground({ videoId }: { videoId: string }) {
+  const playerContainerRef = useRef<HTMLDivElement>(null);
+  const revealTimeoutRef = useRef<number | null>(null);
+  const [isVideoVisible, setIsVideoVisible] = useState(false);
+  const posterUrl = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+
+  useEffect(() => {
+    let player: YouTubePlayer | null = null;
+    let isCancelled = false;
+    let hasStarted = false;
+
+    setIsVideoVisible(false);
+
+    void loadYouTubeApi()
+      .then((api) => {
+        if (isCancelled || !playerContainerRef.current) return;
+
+        player = new api.Player(playerContainerRef.current, {
+          videoId,
+          host: 'https://www.youtube-nocookie.com',
+          width: 1920,
+          height: 1080,
+          playerVars: {
+            autoplay: 1,
+            controls: 0,
+            disablekb: 1,
+            frameBorder: 0,
+            fs: 0,
+            modestbranding: 1,
+            iv_load_policy: 3,
+            loop: 1,
+            mute: 1,
+            playlist: videoId,
+            playsinline: 1,
+            rel: 0,
+            start: 1,
+          },
+          events: {
+            onReady: (event) => {
+              const iframe = event.target.getIframe();
+              iframe.setAttribute('aria-hidden', 'true');
+              iframe.setAttribute('tabindex', '-1');
+
+              event.target.mute();
+              event.target.playVideo();
+            },
+            onStateChange: (event) => {
+              if (event.data !== api.PlayerState.PLAYING || hasStarted) return;
+
+              hasStarted = true;
+              revealTimeoutRef.current = window.setTimeout(() => {
+                if (!isCancelled) setIsVideoVisible(true);
+              }, 1000);
+            },
+          },
+        });
+      })
+      .catch(() => {
+        // Keep the poster visible if YouTube cannot initialize or autoplay.
+      });
+
+    return () => {
+      isCancelled = true;
+      if (revealTimeoutRef.current) {
+        window.clearTimeout(revealTimeoutRef.current);
+        revealTimeoutRef.current = null;
+      }
+      player?.destroy();
+    };
+  }, [videoId]);
+
+  return (
+    <div
+      className="absolute inset-0 bg-cover bg-center"
+      style={{ backgroundImage: `url("${posterUrl}")` }}
+      aria-hidden="true"
+    >
+      <div
+        className={`pointer-events-none h-full w-full transition-opacity duration-700 ${isVideoVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+      >
+        <div
+          ref={playerContainerRef}
+          className="h-full w-full [&>iframe]:h-full [&>iframe]:w-full [&>iframe]:scale-[1.4] [&>iframe]:border-0"
+        />
+      </div>
+    </div>
+  );
+}
+
+function NativeVideoHeroBackground({ src }: { src: string }) {
+  const [isVideoReady, setIsVideoReady] = useState(false);
+
+  return (
+    <div className="absolute inset-0 bg-background-1" aria-hidden="true">
+      <video
+        src={src}
+        className={`pointer-events-none h-full w-full object-cover transition-opacity duration-500 ${
+          isVideoReady ? 'opacity-100' : 'opacity-0'
+        }`}
+        autoPlay
+        muted
+        loop
+        playsInline
+        controls={false}
+        controlsList="nodownload nofullscreen noremoteplayback"
+        disablePictureInPicture
+        disableRemotePlayback
+        preload="auto"
+        tabIndex={-1}
+        onCanPlay={() => setIsVideoReady(true)}
+      />
+    </div>
+  );
+}
 
 const buttonLabel = {
   explore: { en: 'Explore More', vi: 'Khám phá thêm' },
@@ -106,7 +343,15 @@ export default function HomeClient({
   const team = page?.team_section;
   const connect = page?.connect_section;
   const instagram = page?.instagram_section;
-  const heroImages = hero?.gallery || [];
+  const configuredHeroVideoUrl =
+    hero?.background_video_url || DEFAULT_HERO_VIDEO_URL;
+  const directHeroVideoUrl = isDirectVideoUrl(configuredHeroVideoUrl)
+    ? configuredHeroVideoUrl
+    : null;
+  const heroVideoId = directHeroVideoUrl
+    ? null
+    : getYouTubeVideoId(configuredHeroVideoUrl) ||
+      getYouTubeVideoId(DEFAULT_HERO_VIDEO_URL);
 
   const heroTitle =
     t({ en: hero?.title_en, vi: hero?.title_vi }, lang) ||
@@ -154,10 +399,21 @@ export default function HomeClient({
   return (
     <div className="overflow-hidden bg-background-base text-text-primary">
       <main>
-        <section className="flex min-h-[220px] items-center justify-center px-6 py-16 text-center md:min-h-[300px] md:py-20">
-          <div>
+        <section
+          className="relative aspect-video w-full overflow-hidden bg-background-1"
+          data-tina-field={
+            hero ? tinaField(hero, 'background_video_url') : undefined
+          }
+        >
+          {directHeroVideoUrl ? (
+            <NativeVideoHeroBackground src={directHeroVideoUrl} />
+          ) : (
+            heroVideoId && <YouTubeHeroBackground videoId={heroVideoId} />
+          )}
+
+          <div className="pointer-events-none absolute inset-x-0 top-[7%] z-10 px-6 text-center text-background-base [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] md:top-[5%]">
             <h1
-              className="font-vocago text-h1 uppercase tracking-[0.04em] text-text-accent md:text-display"
+              className="font-vocago text-[clamp(1.75rem,4.5vw,5rem)] uppercase leading-none tracking-[0.025em]"
               data-tina-field={
                 hero
                   ? tinaField(hero, lang === 'en' ? 'title_en' : 'title_vi')
@@ -168,52 +424,18 @@ export default function HomeClient({
             </h1>
             {heroSubtitle && (
               <p
-                className="mt-4 text-body-sm uppercase tracking-[0.18em] text-text-secondary"
+                className="mt-3 text-[clamp(0.625rem,1.05vw,1rem)] uppercase tracking-[0.14em] md:mt-5"
                 data-tina-field={
                   hero
                     ? tinaField(
-                        hero,
-                        lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
-                      )
+                      hero,
+                      lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
+                    )
                     : undefined
                 }
               >
                 {heroSubtitle}
               </p>
-            )}
-          </div>
-        </section>
-
-        <section
-          className="h-[320px] overflow-hidden md:h-[520px] xl:h-[650px]"
-          data-tina-field={hero ? tinaField(hero, 'gallery') : undefined}
-        >
-          <div
-            className="flex h-full w-max animate-hero-carousel motion-reduce:animate-none"
-            style={{
-              animationDuration: `${Math.max(heroImages.length * 8, 24)}s`,
-            }}
-          >
-            {[...heroImages, ...heroImages].map(
-              (image: string, index: number) => (
-                <div
-                  key={`${image}-${index}`}
-                  className="relative h-full w-[50vw] shrink-0 overflow-hidden md:w-[25vw]"
-                  aria-hidden={index >= heroImages.length}
-                >
-                  <MerakiImage
-                    src={image}
-                    alt={
-                      index < heroImages.length
-                        ? `${heroTitle || 'Meraki wedding'} ${index + 1}`
-                        : ''
-                    }
-                    fill
-                    sizes="(min-width: 744px) 25vw, 50vw"
-                    className="object-cover object-center"
-                  />
-                </div>
-              )
             )}
           </div>
         </section>
@@ -225,9 +447,9 @@ export default function HomeClient({
               data-tina-field={
                 introduction
                   ? tinaField(
-                      introduction,
-                      lang === 'en' ? 'text_en' : 'text_vi'
-                    )
+                    introduction,
+                    lang === 'en' ? 'text_en' : 'text_vi'
+                  )
                   : undefined
               }
             >
@@ -246,9 +468,8 @@ export default function HomeClient({
             {journalRows.map((row, rowIndex) => (
               <div
                 key={rowIndex}
-                className={`flex flex-col gap-10 md:flex-row md:gap-5 ${
-                  rowIndex % 2 === 1 ? 'md:justify-end' : 'md:justify-start'
-                }`}
+                className={`flex flex-col gap-10 md:flex-row md:gap-5 ${rowIndex % 2 === 1 ? 'md:justify-end' : 'md:justify-start'
+                  }`}
               >
                 {row.map((journal: any, journalIndex: number) => {
                   const title =
@@ -291,11 +512,11 @@ export default function HomeClient({
                               data-tina-field={
                                 journal?.template_layout
                                   ? tinaField(
-                                      journal.template_layout,
-                                      lang === 'en'
-                                        ? 'main_headline_en'
-                                        : 'main_headline_vi'
-                                    )
+                                    journal.template_layout,
+                                    lang === 'en'
+                                      ? 'main_headline_en'
+                                      : 'main_headline_vi'
+                                  )
                                   : undefined
                               }
                             >
@@ -337,9 +558,9 @@ export default function HomeClient({
             data-tina-field={
               services
                 ? tinaField(
-                    services,
-                    lang === 'en' ? 'description_en' : 'description_vi'
-                  )
+                  services,
+                  lang === 'en' ? 'description_en' : 'description_vi'
+                )
                 : undefined
             }
           >
@@ -368,9 +589,9 @@ export default function HomeClient({
                 data-tina-field={
                   loveNotes
                     ? tinaField(
-                        loveNotes,
-                        lang === 'en' ? 'title_en' : 'title_vi'
-                      )
+                      loveNotes,
+                      lang === 'en' ? 'title_en' : 'title_vi'
+                    )
                     : undefined
                 }
               >
@@ -381,9 +602,9 @@ export default function HomeClient({
                 data-tina-field={
                   loveNotes
                     ? tinaField(
-                        loveNotes,
-                        lang === 'en' ? 'description_en' : 'description_vi'
-                      )
+                      loveNotes,
+                      lang === 'en' ? 'description_en' : 'description_vi'
+                    )
                     : undefined
                 }
               >
@@ -423,9 +644,9 @@ export default function HomeClient({
                   data-tina-field={
                     loveNotes
                       ? tinaField(
-                          loveNotes,
-                          lang === 'en' ? 'couple_names_en' : 'couple_names_vi'
-                        )
+                        loveNotes,
+                        lang === 'en' ? 'couple_names_en' : 'couple_names_vi'
+                      )
                       : undefined
                   }
                 >
@@ -455,9 +676,9 @@ export default function HomeClient({
                     data-tina-field={
                       loveNotes
                         ? tinaField(
-                            loveNotes,
-                            lang === 'en' ? 'excerpt_en' : 'excerpt_vi'
-                          )
+                          loveNotes,
+                          lang === 'en' ? 'excerpt_en' : 'excerpt_vi'
+                        )
                         : undefined
                     }
                   >
@@ -476,9 +697,9 @@ export default function HomeClient({
                     data-tina-field={
                       loveNotes
                         ? tinaField(
-                            loveNotes,
-                            lang === 'en' ? 'note_en' : 'note_vi'
-                          )
+                          loveNotes,
+                          lang === 'en' ? 'note_en' : 'note_vi'
+                        )
                         : undefined
                     }
                   >
@@ -491,11 +712,11 @@ export default function HomeClient({
                     data-tina-field={
                       loveNotes
                         ? tinaField(
-                            loveNotes,
-                            lang === 'en'
-                              ? 'wedding_location_en'
-                              : 'wedding_location_vi'
-                          )
+                          loveNotes,
+                          lang === 'en'
+                            ? 'wedding_location_en'
+                            : 'wedding_location_vi'
+                        )
                         : undefined
                     }
                   >
@@ -563,9 +784,9 @@ export default function HomeClient({
               data-tina-field={
                 connect
                   ? tinaField(
-                      connect,
-                      lang === 'en' ? 'description_en' : 'description_vi'
-                    )
+                    connect,
+                    lang === 'en' ? 'description_en' : 'description_vi'
+                  )
                   : undefined
               }
             >

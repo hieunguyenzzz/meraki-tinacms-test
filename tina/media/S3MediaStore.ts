@@ -5,6 +5,7 @@ import type {
   MediaStore,
   MediaUploadOptions,
 } from 'tinacms';
+import { getMediaKind } from './mediaType';
 
 const S3_BUCKET = process.env.NEXT_PUBLIC_S3_BUCKET || '';
 const S3_REGION = process.env.NEXT_PUBLIC_S3_REGION || 'ap-southeast-1';
@@ -139,7 +140,9 @@ export class S3MediaStore implements MediaStore {
           filename: item.filename,
           src: item.type === 'file' ? item.src : undefined,
           thumbnails:
-            item.type === 'file' && item.src
+            item.type === 'file' &&
+            item.src &&
+            getMediaKind(item.filename || item.src) === 'image'
               ? {
                   '75x75': getThumborUrl('75x75', item.src),
                   '400x400': getThumborUrl('400x400', item.src),
