@@ -41,7 +41,6 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
         {/* Testimonial Heading */}
         <div
           className='text-h3 mb-3'
-          data-tina-field={tinaField(data, 'heading')}
         >
           {/* {data.heading} */}
           Testimonial

@@ -1,4 +1,3 @@
-import Footer from '../../../components/Footer';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -199,7 +198,6 @@ export default function SocialMediaPage({ params }: Props) {
         </div>
       </section>
 
-      <Footer lang={lang} />
     </div>
   );
 }

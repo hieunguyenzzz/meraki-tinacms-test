@@ -10,7 +10,6 @@ import {
 } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import { TinaMarkdown, type TinaMarkdownContent } from 'tinacms/dist/rich-text';
-import Footer from './Footer';
 import HomeServicePanels from './HomeServicePanels';
 import FadeInOnScroll from './ui/FadeInOnScroll';
 import MerakiImage from './ui/MerakiImage';
@@ -910,7 +909,6 @@ export default function HomeClient({
         </section>
       </main>
 
-      <Footer lang={lang} />
     </div>
   );
 }

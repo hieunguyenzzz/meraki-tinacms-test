@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react';
 import { useTina } from 'tinacms/dist/react';
-import Footer from './Footer';
 import JournalTemplate from './JournalTemplate';
 import Lightbox from './Lightbox';
 import ContentBlocksRenderer, { collectLightboxImages } from './ContentBlocksRenderer';
@@ -75,7 +74,6 @@ export default function JournalClient({
         lang={lang}
       />
 
-      <Footer lang={lang} />
     </div>
   );
 }

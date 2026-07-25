@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type TransitionEvent, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
-import Footer from './Footer';
 import LoveNoteLightbox from './LoveNoteLightbox';
 import MerakiImage from './ui/MerakiImage';
 
@@ -456,7 +455,6 @@ export default function LoveNotesClient({
         lang={lang}
       />
 
-      <Footer lang={lang} />
     </div>
   );
 }

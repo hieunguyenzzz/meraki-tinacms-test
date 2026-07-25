@@ -4,7 +4,6 @@
 import { useMemo } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import ContentBlocksRenderer, { collectLightboxImages } from './ContentBlocksRenderer';
-import Footer from './Footer';
 import MerakiImage from './ui/MerakiImage';
 
 interface BlogClientProps {
@@ -125,7 +124,6 @@ export default function BlogClient({
         />
       )}
 
-      <Footer lang={lang} />
     </div>
   );
 }

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type { ServiceQuery } from '../../tina/__generated__/types';
-import Footer from './Footer';
 import styles from './ServiceClient.module.css';
 import MerakiImage from './ui/MerakiImage';
 
@@ -408,7 +407,6 @@ export default function ServiceClient({
         )}
       </main>
 
-      <Footer lang={lang} />
     </div>
   );
 }

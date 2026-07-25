@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type { BlogListingQuery } from '../../tina/__generated__/types';
-import Footer from './Footer';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
 
@@ -316,7 +315,6 @@ export default function BlogListingClient({
         </section>
       )}
 
-      <Footer lang={lang} />
     </div>
   );
 }

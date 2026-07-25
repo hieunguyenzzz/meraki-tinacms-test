@@ -3,7 +3,6 @@
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type { LetsConnectQuery } from '../../tina/__generated__/types';
 import LetsConnectForm from '../app/[lang]/lets-connect/LetsConnectForm';
-import Footer from './Footer';
 import MerakiImage from './ui/MerakiImage';
 
 interface Props {
@@ -242,7 +241,6 @@ export default function LetsConnectClient({
         )}
       </main>
 
-      <Footer lang={lang} />
     </div>
   );
 }
