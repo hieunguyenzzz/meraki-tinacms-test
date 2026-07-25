@@ -32,13 +32,31 @@ export default async function JournalPage({ params }: Props) {
   // Fetch journals
   let journals: any[] = [];
   try {
-    const journalList = await client.queries.journalConnection({
-      filter: {
-        published: {
-          eq: true,
+    const journalEdges: any[] = [];
+    let after: string | undefined;
+    let hasNextPage = true;
+
+    while (hasNextPage) {
+      const journalList = await client.queries.journalConnection({
+        first: 50,
+        after,
+        filter: {
+          published: {
+            eq: true,
+          },
         },
-      },
-    });
+      });
+
+      const connection = journalList.data.journalConnection;
+      journalEdges.push(...(connection.edges || []));
+      hasNextPage = connection.pageInfo.hasNextPage;
+
+      const nextCursor = connection.pageInfo.endCursor;
+      if (hasNextPage && (!nextCursor || nextCursor === after)) {
+        throw new Error('Journal pagination did not return a new cursor');
+      }
+      after = nextCursor;
+    }
 
     // Map edges and attach fileDate
     const getFileDate = (relativePath: string) => {
@@ -51,7 +69,7 @@ export default async function JournalPage({ params }: Props) {
       }
     };
 
-    journals = (journalList.data.journalConnection.edges || [])
+    journals = journalEdges
       .filter((edge): edge is NonNullable<typeof edge> => edge?.node != null)
       .map((edge) => {
         const node = edge.node as any;

@@ -55,8 +55,8 @@ export default function JournalListingClient({
       activeLocation === 'All'
         ? journals
         : journals.filter(
-            (journal) => journal.node?.location === activeLocation
-          );
+          (journal) => journal.node?.location === activeLocation
+        );
 
     // 2. Extract saved order array for active location
     const ordering = (listing as any)?.journal_ordering;
@@ -236,7 +236,7 @@ export default function JournalListingClient({
 
                       {/* Content */}
                       <div className='text-center space-y-2'>
-                        <h3 className='text-h4 font-vocago tracking-wide'>
+                        <h3 className='text-h4 font-vocago tracking-wide uppercase'>
                           {t(
                             {
                               en:
