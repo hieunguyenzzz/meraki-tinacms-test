@@ -123,7 +123,32 @@ const getYouTubeVideoId = (videoUrl?: string | null) => {
 };
 
 const isDirectVideoUrl = (videoUrl?: string | null) =>
-  Boolean(videoUrl && /\.(m4v|mov|mp4|mpeg|mpg|ogv|webm)(?:[?#].*)?$/i.test(videoUrl));
+  Boolean(
+    videoUrl &&
+      /\.(m4v|mov|mp4|mpeg|mpg|ogv|webm)(?:[?#].*)?$/i.test(videoUrl)
+  );
+
+function useMobileHeroViewport(enabled: boolean) {
+  const [isMobileViewport, setIsMobileViewport] = useState<boolean | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    const mediaQuery = window.matchMedia('(max-width: 743px)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsMobileViewport(event.matches);
+    };
+
+    setIsMobileViewport(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [enabled]);
+
+  return isMobileViewport;
+}
 
 const loadYouTubeApi = () => {
   if (window.YT?.Player) return Promise.resolve(window.YT);
@@ -345,12 +370,20 @@ export default function HomeClient({
   const instagram = page?.instagram_section;
   const configuredHeroVideoUrl =
     hero?.background_video_url || DEFAULT_HERO_VIDEO_URL;
-  const directHeroVideoUrl = isDirectVideoUrl(configuredHeroVideoUrl)
-    ? configuredHeroVideoUrl
+  const mobileHeroVideoUrl = hero?.background_video_mobile_url || null;
+  const isMobileHeroViewport = useMobileHeroViewport(Boolean(mobileHeroVideoUrl));
+  const isHeroViewportResolved =
+    !mobileHeroVideoUrl || isMobileHeroViewport !== null;
+  const activeHeroVideoUrl =
+    mobileHeroVideoUrl && isMobileHeroViewport
+      ? mobileHeroVideoUrl
+      : configuredHeroVideoUrl;
+  const directHeroVideoUrl = isDirectVideoUrl(activeHeroVideoUrl)
+    ? activeHeroVideoUrl
     : null;
   const heroVideoId = directHeroVideoUrl
     ? null
-    : getYouTubeVideoId(configuredHeroVideoUrl) ||
+    : getYouTubeVideoId(activeHeroVideoUrl) ||
       getYouTubeVideoId(DEFAULT_HERO_VIDEO_URL);
 
   const heroTitle =
@@ -400,16 +433,32 @@ export default function HomeClient({
     <div className="overflow-hidden bg-background-base text-text-primary">
       <main>
         <section
-          className="relative aspect-video w-full overflow-hidden bg-background-1"
+          className="relative aspect-[9/16] w-full overflow-hidden bg-background-1 md:aspect-video"
           data-tina-field={
-            hero ? tinaField(hero, 'background_video_url') : undefined
+            hero
+              ? tinaField(
+                hero,
+                mobileHeroVideoUrl && isMobileHeroViewport
+                  ? 'background_video_mobile_url'
+                  : 'background_video_url'
+              )
+              : undefined
           }
         >
-          {directHeroVideoUrl ? (
-            <NativeVideoHeroBackground src={directHeroVideoUrl} />
-          ) : (
-            heroVideoId && <YouTubeHeroBackground videoId={heroVideoId} />
-          )}
+          {isHeroViewportResolved &&
+            (directHeroVideoUrl ? (
+              <NativeVideoHeroBackground
+                key={activeHeroVideoUrl}
+                src={directHeroVideoUrl}
+              />
+            ) : (
+              heroVideoId && (
+                <YouTubeHeroBackground
+                  key={activeHeroVideoUrl}
+                  videoId={heroVideoId}
+                />
+              )
+            ))}
 
           <div className="pointer-events-none absolute inset-x-0 top-[7%] z-10 px-6 text-center text-background-base [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] md:top-[5%]">
             <h1

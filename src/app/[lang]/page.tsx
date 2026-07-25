@@ -79,6 +79,7 @@ export default async function LangHomePage({ params }: Props) {
           subtitle_en
           subtitle_vi
           background_video_url
+          background_video_mobile_url
         }
         introduction {
           text_en

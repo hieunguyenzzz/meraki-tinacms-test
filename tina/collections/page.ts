@@ -66,9 +66,19 @@ export const Page: Collection = {
         {
           type: 'string',
           name: 'background_video_url',
-          label: 'Background Video',
+          label: 'Desktop Background Video (16:9)',
           description:
-            'Upload or select an MP4, WebM, or MOV file for the homepage hero.',
+            'Upload or select a landscape MP4, WebM, or MOV file for the homepage hero.',
+          ui: {
+            component: 'video',
+          },
+        },
+        {
+          type: 'string',
+          name: 'background_video_mobile_url',
+          label: 'Mobile Background Video (9:16)',
+          description:
+            'Optional portrait video used for the homepage hero on screens below 744px.',
           ui: {
             component: 'video',
           },
