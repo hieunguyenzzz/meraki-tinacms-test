@@ -1,3 +1,5 @@
+import { legacyPostRedirects } from './config/legacy-post-redirects.mjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
@@ -17,6 +19,10 @@ const nextConfig = {
         destination: '/admin/index.html',
       },
     ];
+  },
+
+  async redirects() {
+    return legacyPostRedirects();
   },
   
   webpack: (config) => {
