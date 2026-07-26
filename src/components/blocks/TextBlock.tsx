@@ -36,19 +36,15 @@ export default function TextBlock({
     alignment === 'left'
       ? 'text-left'
       : alignment === 'right'
-        ? 'text-right'
-        : alignment === 'justify'
-          ? 'text-justify'
-          : 'text-center';
+      ? 'text-right'
+      : alignment === 'justify'
+      ? 'text-justify'
+      : 'text-center';
   const columnClass =
-    columns === 2
-      ? 'md:columns-2'
-      : columns === 3
-        ? 'md:columns-3'
-        : '';
+    columns === 2 ? 'md:columns-2' : columns === 3 ? 'md:columns-3' : '';
 
   return (
-    <div className={`max-w-[968px] mx-auto px-6`}>
+    <div className={`max-w-[968px] mx-auto px-4 md:px-6`}>
       {isTitleLeft ? (
         <div className="flex flex-col md:flex-row md:gap-12 md:items-center">
           {title && (

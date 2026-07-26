@@ -29,13 +29,14 @@ export default function TextImageBlock({
   lang,
   blockIndex,
   indexMap,
-  onImageClick
+  onImageClick,
 }: TextImageBlockProps) {
   const isTextLeft = data.layout === 'text-left';
   const verticalAlignment = data.verticalAlignment || 'center';
   const title = lang === 'vi' ? data.title_vi : data.title_en;
   const description = lang === 'vi' ? data.description_vi : data.description_en;
-  const textAlignmentClass = verticalAlignment === 'top' ? 'md:self-start' : 'md:self-center';
+  const textAlignmentClass =
+    verticalAlignment === 'top' ? 'md:self-start' : 'md:self-center';
 
   const handleImageClick = () => {
     if (onImageClick && indexMap && blockIndex !== undefined) {
@@ -47,18 +48,28 @@ export default function TextImageBlock({
   };
 
   return (
-    <div className="max-w-[968px] mx-auto px-6">
-      <div className={cn(
-        "flex flex-col gap-6 items-center",
-        isTextLeft ? "md:flex-row" : "md:flex-row-reverse"
-      )}>
+    <div className="max-w-[968px] mx-auto px-4 md:px-6">
+      <div
+        className={cn(
+          'flex flex-col gap-6 items-center',
+          isTextLeft ? 'md:flex-row' : 'md:flex-row-reverse'
+        )}
+      >
         {/* Text Section */}
-        <div className={cn("flex-1 w-full md:w-1/2", textAlignmentClass)}>
-          <div className={cn("max-w-lg", isTextLeft ? "mr-auto" : "ml-auto")}>
+        <div
+          className={cn(
+            'order-2 flex-1 w-full md:order-none md:w-1/2',
+            textAlignmentClass
+          )}
+        >
+          <div className={cn('max-w-lg', isTextLeft ? 'mr-auto' : 'ml-auto')}>
             {title && (
               <h2
                 className="text-h3 mb-4"
-                data-tina-field={tinaField(data, lang === 'vi' ? 'title_vi' : 'title_en')}
+                data-tina-field={tinaField(
+                  data,
+                  lang === 'vi' ? 'title_vi' : 'title_en'
+                )}
               >
                 {title}
               </h2>
@@ -66,18 +77,33 @@ export default function TextImageBlock({
             {!!description && (
               <div
                 className="text-body-md text-text-secondary leading-relaxed"
-                data-tina-field={tinaField(data, lang === 'vi' ? 'description_vi' : 'description_en')}
+                data-tina-field={tinaField(
+                  data,
+                  lang === 'vi' ? 'description_vi' : 'description_en'
+                )}
               >
                 <TinaMarkdown
                   content={description}
                   components={{
                     p: (props: any) => (
-                      <p className="text-body-md text-text-secondary leading-relaxed mb-2 last:mb-0" {...props} />
+                      <p
+                        className="text-body-md text-text-secondary leading-relaxed mb-2 last:mb-0"
+                        {...props}
+                      />
                     ),
-                    bold: (props: any) => <strong className="font-bold" {...props} />,
-                    italic: (props: any) => <em className="italic" {...props} />,
+                    bold: (props: any) => (
+                      <strong className="font-bold" {...props} />
+                    ),
+                    italic: (props: any) => (
+                      <em className="italic" {...props} />
+                    ),
                     a: ({ url, children }: any) => (
-                      <a className="underline hover:opacity-70 transition-opacity" target="_blank" href={url} rel="noopener noreferrer">
+                      <a
+                        className="underline hover:opacity-70 transition-opacity"
+                        target="_blank"
+                        href={url}
+                        rel="noopener noreferrer"
+                      >
                         {children}
                       </a>
                     ),
@@ -89,12 +115,13 @@ export default function TextImageBlock({
         </div>
 
         {/* Image Section */}
-        <div className="flex-1 w-full md:w-1/2">
+        <div className="order-1 flex-1 w-full md:order-none md:w-1/2">
           {data.image && (
             <div
               className={cn(
-                "relative aspect-[4/5] w-full overflow-hidden rounded-sm",
-                onImageClick && "cursor-pointer hover:opacity-95 transition-opacity"
+                'relative aspect-[4/5] w-full overflow-hidden rounded-sm',
+                onImageClick &&
+                  'cursor-pointer hover:opacity-95 transition-opacity'
               )}
               data-tina-field={tinaField(data, 'image')}
               onClick={handleImageClick}

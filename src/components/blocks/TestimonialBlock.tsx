@@ -17,11 +17,15 @@ interface TestimonialBlockProps {
   lang: string;
 }
 
-export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) {
+export default function TestimonialBlock({
+  data,
+  lang,
+}: TestimonialBlockProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const text = (lang === 'vi' ? data.quote_vi : data.quote_en) || '';
-  const decorativeText = (lang === 'vi' ? data.decorative_text_vi : data.decorative_text_en) || '';
+  const decorativeText =
+    (lang === 'vi' ? data.decorative_text_vi : data.decorative_text_en) || '';
   // Approx char limit (~5 lines on mobile/desktop) to allow inline "Read more"
   const MAX_LENGTH = 520;
   const shouldTruncate = text.length > MAX_LENGTH;
@@ -36,12 +40,10 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
   };
 
   return (
-    <div className='bg-paper px-12 py-20'>
-      <div className='max-w-[920px] mx-auto text-center relative'>
+    <div className="bg-paper px-4 py-20 md:px-12">
+      <div className="max-w-[920px] mx-auto text-center relative">
         {/* Testimonial Heading */}
-        <div
-          className='text-h3 mb-3'
-        >
+        <div className="text-h3 mb-3">
           {/* {data.heading} */}
           Testimonial
         </div>
@@ -49,8 +51,12 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
         {/* Decorative Script Text */}
         {decorativeText && (
           <div
-            className='text-handwriting text-h4 mb-3 text-center max-w-[640px] mx-auto'
-            data-tina-field={tinaField(data, lang === 'vi' ? 'decorative_text_vi' : 'decorative_text_en')}>
+            className="text-handwriting text-h4 mb-3 text-center max-w-[640px] mx-auto"
+            data-tina-field={tinaField(
+              data,
+              lang === 'vi' ? 'decorative_text_vi' : 'decorative_text_en'
+            )}
+          >
             {decorativeText}
           </div>
         )}
@@ -58,18 +64,20 @@ export default function TestimonialBlock({ data, lang }: TestimonialBlockProps) 
         {/* Quote */}
         {text && (
           <p
-            className='text-justify text-text-secondary text-body-sm whitespace-pre-line'
+            className="text-justify text-text-secondary text-body-sm whitespace-pre-line"
             data-tina-field={tinaField(
               data,
               lang === 'vi' ? 'quote_vi' : 'quote_en'
-            )}>
+            )}
+          >
             {!isExpanded && shouldTruncate ? (
               <>
                 {truncateText(text)}
                 <button
                   onClick={() => setIsExpanded(true)}
-                  type='button'
-                  className='inline text-text-primary text-body-sm underline hover:opacity-70 transition-opacity ml-1'>
+                  type="button"
+                  className="inline text-text-primary text-body-sm underline hover:opacity-70 transition-opacity ml-1"
+                >
                   {lang === 'vi' ? 'Xem thêm' : 'Read more'}
                 </button>
               </>

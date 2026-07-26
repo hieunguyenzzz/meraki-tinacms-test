@@ -14,7 +14,9 @@ interface RichTextBlockProps {
   lang: string;
 }
 
-export const renderRichTextBlock = (content: TinaMarkdownContent | TinaMarkdownContent[]) => (
+export const renderRichTextBlock = (
+  content: TinaMarkdownContent | TinaMarkdownContent[]
+) => (
   <TinaMarkdown
     content={content}
     components={{
@@ -35,18 +37,23 @@ export const renderRichTextBlock = (content: TinaMarkdownContent | TinaMarkdownC
         <h4 className={`text-h4 mb-4`} {...props} />
       ),
       p: (props: any) => (
-        <p className="text-body-md text-text-secondary leading-relaxed mb-2 last:mb-0" {...props} />
+        <p
+          className="text-body-md text-text-secondary leading-relaxed mb-2 last:mb-0"
+          {...props}
+        />
       ),
       img: ({ alt, url }: any) => (
-        <img
-          src={url}
-          alt={alt}
-          className="my-4 max-w-full h-auto" />
+        <img src={url} alt={alt} className="my-4 max-w-full h-auto" />
       ),
       bold: (props: any) => <strong className="font-bold" {...props} />,
       italic: (props: any) => <em className="italic" {...props} />,
       a: ({ url, children }: any) => (
-        <a className="underline hover:opacity-70 transition-opacity" target="_blank" href={url} rel="noopener noreferrer">
+        <a
+          className="underline hover:opacity-70 transition-opacity"
+          target="_blank"
+          href={url}
+          rel="noopener noreferrer"
+        >
           {children}
         </a>
       ),
@@ -62,7 +69,7 @@ export default function RichTextBlock({ data, lang }: RichTextBlockProps) {
   }
 
   return (
-    <div className={`max-w-[968px] mx-auto px-6`}>
+    <div className={`max-w-[968px] mx-auto px-4 md:px-6`}>
       <div
         data-tina-field={tinaField(
           data,

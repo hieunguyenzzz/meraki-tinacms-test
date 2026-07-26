@@ -9,62 +9,69 @@ interface JournalTemplateProps {
   lang: string;
 }
 
-export default function JournalTemplate({ journal, lang }: JournalTemplateProps) {
-  const mainHeadline = lang === 'vi'
-    ? journal.template_layout?.main_headline_vi
-    : journal.template_layout?.main_headline_en;
+export default function JournalTemplate({
+  journal,
+  lang,
+}: JournalTemplateProps) {
+  const mainHeadline =
+    lang === 'vi'
+      ? journal.template_layout?.main_headline_vi
+      : journal.template_layout?.main_headline_en;
 
   return (
-    <div className='bg-background-1  '>
+    <div className="bg-background-1  ">
       {/* Main Template Container */}
-      <div className='relative w-full max-w-[1400px] mx-auto z-[1] pb-10'>
-        <div className='flex'>
+      <div className="relative w-full max-w-[1400px] mx-auto z-[1] pb-10">
+        <div className="flex flex-col-reverse lg:flex-row">
           {/* LEFT COLUMN */}
-          <div className='flex-1 relative flex flex-col'>
+          <div className="relative flex w-full flex-col lg:flex-1">
             {/* Top Left image */}
             {journal.template_layout?.image_top && (
               <div
-                className='relative overflow-hidden'
+                className="relative hidden overflow-hidden lg:block"
                 data-tina-field={tinaField(
                   journal.template_layout,
                   'image_top'
-                )}>
+                )}
+              >
                 <MerakiImage
                   src={journal.template_layout.image_top}
-                  alt='Detail'
+                  alt="Detail"
                   width={212}
                   height={381}
-                  className='object-cover'
+                  className="object-cover"
                 />
               </div>
             )}
 
             {/* Left Content Area - 75% of left column */}
-            <div className='flex-1 px-8 pt-8'>
-              <div className='max-w-[464px] mx-auto flex flex-col justify-center'>
+            <div className="flex-1 px-4 pt-8 md:px-8">
+              <div className="max-w-[464px] mx-auto flex flex-col justify-center">
                 {/* Couple Names */}
-                <div className='mb-12'>
+                <div className="mb-12">
                   <h1
-                    className='text-h1 tracking-wider text-center'
-                    data-tina-field={tinaField(journal, 'couple_names')}>
+                    className="text-h1 tracking-wider text-center"
+                    data-tina-field={tinaField(journal, 'couple_names')}
+                  >
                     {journal.couple_names?.toUpperCase()}
                   </h1>
                 </div>
 
                 {/* Wedding Details */}
                 {journal.wedding_details && (
-                  <div className='space-y-6 text-center mb-12'>
+                  <div className="space-y-6 text-center mb-12">
                     {/* Nationality */}
                     {journal.wedding_details.nationality && (
                       <div
                         data-tina-field={tinaField(
                           journal.wedding_details,
                           'nationality'
-                        )}>
-                        <div className='text-body-sm mb-1 uppercase text-text-secondary'>
+                        )}
+                      >
+                        <div className="text-body-sm mb-1 uppercase text-text-secondary">
                           {lang === 'vi' ? 'QUỐC TỊCH' : 'NATIONALITY'}
                         </div>
-                        <div className='text-body-md'>
+                        <div className="text-body-md">
                           {journal.wedding_details.nationality}
                         </div>
                       </div>
@@ -92,11 +99,12 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                         data-tina-field={tinaField(
                           journal.wedding_details,
                           'venue'
-                        )}>
-                        <div className='text-body-sm mb-1 uppercase text-text-secondary'>
+                        )}
+                      >
+                        <div className="text-body-sm mb-1 uppercase text-text-secondary">
                           {lang === 'vi' ? 'ĐỊA ĐIỂM' : 'WEDDING VENUE'}
                         </div>
-                        <div className='text-body-md'>
+                        <div className="text-body-md">
                           {journal.wedding_details.venue}
                         </div>
                       </div>
@@ -106,13 +114,14 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
 
                 {/* Main Headline */}
                 {mainHeadline && (
-                  <div className='mb-12'>
+                  <div className="mb-12">
                     <h2
-                      className='text-display text-center uppercase text-text-accent'
+                      className="text-display text-center uppercase text-text-accent"
                       data-tina-field={tinaField(
                         journal.template_layout,
                         lang === 'vi' ? 'main_headline_vi' : 'main_headline_en'
-                      )}>
+                      )}
+                    >
                       {mainHeadline}
                     </h2>
                   </div>
@@ -121,17 +130,18 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                 {/* Sub image */}
                 {journal.template_layout?.image_sub && (
                   <div
-                    className='relative w-full overflow-hidden'
+                    className="relative w-full overflow-hidden"
                     data-tina-field={tinaField(
                       journal.template_layout,
                       'image_sub'
-                    )}>
+                    )}
+                  >
                     <MerakiImage
                       src={journal.template_layout.image_sub}
-                      alt='Ceremony'
+                      alt="Ceremony"
                       width={464}
                       height={300}
-                      className='object-cover'
+                      className="object-cover"
                     />
                   </div>
                 )}
@@ -140,11 +150,11 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
           </div>
 
           {/* RIGHT COLUMN - fixed 587px width */}
-          <div className='w-[587px] relative flex flex-col'>
+          <div className="relative flex w-full flex-col lg:w-[587px]">
             {/* Main image */}
             {journal.template_layout?.image_main && (
               <div
-                className='h-[880px] relative overflow-hidden'
+                className="relative aspect-[2/3] overflow-hidden lg:h-[880px] lg:aspect-auto"
                 data-tina-field={tinaField(
                   journal.template_layout,
                   'image_main'
@@ -155,11 +165,13 @@ export default function JournalTemplate({ journal, lang }: JournalTemplateProps)
                   alt={journal.couple_names}
                   width={587}
                   height={880}
-                  className='object-cover'
+                  className="object-cover"
                   style={{
                     width: '100%',
                     height: '100%',
-                    objectPosition: `${journal.template_layout.image_main_position_x ?? 50}% ${journal.template_layout.image_main_position_y ?? 50}%`,
+                    objectPosition: `${
+                      journal.template_layout.image_main_position_x ?? 50
+                    }% ${journal.template_layout.image_main_position_y ?? 50}%`,
                   }}
                 />
               </div>

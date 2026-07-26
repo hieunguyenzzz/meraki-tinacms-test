@@ -41,6 +41,7 @@ export default function ImageGalleryBlock({
   const mutationObserverRef = useRef<MutationObserver | null>(null);
   const relayoutTimeoutRef = useRef<number | null>(null);
   const relayoutRafRef = useRef<number | null>(null);
+  const masonryGutterRef = useRef(24);
 
   const caption = lang === 'vi' ? data.caption_vi : data.caption_en;
   const columns = data.columns || '1';
@@ -50,14 +51,15 @@ export default function ImageGalleryBlock({
     columns === '1'
       ? 'w-full'
       : columns === '2'
-        ? 'w-full md:w-[calc(50%-12px)]'
-        : columns === '3'
-          ? 'w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]'
-          : 'w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]';
+      ? 'w-[calc(50%-8px)] md:w-[calc(50%-12px)]'
+      : columns === '3'
+      ? 'w-[calc(50%-8px)] md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]'
+      : 'w-[calc(50%-8px)] md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]';
 
   useEffect(() => {
     let isCancelled = false;
     let detachImageListeners: (() => void) | null = null;
+    const getMasonryGutter = () => (window.innerWidth < 744 ? 16 : 24);
 
     const clearRelayoutTimers = () => {
       if (relayoutTimeoutRef.current !== null) {
@@ -120,10 +122,11 @@ export default function ImageGalleryBlock({
       if (isCancelled || !containerRef.current) return;
 
       if (!masonryRef.current) {
+        masonryGutterRef.current = getMasonryGutter();
         masonryRef.current = new Masonry(containerRef.current, {
           itemSelector: '.masonry-item',
           columnWidth: '.grid-sizer',
-          gutter: 24,
+          gutter: masonryGutterRef.current,
           percentPosition: true,
           transitionDuration: '0s',
         });
@@ -141,6 +144,14 @@ export default function ImageGalleryBlock({
 
       resizeObserverRef.current?.disconnect();
       resizeObserverRef.current = new ResizeObserver(() => {
+        const nextGutter = getMasonryGutter();
+        if (nextGutter !== masonryGutterRef.current) {
+          masonryGutterRef.current = nextGutter;
+          masonryRef.current?.option?.({ gutter: nextGutter });
+          scheduleLayout(true);
+          return;
+        }
+
         scheduleLayout();
       });
       resizeObserverRef.current.observe(containerRef.current);
@@ -177,7 +188,7 @@ export default function ImageGalleryBlock({
   }, [data.images, columns]);
 
   return (
-    <div className='max-w-[968px] mx-auto px-6 image-gallery-block !mt-0'>
+    <div className="max-w-[968px] mx-auto px-4 md:px-6 image-gallery-block !mt-0">
       <div ref={containerRef} className="w-full relative">
         {/* Sizer element for Masonry */}
         <div className={`grid-sizer ${itemWidthClass} absolute invisible`} />
@@ -189,18 +200,18 @@ export default function ImageGalleryBlock({
             <button
               key={`${img.src}-${imgIndex}`}
               data-index={imgIndex}
-              type='button'
-              className={`masonry-item ${itemWidthClass} cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary block mt-6`}
+              type="button"
+              className={`masonry-item ${itemWidthClass} cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary block mt-4 md:mt-6`}
               onClick={() => onImageClick(globalIndex)}
               aria-label={altText || 'View image in gallery'}
             >
               <MerakiImage
                 src={img.src}
                 alt={altText || ''}
-                className='w-full h-auto block'
+                className="w-full h-auto block"
                 data-tina-field={tinaField(img, 'src')}
                 thumborWidth={480}
-                thumborFitMode=''
+                thumborFitMode=""
                 width={img.width}
                 height={img.height}
               />
@@ -210,7 +221,7 @@ export default function ImageGalleryBlock({
       </div>
       {caption && (
         <p
-          className='mt-4 text-center text-gray-600 text-sm'
+          className="mt-4 text-center text-gray-600 text-sm"
           data-tina-field={tinaField(
             data,
             lang === 'vi' ? 'caption_vi' : 'caption_en'
