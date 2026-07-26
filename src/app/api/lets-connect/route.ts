@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { saveLetsConnectSubmission, type LetsConnectSubmission } from '../../../lib/db';
 import { sendLetsConnectNotification, sendLetsConnectThankYou } from '../../../lib/mail';
-import { detectFormLanguage } from '../../../lib/gemini';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -91,34 +90,9 @@ export async function POST(request: NextRequest) {
     console.error(`[lets-connect:${correlationId}] failed to send notification email`, error);
   }
 
-  // Detect the actual language the couple wrote in (they may fill the English
-  // page in Vietnamese or vice versa) so the thank-you reply matches their words,
-  // not just which page URL they happened to submit from.
-  let thankYouLang: 'en' | 'vi' = submission.lang === 'vi' ? 'vi' : 'en';
-  const detectionText = [
-    submission.otherNotes,
-    submission.role,
-    submission.partnerName,
-    submission.venue,
-    submission.location,
-  ]
-    .filter(Boolean)
-    .join('\n')
-    .trim();
-
-  if (detectionText) {
-    try {
-      thankYouLang = await detectFormLanguage(detectionText);
-    } catch (error) {
-      console.error(
-        `[lets-connect:${correlationId}] language detection failed, defaulting to page locale`,
-        error
-      );
-    }
-  }
-
+  // The thank-you language follows the page the couple submitted from (/en or /vi).
   try {
-    await sendLetsConnectThankYou(submission, thankYouLang);
+    await sendLetsConnectThankYou(submission);
   } catch (error) {
     console.error(`[lets-connect:${correlationId}] failed to send thank-you email`, error);
   }
