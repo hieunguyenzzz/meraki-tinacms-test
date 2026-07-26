@@ -7,27 +7,25 @@ const COPY = {
     en: (name: string) => `Thank you, ${name} — Meraki has received your message`,
     vi: (name: string) => `Cảm ơn ${name} — Meraki đã nhận được tin nhắn của bạn`,
   },
-  heading: {
-    en: "Let's connect soon",
-    vi: 'Meraki sẽ sớm liên hệ với bạn',
+  greeting: {
+    en: 'Dear our beloved couple,',
+    vi: 'Chào hai bạn,',
   },
   body: {
     en: [
-      'Thank you for sharing your story with us. We are so excited to learn more about your wedding day.',
-      'Our team usually replies within two working days. In the meantime, feel free to browse our recent weddings on Instagram for inspiration.',
+      'Thank you for taking the time to share your story and wedding details with us. We have safely received your submission.',
+      'Our team will carefully review the information you’ve provided and prepare a quotation for your celebration. We’ll get back to you within 2 working days (excluding weekends and public holidays).',
+      'In the meantime, if there’s anything you would like to add or clarify, please feel free to reply to this email. We’re here whenever you need us ~',
     ],
     vi: [
-      'Cảm ơn bạn đã chia sẻ câu chuyện của mình với Meraki. Tụi mình rất mong được hiểu thêm về ngày cưới của bạn.',
-      'Đội ngũ Meraki thường phản hồi trong vòng 2 ngày làm việc. Trong lúc chờ đợi, bạn có thể ghé thăm Instagram của Meraki để xem thêm các đám cưới gần đây.',
+      'Meraki đã nhận được những chia sẻ đầu tiên của hai bạn về hành trình sắp tới. Cảm ơn hai bạn đã tin tưởng và dành thời gian để kể cho tụi mình nghe những dự định về ngày cưới ~',
+      'Từ những thông tin này, Meraki sẽ chuẩn bị và gửi lại báo giá dịch vụ phù hợp với nhu cầu của hai bạn. Tụi mình sẽ phản hồi lại hai bạn trong vòng 2 ngày làm việc (không bao gồm Thứ Bảy, Chủ Nhật và các ngày Lễ, Tết).',
+      'Nếu trong lúc này, hai bạn nhớ ra thêm điều gì, dù là một ý tưởng nhỏ hay một mong muốn còn đang ấp ủ, hãy cứ thoải mái chia sẻ thêm với tụi mình nhen.',
     ],
   },
-  cta: {
-    en: 'View our Instagram',
-    vi: 'Xem Instagram của Meraki',
-  },
   signoff: {
-    en: 'With warmth,<br/>The Meraki Wedding Planner team',
-    vi: 'Thân mến,<br/>Đội ngũ Meraki Wedding Planner',
+    en: 'Warmly,<br/>Meraki Wedding Planner',
+    vi: 'Mong sớm được đồng hành cùng hai bạn,<br/>Meraki Wedding Planner',
   },
 };
 
@@ -35,14 +33,11 @@ function greetingName(submission: LetsConnectSubmission, lang: 'en' | 'vi') {
   return submission.firstName || (lang === 'vi' ? 'bạn' : 'there');
 }
 
-export function buildLetsConnectThankYouEmail(
-  submission: LetsConnectSubmission,
-  langOverride?: 'en' | 'vi'
-) {
-  const lang = langOverride ?? (submission.lang === 'vi' ? 'vi' : 'en');
+export function buildLetsConnectThankYouEmail(submission: LetsConnectSubmission) {
+  const lang = submission.lang === 'vi' ? 'vi' : 'en';
   const name = greetingName(submission, lang);
   const subject = COPY.subject[lang](name);
-  const paragraphs = COPY.body[lang]
+  const paragraphs = [COPY.greeting[lang], ...COPY.body[lang]]
     .map(
       (paragraph) =>
         `<p style="margin:0 0 14px;font-size:15px;line-height:1.7;color:#374220;">${paragraph}</p>`
@@ -67,11 +62,7 @@ export function buildLetsConnectThankYouEmail(
             </tr>
             <tr>
               <td style="padding:32px;">
-                <h1 style="margin:0 0 16px;font-size:22px;color:#374220;">${COPY.heading[lang]}</h1>
                 ${paragraphs}
-                <p style="text-align:center;margin:28px 0 8px;">
-                  <a href="https://www.instagram.com/meraki.wedding.planner" style="display:inline-block;padding:10px 24px;border:1px solid #374220;color:#374220;font-family:Arial,Helvetica,sans-serif;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">${COPY.cta[lang]}</a>
-                </p>
                 <p style="margin:32px 0 0;font-size:14px;line-height:1.7;color:#535d44;">${COPY.signoff[lang]}</p>
               </td>
             </tr>
@@ -89,7 +80,7 @@ export function buildLetsConnectThankYouEmail(
   </body>
 </html>`;
 
-  const text = `${COPY.heading[lang]}\n\n${COPY.body[lang].join('\n\n')}\n\nInstagram: https://www.instagram.com/meraki.wedding.planner\n\n${COPY.signoff[lang].replace('<br/>', '\n')}`;
+  const text = `${COPY.greeting[lang]}\n\n${COPY.body[lang].join('\n\n')}\n\n${COPY.signoff[lang].replace('<br/>', '\n')}`;
 
   return { subject, html, text };
 }
