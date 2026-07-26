@@ -45,7 +45,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
         <section className="relative">
           <div className="grid lg:grid-cols-2 lg:min-h-[760px]">
             <div
-              className="relative min-h-[480px] overflow-hidden lg:min-h-0 animate__animated animate__fadeInLeft"
+              className="animate__animated animate__fadeInLeft relative aspect-[375/368] overflow-hidden md:h-[500px] md:aspect-auto lg:h-auto lg:min-h-0"
               data-tina-field={tinaField(hero, 'background_image')}
             >
               {hero?.background_image && (
@@ -63,7 +63,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
               )}
             </div>
 
-            <div className="bg-background-1 bg-paper relative flex flex-col items-center justify-center gap-8 px-6 py-16 text-center md:px-16 lg:gap-10 lg:px-20">
+            <div className="bg-paper relative mx-4 flex -translate-y-20 flex-col items-center justify-center gap-8 bg-background-1 px-4 py-8 text-center md:mx-auto md:w-[540px] md:px-16 md:py-16 lg:w-full lg:translate-y-0 lg:gap-10 lg:px-20">
               <h1
                 className="text-display font-vocago uppercase tracking-wide"
                 data-tina-field={tinaField(
@@ -76,7 +76,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
 
               {hero?.featured_image && (
                 <div
-                  className="relative z-10 w-48 overflow-hidden md:w-56 animate__animated animate__fadeInLeft"
+                  className="animate__animated animate__fadeInLeft relative z-10 w-[140px] overflow-hidden md:w-56"
                   data-tina-field={tinaField(hero, 'featured_image')}
                 >
                   <MerakiImage
@@ -116,7 +116,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
           </div>
         </section>
 
-        <section className="bg-background-1 px-6 py-20 text-center md:px-12 lg:py-28">
+        <section className="bg-background-1 px-4 py-20 text-center md:px-12 lg:py-28">
           <div
             className="mx-auto max-w-3xl text-body-lg leading-relaxed text-text-secondary md:text-h2"
             data-tina-field={tinaField(
@@ -179,7 +179,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
           </div>
         </section>
 
-        <section className="bg-background-1 px-6 pb-20 md:px-12 lg:pb-28">
+        <section className="bg-background-1 px-4 pb-20 md:px-12 lg:pb-28">
           <h2
             className="mx-auto mb-14 max-w-md text-center text-h1 font-vocago leading-tight md:mb-20"
             data-tina-field={tinaField(
@@ -190,7 +190,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
             {localized(about.team_title_en, about.team_title_vi, lang)}
           </h2>
 
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-y-20">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 md:gap-y-14 lg:grid-cols-3 lg:gap-y-20">
             {team.map((member, index) => {
               const isRaised = index % 3 === 1;
               const name = localized(member?.name_en, member?.name_vi, lang);
@@ -199,7 +199,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
               return (
                 <FadeInOnScroll
                   key={`${member?.name_en || 'planner'}-${index}`}
-                  className="mx-auto w-full max-w-[300px]"
+                  className="mx-auto w-full md:max-w-[300px]"
                 >
                   <article
                     className={`group ${isRaised ? 'lg:-translate-y-8' : ''}`}
@@ -245,7 +245,6 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
           </div>
         </section>
       </main>
-
     </div>
   );
 }
