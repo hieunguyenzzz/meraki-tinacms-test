@@ -136,7 +136,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
       <section className='relative'>
         <div className='grid grid-cols-1 lg:grid-cols-2 items-stretch'>
           <div
-            className='relative min-h-[420px] md:min-h-[620px] overflow-hidden animate__animated animate__fadeInLeft'
+            className='relative h-[500px] overflow-hidden animate__animated animate__fadeInLeft md:h-[620px] lg:h-auto lg:min-h-[620px]'
             data-tina-field={tinaField(listing.hero, 'background_image')}>
             <MerakiImage
               src={listing?.hero?.background_image || '/images/bg/love-notes-hero.jpg'}
@@ -147,15 +147,15 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
             />
           </div>
 
-          <div className='bg-background-1 bg-paper px-8 py-12 md:px-16 md:py-20 lg:px-20 lg:py-24 flex flex-col items-center justify-between text-center gap-10'>
+          <div className='relative mx-4 -translate-y-20 bg-background-1 bg-paper px-4 py-8 md:mx-0 md:translate-y-0 md:px-16 md:py-20 lg:px-20 lg:py-24 flex flex-col items-center justify-between text-center gap-10'>
             <h1
-              className='text-display font-vocago uppercase tracking-wider'
+              className='text-h1 font-vocago uppercase tracking-wider md:text-display'
               data-tina-field={tinaField(listing, lang === 'en' ? 'title_en' : 'title_vi')}>
               {title}
             </h1>
 
             <div
-              className='w-[180px] md:w-[220px] lg:w-[260px] animate__animated animate__fadeInLeft'
+              className='w-[140px] animate__animated animate__fadeInLeft md:w-[220px] lg:w-[260px]'
               data-tina-field={tinaField(listing.hero, 'featured_image')}>
               <MerakiImage
                 src={listing?.hero?.featured_image || '/images/bg/love-notes-featured.jpg'}
@@ -178,8 +178,8 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
       </section>
 
       <section ref={notesSectionRef}>
-        <div className='mx-auto max-w-[1728px] px-6 md:px-10 mb-12'>
-          <div className='space-y-4 md:space-y-16 mt-16'>
+        <div className='mx-auto mb-12 max-w-[1728px] px-4 md:px-10'>
+          <div className='mt-12 space-y-0 md:mt-16 md:space-y-16'>
             {paginatedNotes.map((note: any, pageIndex: number) => {
               const index = firstNoteIndex + pageIndex;
               const coupleNames = t(
@@ -222,13 +222,13 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
               return (
                 <article
                   key={`${coupleNames || 'note'}-${index}`}
-                  className={`flex flex-col items-center lg:flex-row ${isRightAligned ? 'lg:flex-row-reverse' : ''}`}>
+                  className={`flex flex-col items-center border-b border-text-primary/35 py-6 first:pt-0 md:border-0 md:py-0 lg:flex-row ${isRightAligned ? 'lg:flex-row-reverse' : ''}`}>
                   <div
                     className={`w-full ${isRightAligned ? 'lg:max-w-[1000px]' : 'lg:max-w-[980px]'}`}
                     data-tina-field={tinaField(note, lang === 'en' ? 'couple_names_en' : 'couple_names_vi')}>
-                    <div className={isRightAligned ? 'lg:text-right' : undefined}>
+                    <div className={`text-center md:text-left ${isRightAligned ? 'lg:text-right' : 'lg:text-left'}`}>
                       <h2
-                        className={`flex flex-wrap items-center gap-x-5 gap-y-3 font-vocago text-h2 md:text-display ${isRightAligned ? 'lg:justify-end' : 'lg:justify-start'
+                        className={`flex flex-wrap items-center justify-center gap-x-5 gap-y-3 font-vocago text-h2 md:justify-start md:text-display ${isRightAligned ? 'lg:justify-end' : 'lg:justify-start'
                           }`}>
                         <span className='uppercase'>{leftName}</span>
 
@@ -251,7 +251,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
                         <span className='uppercase'>{hasRightName ? rightName : ''}</span>
                       </h2>
 
-                      <div className='mt-8 grid grid-cols-1 gap-5 md:mt-10 lg:grid-cols-12 lg:gap-8 items-baseline'>
+                      <div className='mt-8 hidden grid-cols-1 items-baseline gap-5 md:mt-10 md:grid lg:grid-cols-12 lg:gap-8'>
                         <p
                           className={`text-body-lg uppercase text-text-secondary ${isRightAligned
                             ? 'lg:order-2 lg:col-span-3 lg:col-start-10 lg:text-right'
@@ -302,7 +302,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
                             alt={coupleNames || 'Couple note image'}
                             width={558}
                             height={592}
-                            className='h-auto object-cover'
+                            className='h-auto w-full object-cover'
                           />
                         </div>
                       </div>
@@ -315,7 +315,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
                           return (
                             <div
                               className={`absolute animate__animated animate__faster ${isOpen ? (isRightAligned ? 'animate__fadeInLeft' : 'animate__fadeInRight') : ''
-                                } z-10 w-[446px] max-w-[calc(100vw-2rem)] bg-background-1 bg-paper p-6 text-center md:p-8 ${!isRightAligned ? 'top-[50%] left-[50%]' : 'top-[50%] right-[50%]'
+                                } z-10 top-[50%] w-[calc(100%-3rem)] bg-background-1 bg-paper p-6 text-center md:w-[446px] md:p-8 ${!isRightAligned ? 'right-0 md:right-auto md:left-[50%]' : 'left-0 md:right-[50%] md:left-auto'
                                 }`}>
                               {/* Couple Names */}
                               <h3
@@ -395,6 +395,21 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
                         })()}
                     </div>
                   </div>
+
+                  <button
+                    type='button'
+                    onClick={() => toggleNote(index)}
+                    aria-expanded={isOpen}
+                    aria-controls={notePanelId}
+                    className='mt-5 flex h-6 w-10 items-center justify-center text-text-primary md:hidden'>
+                    <svg
+                      viewBox='0 0 24 24'
+                      aria-hidden='true'
+                      className={`h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                      <path d='m7 10 5 5 5-5' fill='none' stroke='currentColor' strokeLinecap='round' strokeWidth='2' />
+                    </svg>
+                    <span className='sr-only'>{isOpen ? 'Close love note' : 'Open love note'}</span>
+                  </button>
                 </article>
               );
             })}
@@ -406,7 +421,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
 
       {galleryImages.length > 0 && (
         <section className='py-14 md:py-20 bg-background-1'>
-          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='mx-auto max-w-7xl px-4 md:px-6 lg:px-8'>
             {galleryTitle && (
               <h2
                 className='text-h2 md:text-display font-vocago text-center mb-10 md:mb-14'
@@ -417,7 +432,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
           </div>
 
           <div
-            className={`${styles.friendshipViewport} w-full`}
+            className={`${styles.friendshipViewport} w-full px-4 md:px-0`}
             data-tina-field={tinaField(listing.friendship_gallery, 'images')}>
             <div
               className={styles.friendshipTrack}
@@ -430,7 +445,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
                 {galleryImages.map((image: string, index: number) => (
                   <div
                     key={`${image}-${index}`}
-                    className='relative aspect-[4/5] w-[72vw] max-w-[320px] shrink-0 overflow-hidden sm:w-[46vw] md:w-[32vw] md:max-w-[360px] lg:w-[270px] xl:w-[300px]'>
+                    className='relative aspect-[4/5] w-[calc(100vw-2rem)] shrink-0 overflow-hidden md:w-[32vw] md:max-w-[360px] lg:w-[270px] xl:w-[300px]'>
                     <MerakiImage src={image} alt={`Friendship memory ${index + 1}`} fill className='object-cover' />
                   </div>
                 ))}
@@ -440,7 +455,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
                 {galleryImages.map((image: string, index: number) => (
                   <div
                     key={`duplicate-${image}-${index}`}
-                    className='relative aspect-[4/5] w-[72vw] max-w-[320px] shrink-0 overflow-hidden sm:w-[46vw] md:w-[32vw] md:max-w-[360px] lg:w-[270px] xl:w-[300px]'>
+                    className='relative aspect-[4/5] w-[calc(100vw-2rem)] shrink-0 overflow-hidden md:w-[32vw] md:max-w-[360px] lg:w-[270px] xl:w-[300px]'>
                     <MerakiImage src={image} alt='' fill className='object-cover' />
                   </div>
                 ))}
