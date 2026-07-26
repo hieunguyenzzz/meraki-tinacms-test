@@ -459,7 +459,7 @@ export default function HomeClient({
               )
             ))}
 
-          <div className="pointer-events-none absolute inset-x-0 top-[7%] z-10 px-6 text-center text-background-base [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] md:top-[5%]">
+          <div className="pointer-events-none absolute inset-x-0 top-[7%] z-10 px-4 text-center text-background-base [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] md:top-[5%] md:px-6">
             <h1
               className="font-vocago text-[clamp(1.75rem,4.5vw,5rem)] uppercase leading-none tracking-[0.025em]"
               data-tina-field={
@@ -488,7 +488,7 @@ export default function HomeClient({
           </div>
         </section>
 
-        <section className="px-6 py-24 text-center md:py-36">
+        <section className="px-4 py-24 text-center md:px-6 md:py-36">
           <div className="mx-auto max-w-[620px]">
             <div
               className="whitespace-pre-line text-body-lg leading-relaxed text-text-secondary"
@@ -511,13 +511,14 @@ export default function HomeClient({
           </div>
         </section>
 
-        <section className="px-6 pb-24 md:px-10 md:pb-36">
+        <section className="px-4 pb-24 md:px-10 md:pb-36">
           <div className="mx-auto max-w-[1380px] space-y-14 md:space-y-20">
             {journalRows.map((row, rowIndex) => (
               <div
                 key={rowIndex}
-                className={`flex flex-col gap-10 md:flex-row md:gap-5 ${rowIndex % 2 === 1 ? 'md:justify-end' : 'md:justify-start'
-                  }`}
+                className={`grid grid-cols-1 gap-10 md:flex md:flex-row md:gap-5 ${
+                  rowIndex % 2 === 1 ? 'md:justify-end' : 'md:justify-start'
+                }`}
               >
                 {row.map((journal: any, journalIndex: number) => {
                   const title =
@@ -590,7 +591,7 @@ export default function HomeClient({
           </div>
         </section>
 
-        <section className="bg-background-1 bg-paper px-6 py-16 text-center md:py-20">
+        <section className="bg-background-1 bg-paper px-4 py-16 text-center md:px-6 md:py-20">
           <h2
             className="font-vocago text-h2 text-text-primary md:text-h3"
             data-tina-field={
@@ -629,8 +630,8 @@ export default function HomeClient({
 
         <HomeServicePanels services={services} lang={lang} />
 
-        <section className="bg-background-support1 px-6 py-20 md:px-12 md:py-28 lg:px-20">
-          <div className="mx-auto grid max-w-[1480px] items-center gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+        <section className="bg-background-support1 px-4 py-20 md:px-12 md:py-28 lg:px-20">
+          <div className="mx-auto grid max-w-[1480px] grid-cols-1 items-center gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
             <div className="text-center">
               <h2
                 className="font-vocago text-h3 md:text-h3"
@@ -671,7 +672,7 @@ export default function HomeClient({
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[720px] pb-72 md:pb-80">
+            <div className="relative mx-auto grid w-full max-w-[720px] grid-cols-1 md:block md:pb-80">
               <div
                 className="relative aspect-[5/4] overflow-hidden"
                 data-tina-field={
@@ -686,7 +687,7 @@ export default function HomeClient({
                   className="object-cover"
                 />
               </div>
-              <div className="bg-paper absolute bottom-0 left-1/2 w-[70%] max-w-[442px] -translate-x-1/2 bg-background-1 px-6 py-8 text-center shadow-sm md:p-6">
+              <div className="bg-paper relative w-full bg-background-1 px-4 py-8 text-center shadow-sm md:absolute md:bottom-0 md:left-1/2 md:w-[70%] md:max-w-[442px] md:-translate-x-1/2 md:p-6">
                 <h3
                   className="font-vocago uppercase tracking-[0.04em] md:text-h3"
                   data-tina-field={
@@ -777,7 +778,7 @@ export default function HomeClient({
           </div>
         </section>
 
-        <section className="px-6 py-24 text-center md:py-32">
+        <section className="px-4 py-24 text-center md:px-6 md:py-32">
           <div
             className="mx-auto max-w-[620px] whitespace-pre-line text-h4 leading-relaxed text-text-secondary md:text-h2"
             data-tina-field={
@@ -807,7 +808,7 @@ export default function HomeClient({
           </div>
         </section>
 
-        <section className="bg-paper bg-background-1 px-6 py-20 text-center md:py-24">
+        <section className="bg-paper bg-background-1 px-4 py-20 text-center md:px-6 md:py-24">
           <div className="relative mx-auto max-w-[580px]">
             <img
               src="/images/botanical/3.svg"
@@ -854,7 +855,7 @@ export default function HomeClient({
           </div>
         </section>
 
-        <section className="px-5 py-16 md:px-10 md:py-20">
+        <section className="px-4 py-16 md:px-10 md:py-20">
           <h2
             className="text-center font-vocago text-h2 text-text-accent md:text-h3"
             data-tina-field={

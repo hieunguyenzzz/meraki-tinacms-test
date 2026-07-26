@@ -29,7 +29,7 @@ export default function HomeServicePanels({
         {(services?.items || []).map((service: any, index: number) => (
           <div
             key={`${service?.title_en}-${index}`}
-            className="group relative aspect-[4/3] overflow-hidden bg-background-brand"
+            className="group relative aspect-[3/4] overflow-hidden bg-background-brand"
             data-tina-field={tinaField(service, 'preview_image')}
           >
             <MerakiImage
@@ -93,26 +93,23 @@ export default function HomeServicePanels({
                   alt={serviceTitle}
                   fill
                   sizes={isActive ? '66vw' : '34vw'}
-                  className={`object-cover transition-[filter,transform] duration-700 ease-in-out motion-reduce:transition-none ${
-                    isActive
+                  className={`object-cover transition-[filter,transform] duration-700 ease-in-out motion-reduce:transition-none ${isActive
                       ? 'scale-100 grayscale-0'
                       : 'scale-[1.015] grayscale'
-                  }`}
+                    }`}
                 />
               </div>
 
               <div
-                className={`absolute inset-0 bg-background-brand transition-opacity duration-700 ease-in-out motion-reduce:transition-none ${
-                  isActive ? 'opacity-10' : 'opacity-40'
-                }`}
+                className={`absolute inset-0 bg-background-brand transition-opacity duration-700 ease-in-out motion-reduce:transition-none ${isActive ? 'opacity-10' : 'opacity-40'
+                  }`}
               />
 
               <div
-                className={`absolute inset-0 flex items-center justify-center px-7 text-center transition-[opacity,transform] duration-500 ease-in-out motion-reduce:transition-none ${
-                  isActive
+                className={`absolute inset-0 flex items-center justify-center px-7 text-center transition-[opacity,transform] duration-500 ease-in-out motion-reduce:transition-none ${isActive
                     ? 'pointer-events-none translate-y-3 opacity-0'
                     : 'translate-y-0 opacity-100 delay-150'
-                }`}
+                  }`}
               >
                 <h3
                   className="font-vocago text-[clamp(38px,4vw,64px)] uppercase leading-[1.08] tracking-[0.02em] text-background-base drop-shadow-sm"
@@ -126,11 +123,10 @@ export default function HomeServicePanels({
               </div>
 
               <article
-                className={`bg-paper absolute left-1/2 top-1/2 flex w-[min(80%,478px)] -translate-x-1/2 flex-col items-center bg-background-base px-5 py-6 text-center shadow-sm transition-[opacity,transform] duration-700 ease-in-out motion-reduce:transition-none lg:h-[500px] lg:justify-between lg:px-5 lg:py-7 ${
-                  isActive
+                className={`bg-paper absolute left-1/2 top-1/2 flex w-[min(80%,478px)] -translate-x-1/2 flex-col items-center bg-background-base px-5 py-6 text-center shadow-sm transition-[opacity,transform] duration-700 ease-in-out motion-reduce:transition-none lg:h-[500px] lg:justify-between lg:px-5 lg:py-7 ${isActive
                     ? '-translate-y-1/2 opacity-100 delay-150'
                     : 'pointer-events-none -translate-y-[46%] opacity-0'
-                }`}
+                  }`}
               >
                 <h3
                   className="font-vocago text-[clamp(34px,3.6vw,52px)] uppercase leading-[1.08] tracking-[0.01em] text-text-primary"
