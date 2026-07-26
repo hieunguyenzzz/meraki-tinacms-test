@@ -266,14 +266,14 @@ export default function ServiceClient({
         )}
 
         {journals.length > 0 && (
-          <section className="px-0 py-10 md:px-12 lg:py-16">
-            <div className="mx-auto max-w-6xl bg-background-base px-6 py-12 md:px-12 lg:px-16">
-              <div className="grid gap-10 md:grid-cols-3 md:gap-5 lg:gap-8">
+          <section className="px-0 py-10 lg:py-16">
+            <div className="mx-auto max-w-[1408px] bg-background-base py-12">
+              <div className={styles.journalGrid}>
                 {journals.map((journal) => (
                   <a
                     key={journal.id}
                     href={`/${lang}/journal/${journal.slug}`}
-                    className="group block text-center"
+                    className={`${styles.journalItem} block text-center`}
                   >
                     <div className="relative aspect-[3/4] overflow-hidden">
                       <MerakiImage
@@ -281,7 +281,7 @@ export default function ServiceClient({
                         alt={journal.couple_names}
                         fill
                         sizes="(min-width: 744px) 30vw, 100vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="object-cover"
                       />
                     </div>
                     <h2 className="mt-5 text-h4 font-vocago uppercase text-text-accent">
@@ -406,7 +406,6 @@ export default function ServiceClient({
           </section>
         )}
       </main>
-
     </div>
   );
 }
