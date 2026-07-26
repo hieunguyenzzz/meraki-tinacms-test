@@ -1,0 +1,49 @@
+.friendshipViewport {
+  overflow: hidden;
+}
+
+.friendshipTrack {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: friendship-carousel var(--carousel-duration, 36s) linear infinite;
+}
+
+.friendshipGroup {
+  display: flex;
+  flex: none;
+  gap: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+@keyframes friendship-carousel {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 744px) {
+  .friendshipGroup {
+    gap: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .friendshipViewport {
+    overflow-x: auto;
+  }
+
+  .friendshipTrack {
+    animation: none;
+    will-change: auto;
+  }
+
+  .friendshipDuplicate {
+    display: none;
+  }
+}

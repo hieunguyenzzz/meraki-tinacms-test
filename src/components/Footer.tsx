@@ -99,7 +99,7 @@ export default function Footer({
                   <p key={`${label}-${value}-${index}`}>
                     <a
                       href={item.url}
-                      className="hover:text-text-primary transition-colors"
+                      className="underline-offset-4 decoration-1 transition-colors hover:text-text-secondary hover:underline"
                       data-tina-field={tinaField(item, 'url')}
                     >
                       {content}
@@ -154,7 +154,7 @@ export default function Footer({
                         <li key={`${link.url}-${linkIndex}`}>
                           <a
                             href={resolveUrl(link.url, lang)}
-                            className="transition-colors hover:text-text-primary"
+                            className="underline-offset-4 decoration-1 transition-colors hover:text-text-secondary hover:underline"
                             data-tina-field={tinaField(link, 'url')}
                           >
                             <span
