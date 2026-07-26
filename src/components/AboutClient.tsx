@@ -45,7 +45,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
         <section className="relative">
           <div className="grid lg:grid-cols-2 lg:min-h-[760px]">
             <div
-              className="relative min-h-[480px] overflow-hidden lg:min-h-0"
+              className="relative min-h-[480px] overflow-hidden lg:min-h-0 animate__animated animate__fadeInLeft"
               data-tina-field={tinaField(hero, 'background_image')}
             >
               {hero?.background_image && (
@@ -76,7 +76,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
 
               {hero?.featured_image && (
                 <div
-                  className="relative z-10 w-48 overflow-hidden md:w-56"
+                  className="relative z-10 w-48 overflow-hidden md:w-56 animate__animated animate__fadeInLeft"
                   data-tina-field={tinaField(hero, 'featured_image')}
                 >
                   <MerakiImage

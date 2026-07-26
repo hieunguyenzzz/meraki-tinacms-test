@@ -108,7 +108,7 @@ export default function BlogListingClient({
         <div className='grid sm:grid-cols-1 lg:grid-cols-2 items-stretch'>
           {/* Left - Hero Image */}
           <div
-            className='md:h-[500px] relative lg:h-full overflow-hidden'
+            className='md:h-[500px] relative lg:h-full overflow-hidden animate__animated animate__fadeInLeft'
             data-tina-field={tinaField(listing.hero, 'background_image')}>
             <MerakiImage
               src={listing.hero?.background_image || '/images/journal/listing/hero-image.jpg'}
@@ -131,7 +131,9 @@ export default function BlogListingClient({
             </h1>
 
             {listing.hero?.featured_thumbnail && (
-              <div data-tina-field={tinaField(listing.hero, 'featured_thumbnail')}>
+              <div
+                className='animate__animated animate__fadeInLeft'
+                data-tina-field={tinaField(listing.hero, 'featured_thumbnail')}>
                 <MerakiImage
                   src={listing.hero.featured_thumbnail}
                   alt='Blog featured thumbnail'

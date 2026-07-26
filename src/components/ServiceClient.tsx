@@ -113,7 +113,7 @@ export default function ServiceClient({
           <section className="relative">
             <div className="grid lg:grid-cols-2 lg:min-h-[720px]">
               <div
-                className="relative min-h-[460px] overflow-hidden lg:min-h-0"
+                className="relative min-h-[460px] overflow-hidden lg:min-h-0 animate__animated animate__fadeInLeft"
                 data-tina-field={tinaField(hero, 'background_image')}
               >
                 {hero.background_image ? (
@@ -143,7 +143,7 @@ export default function ServiceClient({
 
                 {hero.featured_image && (
                   <div
-                    className="relative w-[156px] overflow-hidden sm:w-[184px]"
+                    className="relative w-[156px] overflow-hidden sm:w-[184px] animate__animated animate__fadeInLeft"
                     data-tina-field={tinaField(hero, 'featured_image')}
                   >
                     <MerakiImage

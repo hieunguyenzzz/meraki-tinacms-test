@@ -136,7 +136,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
       <section className='relative'>
         <div className='grid grid-cols-1 lg:grid-cols-2 items-stretch'>
           <div
-            className='relative min-h-[420px] md:min-h-[620px] overflow-hidden'
+            className='relative min-h-[420px] md:min-h-[620px] overflow-hidden animate__animated animate__fadeInLeft'
             data-tina-field={tinaField(listing.hero, 'background_image')}>
             <MerakiImage
               src={listing?.hero?.background_image || '/images/bg/love-notes-hero.jpg'}
@@ -155,7 +155,7 @@ export default function LoveNotesClient({ data, query, variables, lang }: Props)
             </h1>
 
             <div
-              className='w-[180px] md:w-[220px] lg:w-[260px]'
+              className='w-[180px] md:w-[220px] lg:w-[260px] animate__animated animate__fadeInLeft'
               data-tina-field={tinaField(listing.hero, 'featured_image')}>
               <MerakiImage
                 src={listing?.hero?.featured_image || '/images/bg/love-notes-featured.jpg'}
