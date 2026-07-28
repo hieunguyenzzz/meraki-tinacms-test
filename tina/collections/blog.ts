@@ -134,8 +134,17 @@ export const Blog: Collection = {
     {
       type: 'string',
       name: 'slug',
-      label: 'URL Slug',
+      label: 'URL Slug (English)',
+      description:
+        'Used for the English blog URL: /en/blog/{slug}. This also remains the fallback when the Vietnamese slug is empty.',
       required: true,
+    },
+    {
+      type: 'string',
+      name: 'slug_vi',
+      label: 'URL Slug (Vietnamese)',
+      description:
+        'Used for the Vietnamese blog URL: /vi/blog/{slug}. Leave empty to use the English slug.',
     },
     {
       type: 'datetime',

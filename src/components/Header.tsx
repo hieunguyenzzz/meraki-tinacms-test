@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { useLanguageNavigation } from './LanguageNavigationContext';
 
 interface HeaderProps {
   lang: string;
@@ -66,6 +67,7 @@ function MobileLanguageSwitcher({
 
 export default function Header({ lang }: HeaderProps) {
   const pathname = usePathname();
+  const { localizedPaths } = useLanguageNavigation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuPanelRef = useRef<HTMLDivElement>(null);
@@ -157,6 +159,11 @@ export default function Header({ lang }: HeaderProps) {
 
   // Function to get the language-switched URL
   const getLanguageSwitchUrl = (targetLang: string) => {
+    const localizedPath = localizedPaths?.[targetLang as 'en' | 'vi'];
+    if (localizedPath) {
+      return localizedPath;
+    }
+
     // Remove current language prefix from pathname
     const pathWithoutLang = pathname.replace(`/${lang}`, '') || '/';
     // Return new path with target language

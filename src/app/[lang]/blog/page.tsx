@@ -26,6 +26,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: seo?.title || `${title} - Meraki Wedding Planner`,
       description: seo?.description || '',
+      alternates: {
+        canonical: `/${lang}/blog`,
+        languages: {
+          en: '/en/blog',
+          vi: '/vi/blog',
+        },
+      },
     };
   } catch {
     return {
@@ -37,6 +44,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         lang === 'en'
           ? 'Wedding tips, inspiration, and behind-the-scenes stories from Meraki Wedding Planner'
           : 'Mẹo cưới, cảm hứng và những câu chuyện hậu trường từ Meraki Wedding Planner',
+      alternates: {
+        canonical: `/${lang}/blog`,
+        languages: {
+          en: '/en/blog',
+          vi: '/vi/blog',
+        },
+      },
     };
   }
 }
@@ -73,4 +87,3 @@ export default async function BlogPage({ params }: Props) {
     />
   );
 }
-

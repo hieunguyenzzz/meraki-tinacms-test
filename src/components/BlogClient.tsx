@@ -1,11 +1,12 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import ContentBlocksRenderer, {
   collectLightboxImages,
 } from './ContentBlocksRenderer';
+import { useLanguageNavigation } from './LanguageNavigationContext';
 import MerakiImage from './ui/MerakiImage';
 
 interface BlogClientProps {
@@ -13,6 +14,10 @@ interface BlogClientProps {
   variables: any;
   query: string;
   lang: string;
+  localizedSlugs: {
+    en: string;
+    vi: string;
+  };
 }
 
 const t = (text: { en: string; vi: string }, lang: string) =>
@@ -23,9 +28,20 @@ export default function BlogClient({
   variables,
   query,
   lang,
+  localizedSlugs,
 }: BlogClientProps) {
   const { data: tinaData } = useTina({ data, variables, query });
   const blog = tinaData.blog;
+  const { setLocalizedPaths } = useLanguageNavigation();
+
+  useEffect(() => {
+    setLocalizedPaths({
+      en: `/en/blog/${localizedSlugs.en}`,
+      vi: `/vi/blog/${localizedSlugs.vi}`,
+    });
+
+    return () => setLocalizedPaths(null);
+  }, [localizedSlugs.en, localizedSlugs.vi, setLocalizedPaths]);
 
   const { indexMap } = useMemo(() => {
     return collectLightboxImages(

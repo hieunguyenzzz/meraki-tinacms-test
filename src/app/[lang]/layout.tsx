@@ -1,6 +1,7 @@
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { client } from '../../../tina/__generated__/client';
+import { LanguageNavigationProvider } from '../../components/LanguageNavigationContext';
 
 interface LanguageLayoutProps {
   children: React.ReactNode;
@@ -15,7 +16,7 @@ export default async function LanguageLayout({
   const footer = await client.queries.footer(variables);
 
   return (
-    <>
+    <LanguageNavigationProvider>
       <Header lang={params.lang} />
       {children}
       <Footer
@@ -24,6 +25,6 @@ export default async function LanguageLayout({
         variables={variables}
         lang={params.lang}
       />
-    </>
+    </LanguageNavigationProvider>
   );
 }

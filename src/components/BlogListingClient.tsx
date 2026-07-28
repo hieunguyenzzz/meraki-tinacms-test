@@ -11,6 +11,7 @@ import MerakiImage from './ui/MerakiImage';
 interface BlogNode {
   _sys: { filename: string; createdAt: string };
   slug: string;
+  slug_vi?: string;
   title_en: string;
   title_vi: string;
   excerpt_en?: string;
@@ -85,8 +86,12 @@ export default function BlogListingClient({
     setCurrentPage(1);
   }, [activeCategory]);
 
-  const getSlug = (blog: BlogNode) =>
-    blog.slug || blog._sys.filename.replace('.mdx', '');
+  const getSlug = (blog: BlogNode) => {
+    const englishSlug =
+      blog.slug?.trim() || blog._sys.filename.replace('.mdx', '');
+
+    return lang === 'vi' ? blog.slug_vi?.trim() || englishSlug : englishSlug;
+  };
 
   const getTitle = (blog: BlogNode) =>
     lang === 'en' ? blog.title_en : blog.title_vi;

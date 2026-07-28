@@ -3,40 +3,95 @@ import { client } from '../../../../../tina/__generated__/client';
 import BlogClient from '../../../../components/BlogClient';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { cache } from 'react';
 
 interface Props {
   params: { lang: string; slug: string };
 }
 
+type BlogLanguage = 'en' | 'vi';
+type BlogSlugEntry = {
+  relativePath: string;
+  slugEn: string;
+  slugVi: string;
+};
+type BlogSlugNode = {
+  _sys?: {
+    relativePath: string;
+    filename: string;
+  } | null;
+  slug?: string | null;
+  slug_vi?: string | null;
+};
+
 // Enable static generation with revalidation
 export const revalidate = 3600;
 
-const resolveBlogRelativePath = cache(async (slug: string) => {
-  try {
-    const bySlug = await client.queries.blogConnection({
-      filter: { slug: { eq: slug } },
-      first: 1,
-    });
+const toBlogSlugEntry = (
+  node: BlogSlugNode | null | undefined
+): BlogSlugEntry | null => {
+  const relativePath = node?._sys?.relativePath;
+  const fallbackSlug = node?._sys?.filename?.replace(/\.mdx$/, '').trim();
+  const slugEn = node?.slug?.trim() || fallbackSlug;
 
-    const matchedPath = bySlug.data.blogConnection.edges?.[0]?.node?._sys.relativePath;
-    if (matchedPath) return matchedPath;
-
-    console.warn(`No blog found by slug "${slug}", falling back to filename path.`);
-    return `${slug}.mdx`;
-  } catch (error) {
-    console.error('Error resolving blog slug:', error);
-    return `${slug}.mdx`;
+  if (!relativePath || !slugEn) {
+    return null;
   }
-});
+
+  return {
+    relativePath,
+    slugEn,
+    slugVi: node?.slug_vi?.trim() || slugEn,
+  };
+};
+
+const getBlogSlugEntries = async () => {
+  const blogList = await client.queries.blogConnection();
+
+  return (blogList.data.blogConnection.edges || [])
+    .map((edge) => toBlogSlugEntry(edge?.node))
+    .filter((entry): entry is BlogSlugEntry => entry !== null);
+};
+
+const findBlogBySlug = async (
+  slug: string,
+  field: 'slug' | 'slug_vi'
+): Promise<BlogSlugEntry | null> => {
+  const result = await client.queries.blogConnection({
+    filter:
+      field === 'slug_vi'
+        ? { slug_vi: { eq: slug } }
+        : { slug: { eq: slug } },
+    first: 1,
+  });
+
+  return toBlogSlugEntry(result.data.blogConnection.edges?.[0]?.node);
+};
+
+const resolveBlog = async (slug: string, lang: BlogLanguage) => {
+  const localeField = lang === 'vi' ? 'slug_vi' : 'slug';
+  const alternateField = lang === 'vi' ? 'slug' : 'slug_vi';
+
+  return (
+    (await findBlogBySlug(slug, localeField)) ||
+    (await findBlogBySlug(slug, alternateField))
+  );
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, slug } = params;
 
+  if (lang !== 'en' && lang !== 'vi') {
+    return {};
+  }
+
   try {
-    const relativePath = await resolveBlogRelativePath(slug);
+    const resolvedBlog = await resolveBlog(slug, lang);
+    if (!resolvedBlog) {
+      throw new Error(`No blog found for slug "${slug}"`);
+    }
+
     const blogPost = await client.queries.blog({
-      relativePath,
+      relativePath: resolvedBlog.relativePath,
     });
 
     const post = blogPost.data.blog;
@@ -47,6 +102,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: seo?.title || `${title} - Meraki Wedding Planner`,
       description: seo?.description || description || '',
+      alternates: {
+        canonical: `/${lang}/blog/${
+          lang === 'vi' ? resolvedBlog.slugVi : resolvedBlog.slugEn
+        }`,
+        languages: {
+          en: `/en/blog/${resolvedBlog.slugEn}`,
+          vi: `/vi/blog/${resolvedBlog.slugVi}`,
+        },
+      },
     };
   } catch {
     return {
@@ -60,20 +124,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateStaticParams() {
   try {
-    const blogList = await client.queries.blogConnection();
-    const slugs: Array<{ lang: string; slug: string }> = [];
+    const entries = await getBlogSlugEntries();
 
-    blogList.data.blogConnection.edges?.forEach((edge) => {
-      const blogSlug =
-        edge?.node?.slug?.trim() ||
-        edge?.node?._sys?.filename?.replace('.mdx', '').trim();
-
-      if (blogSlug) {
-        slugs.push({ lang: 'en', slug: blogSlug }, { lang: 'vi', slug: blogSlug });
-      }
-    });
-
-    return slugs;
+    return entries.flatMap(({ slugEn, slugVi }) => [
+      { lang: 'en', slug: slugEn },
+      { lang: 'vi', slug: slugVi },
+    ]);
   } catch {
     return [];
   }
@@ -86,25 +142,42 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
+  let resolvedBlog: BlogSlugEntry | null;
   try {
-    const relativePath = await resolveBlogRelativePath(slug);
-    const variables = { relativePath };
-    const result = await client.queries.blog(variables);
+    resolvedBlog = await resolveBlog(slug, lang as BlogLanguage);
+  } catch (error) {
+    console.error('Error resolving blog slug:', error);
+    notFound();
+  }
 
-    if (!result.data.blog.published) {
-      notFound();
-    }
+  if (!resolvedBlog) {
+    notFound();
+  }
 
-    return (
-      <BlogClient
-        data={result.data}
-        query={result.query}
-        variables={variables}
-        lang={lang}
-      />
-    );
+  const variables = { relativePath: resolvedBlog.relativePath };
+  let result: Awaited<ReturnType<typeof client.queries.blog>>;
+
+  try {
+    result = await client.queries.blog(variables);
   } catch (error) {
     console.error('Error fetching blog post:', error);
     notFound();
   }
+
+  if (!result.data.blog.published) {
+    notFound();
+  }
+
+  return (
+    <BlogClient
+      data={result.data}
+      query={result.query}
+      variables={variables}
+      lang={lang}
+      localizedSlugs={{
+        en: resolvedBlog.slugEn,
+        vi: resolvedBlog.slugVi,
+      }}
+    />
+  );
 }
