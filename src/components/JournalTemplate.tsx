@@ -9,6 +9,9 @@ interface JournalTemplateProps {
   lang: string;
 }
 
+const uppercaseCoupleNames = (names?: string | null, lang = 'en') =>
+  names?.normalize('NFC').toLocaleUpperCase(lang === 'vi' ? 'vi-VN' : 'en-US');
+
 export default function JournalTemplate({
   journal,
   lang,
@@ -53,7 +56,7 @@ export default function JournalTemplate({
                     className="text-h1 tracking-wider text-center"
                     data-tina-field={tinaField(journal, 'couple_names')}
                   >
-                    {journal.couple_names?.toUpperCase()}
+                    {uppercaseCoupleNames(journal.couple_names, lang)}
                   </h1>
                 </div>
 
