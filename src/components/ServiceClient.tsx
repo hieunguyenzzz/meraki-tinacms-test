@@ -247,11 +247,11 @@ export default function ServiceClient({
               >
                 {localized(scope.description_en, scope.description_vi, lang)}
               </p>
-              <div className="mt-8 flex flex-wrap justify-center">
+              <div className="mt-8 flex flex-col items-center justify-center gap-1 md:flex-row md:flex-wrap md:gap-0">
                 {scope.items?.filter(Boolean).map((item, index) => (
                   <span
                     key={`${item?.label_en}-${index}`}
-                    className="border-r border-line-secondary px-3 py-1 text-body-sm text-text-secondary last:border-r-0"
+                    className="border-b border-line-secondary px-3 py-2 text-body-sm text-text-secondary last:border-b-0 md:border-b-0 md:border-r md:py-1 md:last:border-r-0"
                     data-tina-field={tinaField(
                       item,
                       lang === 'vi' ? 'label_vi' : 'label_en'
