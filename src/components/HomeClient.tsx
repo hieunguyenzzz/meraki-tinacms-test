@@ -296,7 +296,7 @@ const buttonLabel = {
   explore: { en: 'Explore More', vi: 'Khám phá thêm' },
   read: { en: 'Read All', vi: 'Đọc tất cả' },
   team: { en: 'Meet Meraki Team', vi: 'Gặp gỡ team Meraki' },
-  contact: { en: 'Contact Us', vi: 'Liên hệ với chúng tôi' },
+  contact: { en: 'Contact Us', vi: 'Liên hệ với tụi mình' },
 };
 
 function EditorialLink({
