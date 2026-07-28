@@ -118,7 +118,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
 
         <section className="bg-background-1 px-4 py-20 text-center md:px-12 lg:py-28">
           <div
-            className="mx-auto max-w-3xl text-body-lg leading-relaxed text-text-secondary md:text-h2"
+            className="mx-auto max-w-3xl text-body-lg leading-relaxed text-text-secondary md:text-[28px]"
             data-tina-field={tinaField(
               statement,
               lang === 'en' ? 'text_en' : 'text_vi'
