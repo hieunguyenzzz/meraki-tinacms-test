@@ -6,19 +6,43 @@
 }
 
 .journalGrid {
-  display: grid;
+  display: flex;
   align-items: start;
-  gap: 2.5rem;
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 0 1rem 1.25rem;
+  scroll-behavior: smooth;
+  scroll-padding-inline: 1rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.journalGrid::-webkit-scrollbar {
+  display: none;
 }
 
 .journalItem {
+  flex: 0 0 min(82vw, 320px);
   min-width: 0;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
 }
 
 @media (min-width: 744px) {
   .journalGrid {
+    display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.25rem;
+    overflow: visible;
+    padding: 0;
+    scroll-snap-type: none;
+  }
+
+  .journalItem {
+    flex-basis: auto;
+    scroll-snap-align: none;
   }
 }
 

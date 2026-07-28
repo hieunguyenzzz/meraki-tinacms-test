@@ -268,7 +268,13 @@ export default function ServiceClient({
         {journals.length > 0 && (
           <section className="px-0 py-10 lg:py-16">
             <div className="mx-auto max-w-[1408px] bg-background-base py-12">
-              <div className={styles.journalGrid}>
+              <div
+                className={styles.journalGrid}
+                role="region"
+                aria-label={
+                  lang === 'vi' ? 'Nhật ký nổi bật' : 'Featured journals'
+                }
+              >
                 {journals.map((journal) => (
                   <a
                     key={journal.id}
