@@ -12,29 +12,43 @@ interface RichTextBlockData extends Record<string, unknown> {
 interface RichTextBlockProps {
   data: RichTextBlockData;
   lang: string;
+  centerHeadings?: boolean;
 }
 
 export const renderRichTextBlock = (
-  content: TinaMarkdownContent | TinaMarkdownContent[]
+  content: TinaMarkdownContent | TinaMarkdownContent[],
+  centerHeadings = false
 ) => (
   <TinaMarkdown
     content={content}
     components={{
       h1: (props: any) => (
         // eslint-disable-next-line jsx-a11y/heading-has-content
-        <h1 className={`text-h1 mb-4`} {...props} />
+        <h1
+          className={`text-h1 mb-4 ${centerHeadings ? 'text-center' : ''}`}
+          {...props}
+        />
       ),
       h2: (props: any) => (
         // eslint-disable-next-line jsx-a11y/heading-has-content
-        <h2 className={`text-h2 mb-4`} {...props} />
+        <h2
+          className={`text-h2 mb-4 ${centerHeadings ? 'text-center' : ''}`}
+          {...props}
+        />
       ),
       h3: (props: any) => (
         // eslint-disable-next-line jsx-a11y/heading-has-content
-        <h3 className={`text-h3 mb-4`} {...props} />
+        <h3
+          className={`text-h3 mb-4 ${centerHeadings ? 'text-center' : ''}`}
+          {...props}
+        />
       ),
       h4: (props: any) => (
         // eslint-disable-next-line jsx-a11y/heading-has-content
-        <h4 className={`text-h4 mb-4`} {...props} />
+        <h4
+          className={`text-h4 mb-4 ${centerHeadings ? 'text-center' : ''}`}
+          {...props}
+        />
       ),
       p: (props: any) => (
         <p
@@ -61,7 +75,11 @@ export const renderRichTextBlock = (
   />
 );
 
-export default function RichTextBlock({ data, lang }: RichTextBlockProps) {
+export default function RichTextBlock({
+  data,
+  lang,
+  centerHeadings = false,
+}: RichTextBlockProps) {
   const content = lang === 'vi' ? data.content_vi : data.content_en;
 
   if (!content) {
@@ -76,7 +94,7 @@ export default function RichTextBlock({ data, lang }: RichTextBlockProps) {
           lang === 'vi' ? 'content_vi' : 'content_en'
         )}
       >
-        {renderRichTextBlock(content)}
+        {renderRichTextBlock(content, centerHeadings)}
       </div>
     </div>
   );

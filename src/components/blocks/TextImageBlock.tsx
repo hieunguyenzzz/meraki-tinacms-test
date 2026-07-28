@@ -22,6 +22,7 @@ interface TextImageBlockProps {
   blockIndex?: number;
   indexMap?: Record<string, number>;
   onImageClick?: (index: number) => void;
+  centerTitle?: boolean;
 }
 
 export default function TextImageBlock({
@@ -30,6 +31,7 @@ export default function TextImageBlock({
   blockIndex,
   indexMap,
   onImageClick,
+  centerTitle = false,
 }: TextImageBlockProps) {
   const isTextLeft = data.layout === 'text-left';
   const verticalAlignment = data.verticalAlignment || 'center';
@@ -65,7 +67,9 @@ export default function TextImageBlock({
           <div className={cn('max-w-lg', isTextLeft ? 'mr-auto' : 'ml-auto')}>
             {title && (
               <h2
-                className="text-h3 mb-4"
+                className={`text-h3 mb-4 ${
+                  centerTitle ? 'text-center' : 'text-left'
+                }`}
                 data-tina-field={tinaField(
                   data,
                   lang === 'vi' ? 'title_vi' : 'title_en'

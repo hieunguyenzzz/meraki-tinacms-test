@@ -26,9 +26,7 @@ interface ContentBlocksRendererProps {
   wrapperClassName?: string;
 }
 
-const getDefaultTextAlignment = (
-  typenamePrefix: string,
-): 'left' | 'center' => {
+const getDefaultTextAlignment = (typenamePrefix: string): 'left' | 'center' => {
   if (typenamePrefix === 'BlogContent_blocks') {
     return 'left';
   }
@@ -38,7 +36,7 @@ const getDefaultTextAlignment = (
 
 export function collectLightboxImages(
   blocks: any[],
-  typenamePrefix: string,
+  typenamePrefix: string
 ): { allImages: LightboxImage[]; indexMap: Record<string, number> } {
   const images: LightboxImage[] = [];
   const map: Record<string, number> = {};
@@ -92,6 +90,7 @@ export default function ContentBlocksRenderer({
   wrapperClassName = '',
 }: ContentBlocksRendererProps) {
   const defaultTextAlignment = getDefaultTextAlignment(typenamePrefix);
+  const isJournalContent = typenamePrefix === 'JournalContent_blocks';
 
   return (
     <div className={`py-16 space-y-6 ${wrapperClassName}`}>
@@ -130,6 +129,7 @@ export default function ContentBlocksRenderer({
               key={blockIndex}
               data={block}
               lang={lang}
+              centerHeadings={isJournalContent}
             />
           );
         }
@@ -141,6 +141,9 @@ export default function ContentBlocksRenderer({
               data={block}
               lang={lang}
               defaultAlignment={defaultTextAlignment}
+              centerTitle={isJournalContent}
+              forceBodyAlignment={isJournalContent ? 'left' : undefined}
+              centerRichTextHeadings={isJournalContent}
             />
           );
         }
@@ -158,6 +161,7 @@ export default function ContentBlocksRenderer({
               blockIndex={blockIndex}
               indexMap={indexMap}
               onImageClick={onImageClick}
+              centerTitle={isJournalContent}
             />
           );
         }

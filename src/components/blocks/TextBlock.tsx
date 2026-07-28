@@ -17,16 +17,22 @@ interface TextBlockProps {
   data: TextBlockData;
   lang: string;
   defaultAlignment?: 'left' | 'center' | 'right' | 'justify';
+  centerTitle?: boolean;
+  forceBodyAlignment?: 'left' | 'center' | 'right' | 'justify';
+  centerRichTextHeadings?: boolean;
 }
 
 export default function TextBlock({
   data,
   lang,
   defaultAlignment = 'center',
+  centerTitle = false,
+  forceBodyAlignment,
+  centerRichTextHeadings = false,
 }: TextBlockProps) {
   const title = lang === 'vi' ? data.title_vi : data.title_en;
   const description = lang === 'vi' ? data.description_vi : data.description_en;
-  const alignment = data.alignment || defaultAlignment;
+  const alignment = forceBodyAlignment || data.alignment || defaultAlignment;
   const columnLayout = data.columnLayout || '1';
 
   const isTitleLeft = columnLayout === 'title-left';
@@ -50,7 +56,9 @@ export default function TextBlock({
           {title && (
             <div className="md:flex-1 flex-shrink-0">
               <h2
-                className={`text-h3 mb-4 md:mb-0 text-left`}
+                className={`text-h3 mb-4 md:mb-0 ${
+                  centerTitle ? 'text-center' : 'text-left'
+                }`}
                 data-tina-field={tinaField(
                   data,
                   lang === 'vi' ? 'title_vi' : 'title_en'
@@ -68,7 +76,7 @@ export default function TextBlock({
                 lang === 'vi' ? 'description_vi' : 'description_en'
               )}
             >
-              {renderRichTextBlock(description)}
+              {renderRichTextBlock(description, centerRichTextHeadings)}
             </div>
           )}
         </div>
@@ -76,7 +84,9 @@ export default function TextBlock({
         <>
           {title && (
             <h2
-              className={`text-h3 mb-4 ${alignClass}`}
+              className={`text-h3 mb-4 ${
+                centerTitle ? 'text-center' : alignClass
+              }`}
               data-tina-field={tinaField(
                 data,
                 lang === 'vi' ? 'title_vi' : 'title_en'
@@ -93,7 +103,7 @@ export default function TextBlock({
                 lang === 'vi' ? 'description_vi' : 'description_en'
               )}
             >
-              {renderRichTextBlock(description)}
+              {renderRichTextBlock(description, centerRichTextHeadings)}
             </div>
           )}
         </>
