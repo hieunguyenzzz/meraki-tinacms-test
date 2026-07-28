@@ -36,20 +36,11 @@ function SocialIcon({ platform }: { platform: string }) {
   );
 }
 
-export default function Footer({
-  data,
-  lang,
-  query,
-  variables,
-}: FooterProps) {
+export default function Footer({ data, lang, query, variables }: FooterProps) {
   const { data: tinaData } = useTina({ data, query, variables });
   const footer = tinaData.footer;
   const currentYear = new Date().getFullYear().toString();
-  const copyright = localized(
-    footer.copyright_en,
-    footer.copyright_vi,
-    lang
-  )
+  const copyright = localized(footer.copyright_en, footer.copyright_vi, lang)
     .split('{year}')
     .join(currentYear);
 
@@ -131,7 +122,7 @@ export default function Footer({
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-x-20 gap-y-10">
+          <div className="flex flex-col gap-y-10 md:flex-row md:flex-wrap md:gap-x-20">
             {footer.navigation_sections?.map((section, sectionIndex) => {
               if (!section) return null;
 
