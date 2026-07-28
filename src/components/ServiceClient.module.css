@@ -198,6 +198,7 @@
     min-height: 0;
     flex-direction: column;
     overflow: hidden;
+    padding-bottom: 2rem;
   }
 
   .panelMedia {
@@ -206,16 +207,27 @@
   }
 
   .panelSurface {
+    z-index: 2;
     min-height: 0;
-    width: 100%;
+    width: calc(100% - 2rem);
     padding: 3rem 1.5rem;
+    opacity: 0;
+    transform: translateY(4rem);
+    transition: opacity 650ms ease,
+      transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
   }
 
   .destinationPanel .panelSurface,
   .cityPanel .panelSurface {
-    margin-left: 0;
+    margin: -2.5rem 1rem 0;
     -webkit-mask-image: none;
     mask-image: none;
+  }
+
+  .mobilePanelRevealed .panelSurface {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .panelMedia {
@@ -229,5 +241,11 @@
   .journalItem {
     transition: none;
     animation: none;
+  }
+
+  .panelSurface {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

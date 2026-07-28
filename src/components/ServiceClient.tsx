@@ -433,9 +433,47 @@ function WeddingPanel({
   onActivate,
   onDeactivate,
 }: WeddingPanelProps) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [isMobileRevealed, setIsMobileRevealed] = useState(false);
+
+  useEffect(() => {
+    const panelElement = panelRef.current;
+    const mobileMediaQuery = window.matchMedia('(max-width: 743px)');
+
+    if (!panelElement || !mobileMediaQuery.matches) {
+      return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      setIsMobileRevealed(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setIsMobileRevealed(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: '0px 0px -12% 0px',
+        threshold: 0.2,
+      }
+    );
+
+    observer.observe(panelElement);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
-      className={className}
+      ref={panelRef}
+      className={`${className} ${
+        isMobileRevealed ? styles.mobilePanelRevealed : ''
+      }`}
+      data-mobile-revealed={isMobileRevealed}
       onMouseEnter={() => onActivate(panelName)}
       onMouseLeave={() => onDeactivate(panelName)}
       onFocus={() => onActivate(panelName)}
