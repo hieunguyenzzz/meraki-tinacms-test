@@ -2,15 +2,11 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from 'next/link';
-import {
-  type ReactElement,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type ReactElement, useEffect, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import { TinaMarkdown, type TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import HomeServicePanels from './HomeServicePanels';
+import LoveNoteLightbox from './LoveNoteLightbox';
 import FadeInOnScroll from './ui/FadeInOnScroll';
 import MerakiImage from './ui/MerakiImage';
 
@@ -123,8 +119,7 @@ const getYouTubeVideoId = (videoUrl?: string | null) => {
 
 const isDirectVideoUrl = (videoUrl?: string | null) =>
   Boolean(
-    videoUrl &&
-      /\.(m4v|mov|mp4|mpeg|mpg|ogv|webm)(?:[?#].*)?$/i.test(videoUrl)
+    videoUrl && /\.(m4v|mov|mp4|mpeg|mpg|ogv|webm)(?:[?#].*)?$/i.test(videoUrl)
   );
 
 function useMobileHeroViewport(enabled: boolean) {
@@ -258,8 +253,9 @@ function YouTubeHeroBackground({ videoId }: { videoId: string }) {
       aria-hidden="true"
     >
       <div
-        className={`pointer-events-none h-full w-full transition-opacity duration-700 ${isVideoVisible ? 'opacity-100' : 'opacity-0'
-          }`}
+        className={`pointer-events-none h-full w-full transition-opacity duration-700 ${
+          isVideoVisible ? 'opacity-100' : 'opacity-0'
+        }`}
       >
         <div
           ref={playerContainerRef}
@@ -350,6 +346,7 @@ export default function HomeClient({
   query,
   lang,
 }: HomeClientProps) {
+  const [isLoveNoteOpen, setIsLoveNoteOpen] = useState(false);
   const { data: tinaData } = useTina({ data, variables, query });
   const page = tinaData?.page;
   const hero = page?.hero;
@@ -370,7 +367,9 @@ export default function HomeClient({
   const configuredHeroVideoUrl =
     hero?.background_video_url || DEFAULT_HERO_VIDEO_URL;
   const mobileHeroVideoUrl = hero?.background_video_mobile_url || null;
-  const isMobileHeroViewport = useMobileHeroViewport(Boolean(mobileHeroVideoUrl));
+  const isMobileHeroViewport = useMobileHeroViewport(
+    Boolean(mobileHeroVideoUrl)
+  );
   const isHeroViewportResolved =
     !mobileHeroVideoUrl || isMobileHeroViewport !== null;
   const activeHeroVideoUrl =
@@ -436,11 +435,11 @@ export default function HomeClient({
           data-tina-field={
             hero
               ? tinaField(
-                hero,
-                mobileHeroVideoUrl && isMobileHeroViewport
-                  ? 'background_video_mobile_url'
-                  : 'background_video_url'
-              )
+                  hero,
+                  mobileHeroVideoUrl && isMobileHeroViewport
+                    ? 'background_video_mobile_url'
+                    : 'background_video_url'
+                )
               : undefined
           }
         >
@@ -476,9 +475,9 @@ export default function HomeClient({
                 data-tina-field={
                   hero
                     ? tinaField(
-                      hero,
-                      lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
-                    )
+                        hero,
+                        lang === 'en' ? 'subtitle_en' : 'subtitle_vi'
+                      )
                     : undefined
                 }
               >
@@ -495,9 +494,9 @@ export default function HomeClient({
               data-tina-field={
                 introduction
                   ? tinaField(
-                    introduction,
-                    lang === 'en' ? 'text_en' : 'text_vi'
-                  )
+                      introduction,
+                      lang === 'en' ? 'text_en' : 'text_vi'
+                    )
                   : undefined
               }
             >
@@ -540,10 +539,7 @@ export default function HomeClient({
                     >
                       <article
                         className="group"
-                        data-tina-field={tinaField(
-                          journal,
-                          'featured_image'
-                        )}
+                        data-tina-field={tinaField(journal, 'featured_image')}
                       >
                         <Link href={`/${lang}/journal/${journal?.slug}`}>
                           <div className="relative aspect-[2/3] overflow-hidden bg-background-1">
@@ -561,11 +557,11 @@ export default function HomeClient({
                               data-tina-field={
                                 journal?.template_layout
                                   ? tinaField(
-                                    journal.template_layout,
-                                    lang === 'en'
-                                      ? 'main_headline_en'
-                                      : 'main_headline_vi'
-                                  )
+                                      journal.template_layout,
+                                      lang === 'en'
+                                        ? 'main_headline_en'
+                                        : 'main_headline_vi'
+                                    )
                                   : undefined
                               }
                             >
@@ -607,9 +603,9 @@ export default function HomeClient({
             data-tina-field={
               services
                 ? tinaField(
-                  services,
-                  lang === 'en' ? 'description_en' : 'description_vi'
-                )
+                    services,
+                    lang === 'en' ? 'description_en' : 'description_vi'
+                  )
                 : undefined
             }
           >
@@ -638,9 +634,9 @@ export default function HomeClient({
                 data-tina-field={
                   loveNotes
                     ? tinaField(
-                      loveNotes,
-                      lang === 'en' ? 'title_en' : 'title_vi'
-                    )
+                        loveNotes,
+                        lang === 'en' ? 'title_en' : 'title_vi'
+                      )
                     : undefined
                 }
               >
@@ -651,9 +647,9 @@ export default function HomeClient({
                 data-tina-field={
                   loveNotes
                     ? tinaField(
-                      loveNotes,
-                      lang === 'en' ? 'description_en' : 'description_vi'
-                    )
+                        loveNotes,
+                        lang === 'en' ? 'description_en' : 'description_vi'
+                      )
                     : undefined
                 }
               >
@@ -693,9 +689,9 @@ export default function HomeClient({
                   data-tina-field={
                     loveNotes
                       ? tinaField(
-                        loveNotes,
-                        lang === 'en' ? 'couple_names_en' : 'couple_names_vi'
-                      )
+                          loveNotes,
+                          lang === 'en' ? 'couple_names_en' : 'couple_names_vi'
+                        )
                       : undefined
                   }
                 >
@@ -725,9 +721,9 @@ export default function HomeClient({
                     data-tina-field={
                       loveNotes
                         ? tinaField(
-                          loveNotes,
-                          lang === 'en' ? 'excerpt_en' : 'excerpt_vi'
-                        )
+                            loveNotes,
+                            lang === 'en' ? 'excerpt_en' : 'excerpt_vi'
+                          )
                         : undefined
                     }
                   >
@@ -736,24 +732,33 @@ export default function HomeClient({
                 )}
 
                 {loveNoteBody && (
-                  <p
-                    className="mt-6 overflow-hidden text-body-md leading-relaxed text-text-secondary"
-                    style={{
-                      display: '-webkit-box',
-                      WebkitLineClamp: 8,
-                      WebkitBoxOrient: 'vertical',
-                    }}
-                    data-tina-field={
-                      loveNotes
-                        ? tinaField(
-                          loveNotes,
-                          lang === 'en' ? 'note_en' : 'note_vi'
-                        )
-                        : undefined
-                    }
-                  >
-                    {loveNoteBody}
-                  </p>
+                  <>
+                    <p
+                      className="mt-6 overflow-hidden text-body-md leading-relaxed text-text-secondary"
+                      style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 8,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                      data-tina-field={
+                        loveNotes
+                          ? tinaField(
+                              loveNotes,
+                              lang === 'en' ? 'note_en' : 'note_vi'
+                            )
+                          : undefined
+                      }
+                    >
+                      {loveNoteBody}
+                    </p>
+                    <button
+                      type="button"
+                      className="mt-5 border-b border-line-primary px-4 pb-1 text-body-sm text-text-primary transition-all hover:-translate-y-0.5 hover:border-text-accent hover:text-text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-line-accent focus-visible:ring-offset-4"
+                      onClick={() => setIsLoveNoteOpen(true)}
+                    >
+                      {lang === 'en' ? 'View more' : 'Xem thêm'}
+                    </button>
+                  </>
                 )}
                 {loveNoteLocation && (
                   <p
@@ -761,11 +766,11 @@ export default function HomeClient({
                     data-tina-field={
                       loveNotes
                         ? tinaField(
-                          loveNotes,
-                          lang === 'en'
-                            ? 'wedding_location_en'
-                            : 'wedding_location_vi'
-                        )
+                            loveNotes,
+                            lang === 'en'
+                              ? 'wedding_location_en'
+                              : 'wedding_location_vi'
+                          )
                         : undefined
                     }
                   >
@@ -777,6 +782,13 @@ export default function HomeClient({
             </div>
           </div>
         </section>
+
+        <LoveNoteLightbox
+          note={loveNotes || null}
+          isOpen={isLoveNoteOpen}
+          onClose={() => setIsLoveNoteOpen(false)}
+          lang={lang}
+        />
 
         <section className="px-4 py-24 text-center md:px-6 md:py-32">
           <div
@@ -833,9 +845,9 @@ export default function HomeClient({
               data-tina-field={
                 connect
                   ? tinaField(
-                    connect,
-                    lang === 'en' ? 'description_en' : 'description_vi'
-                  )
+                      connect,
+                      lang === 'en' ? 'description_en' : 'description_vi'
+                    )
                   : undefined
               }
             >
@@ -909,7 +921,6 @@ export default function HomeClient({
           </div>
         </section>
       </main>
-
     </div>
   );
 }
