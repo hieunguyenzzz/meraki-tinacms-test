@@ -13,8 +13,13 @@ const navItems = [
   { path: '/journal', key: 'journal', en: 'Journals', vi: 'Nhật ký' },
   { path: '/service', key: 'service', en: 'Service', vi: 'Dịch vụ' },
   { path: '/about', key: 'about', en: 'About Us', vi: 'Gặp gỡ' },
-  { path: '/blog', key: 'blog', en: 'Blogs', vi: 'Chia sẻ' },
-  { path: '/love-notes', key: 'loveNotes', en: 'Love Notes', vi: 'Tri ân' },
+  { path: '/blog', key: 'blog', en: 'Blogs', vi: 'Blog' },
+  {
+    path: '/love-notes',
+    key: 'loveNotes',
+    en: 'Love Notes',
+    vi: 'Love Notes',
+  },
   { path: '/lets-connect', key: 'connect', en: "Let's Connect", vi: 'Liên hệ' },
 ];
 
@@ -143,10 +148,11 @@ export default function Header({ lang }: HeaderProps) {
                 <a
                   key={item.key}
                   href={`/${lang}${item.path}`}
-                  className={`px-3 py-2 text-body-sm transition-all underline-offset-4 decoration-2 ${active
+                  className={`px-3 py-2 text-body-sm transition-all underline-offset-4 decoration-2 ${
+                    active
                       ? 'text-text-primary underline'
                       : 'text-text-secondary hover:-translate-y-[2px] hover:underline'
-                    }`}
+                  }`}
                 >
                   {t({ en: item.en, vi: item.vi }, lang)}
                 </a>
@@ -160,10 +166,11 @@ export default function Header({ lang }: HeaderProps) {
             <a
               key={language}
               href={getLanguageSwitchUrl(language)}
-              className={`rounded px-2 py-1 text-sm transition-colors ${lang === language
+              className={`rounded px-2 py-1 text-sm transition-colors ${
+                lang === language
                   ? 'bg-background-brand text-background-base'
                   : 'text-text-secondary hover:bg-background-1 hover:text-text-primary'
-                }`}
+              }`}
             >
               {language.toUpperCase()}
             </a>
@@ -266,10 +273,11 @@ export default function Header({ lang }: HeaderProps) {
                 <a
                   key={language}
                   href={getLanguageSwitchUrl(language)}
-                  className={`flex h-7 w-[54px] items-center justify-center border border-line-secondary font-bt-beau-sans text-sm transition-colors ${lang === language
+                  className={`flex h-7 w-[54px] items-center justify-center border border-line-secondary font-bt-beau-sans text-sm transition-colors ${
+                    lang === language
                       ? 'border-background-brand bg-background-brand text-background-base'
                       : 'bg-background-base text-text-secondary hover:bg-background-1 hover:text-text-primary'
-                    } ${language === 'vi' ? '-ml-px' : ''}`}
+                  } ${language === 'vi' ? '-ml-px' : ''}`}
                   aria-current={lang === language ? 'page' : undefined}
                   onClick={() => setIsMenuOpen(false)}
                 >
