@@ -1,12 +1,21 @@
 import { Pool } from 'pg';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Built lazily so a deployment without DATABASE_URL never opens a connection.
+let pool: Pool | null = null;
+
+function getPool() {
+  if (!pool) {
+    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  }
+  return pool;
+}
 
 let schemaReady: Promise<void> | null = null;
+let warnedMissingDatabaseUrl = false;
 
 function ensureSchema() {
   if (!schemaReady) {
-    schemaReady = pool.query(`
+    schemaReady = getPool().query(`
       CREATE TABLE IF NOT EXISTS lets_connect_submissions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         lang VARCHAR(2) NOT NULL,
@@ -49,10 +58,25 @@ export interface LetsConnectSubmission {
   otherNotes?: string;
 }
 
-export async function saveLetsConnectSubmission(submission: LetsConnectSubmission) {
+export async function saveLetsConnectSubmission(
+  submission: LetsConnectSubmission,
+  correlationId: string
+) {
+  // Postgres only holds an audit copy of the submission, so an unconfigured
+  // database must not stop the enquiry reaching the ERP and the inbox.
+  if (!process.env.DATABASE_URL) {
+    if (!warnedMissingDatabaseUrl) {
+      warnedMissingDatabaseUrl = true;
+      console.warn(
+        `[lets-connect:${correlationId}] DATABASE_URL not configured, skipping submission audit row`
+      );
+    }
+    return;
+  }
+
   await ensureSchema();
 
-  await pool.query(
+  await getPool().query(
     `INSERT INTO lets_connect_submissions
       (lang, first_name, last_name, role, partner_name, email, phone, location,
        wedding_date, venue, guest_count, budget, extra_events, referral_source, other_notes)

@@ -57,15 +57,16 @@ export async function POST(request: NextRequest) {
     otherNotes: body.otherNotes ? String(body.otherNotes).trim() : undefined,
   };
 
+  // Best-effort audit row. A missing or unreachable database must not cost us the
+  // enquiry, so carry on to the ERP lead and the notification email regardless.
   try {
-    await saveLetsConnectSubmission(submission);
+    await saveLetsConnectSubmission(submission, correlationId);
   } catch (error) {
     console.error(`[lets-connect:${correlationId}] failed to save submission`, error);
-    return NextResponse.json({ error: 'Failed to submit, please try again' }, { status: 500 });
   }
 
   // Best-effort sync to the ERP CRM (creates a Lead). Never block the couple's
-  // submission on it — the submission is already persisted above.
+  // submission on it.
   try {
     const erpUrl = process.env.ERP_INQUIRY_URL;
     const erpSecret = process.env.ERP_INQUIRY_SECRET;
