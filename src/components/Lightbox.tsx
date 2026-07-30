@@ -26,12 +26,8 @@ export default function Lightbox({
   lang 
 }: LightboxProps) {
   const touchStartX = useRef<number | null>(null);
-
-  const [imgLoaded, setImgLoaded] = useState(false);
-
-  useEffect(() => {
-    setImgLoaded(false);
-  }, [currentIndex]);
+  const [loadedImage, setLoadedImage] = useState<string | null>(null);
+  const [loadedThumbnail, setLoadedThumbnail] = useState<string | null>(null);
 
   // Keyboard navigation
   useEffect(() => {
@@ -94,6 +90,9 @@ export default function Lightbox({
 
   const currentImage = images[currentIndex];
   const altText = lang === "en" ? currentImage.alt_en : currentImage.alt_vi;
+  const imgLoaded = loadedImage === currentImage.image;
+  const thumbnailLoaded =
+    loadedThumbnail === currentImage.thumbnail && !imgLoaded;
 
   return (
     <div 
@@ -128,26 +127,36 @@ export default function Lightbox({
       )}
 
       {/* Main Image */}
-      <div className='max-h-screen p-4 relative flex items-center justify-center w-full h-full'>
-        {/* Thumbnail Placeholder */}
-        {currentImage.thumbnail && (
+      <div className='relative flex h-full w-full items-center justify-center p-4'>
+        <div className='relative h-full w-full'>
+          {/* Low-resolution placeholder. Its viewport-sized box remains stable
+              while the browser discovers the image's intrinsic ratio. */}
+          {currentImage.thumbnail && (
+            <MerakiImage
+              src={currentImage.thumbnail}
+              alt=''
+              aria-hidden='true'
+              className={`absolute inset-0 h-full w-full object-contain blur-sm transition-opacity duration-300 ${
+                thumbnailLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              width={75}
+              sizes='100vw'
+              onLoad={() => setLoadedThumbnail(currentImage.thumbnail || null)}
+            />
+          )}
+
           <MerakiImage
-            src={currentImage.thumbnail}
-            alt={altText || 'Gallery image placeholder'}
-            className='absolute h-[90vh] z-0'
-            width={75}
+            src={currentImage.image}
+            alt={altText || 'Gallery image'}
+            className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-300 ${
+              imgLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            width={1200}
+            sizes='100vw'
+            priority
+            onLoad={() => setLoadedImage(currentImage.image)}
           />
-        )}
-        
-        <MerakiImage
-          src={currentImage.image}
-          alt={altText || 'Gallery image'}
-          className={`max-w-full max-h-[90vh] object-contain z-10 relative ${imgLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
-          width={1200}
-          sizes='100vw'
-          priority
-          onLoad={() => setImgLoaded(true)}
-        />
+        </div>
       </div>
 
       {/* Image Counter */}

@@ -35,7 +35,7 @@ export default function TwoImagesAsymmetryBlock({
 
   return (
     <div className="max-w-[968px] mx-auto px-4 md:px-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:mt-[120px] md:grid-cols-2">
         <div className={leftOffset}>
           <button
             type="button"
