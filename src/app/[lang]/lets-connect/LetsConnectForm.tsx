@@ -432,7 +432,7 @@ export default function LetsConnectForm({
           <div className="mt-7">
             <label
               htmlFor="otherNotes"
-              className="block border-b border-line-primary pb-2 text-body-sm text-text-secondary"
+              className="block text-body-sm text-text-secondary"
               data-tina-field={tinaField(
                 content,
                 lang === 'en' ? 'other_notes_label_en' : 'other_notes_label_vi'
@@ -448,13 +448,17 @@ export default function LetsConnectForm({
               id="otherNotes"
               name="otherNotes"
               rows={4}
-              placeholder={localized(
-                content.notes_hint_en,
-                content.notes_hint_vi,
-                lang
-              )}
-              className="mt-2 w-full resize-y border-0 bg-transparent px-0 text-body-sm text-text-primary outline-none placeholder:whitespace-pre-line placeholder:text-[11px] placeholder:leading-[15px] placeholder:text-text-tertiary focus:ring-0"
+              className="mt-1 w-full resize-y border-0 border-b border-line-primary bg-transparent px-0 py-2 text-body-sm text-text-primary outline-none transition-colors focus:border-text-primary focus:ring-0"
             />
+            <p
+              className="mt-1 whitespace-pre-line text-[11px] leading-[15px] text-text-tertiary"
+              data-tina-field={tinaField(
+                content,
+                lang === 'en' ? 'notes_hint_en' : 'notes_hint_vi'
+              )}
+            >
+              {localized(content.notes_hint_en, content.notes_hint_vi, lang)}
+            </p>
           </div>
         </fieldset>
 
