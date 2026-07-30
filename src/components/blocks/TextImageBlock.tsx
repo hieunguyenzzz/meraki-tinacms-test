@@ -60,7 +60,7 @@ export default function TextImageBlock({
         {/* Text Section */}
         <div
           className={cn(
-            'order-2 flex-1 w-full md:order-none md:w-1/2',
+            'order-1 flex-1 w-full md:order-none md:w-1/2',
             textAlignmentClass
           )}
         >
@@ -119,7 +119,7 @@ export default function TextImageBlock({
         </div>
 
         {/* Image Section */}
-        <div className="order-1 flex-1 w-full md:order-none md:w-1/2">
+        <div className="order-2 flex-1 w-full md:order-none md:w-1/2">
           {data.image && (
             <div
               className={cn(
