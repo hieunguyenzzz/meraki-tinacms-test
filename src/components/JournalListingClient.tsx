@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type {
   JournalConnectionEdges,
   JournalListingQuery,
 } from '../../tina/__generated__/types';
+import { useUrlPagination } from '../lib/useUrlPagination';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
 
@@ -22,6 +23,12 @@ interface Props {
 const t = (text: { en: string; vi: string }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
+const getJournalId = (journal: JournalConnectionEdges) =>
+  journal.node?.id ||
+  journal.node?._sys?.relativePath ||
+  journal.node?.slug ||
+  journal.cursor;
+
 export default function JournalListingClient({
   data,
   query,
@@ -35,8 +42,8 @@ export default function JournalListingClient({
   // Location filter state
   const [activeLocation, setActiveLocation] = useState<string>('All');
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const listSectionRef = useRef<HTMLElement | null>(null);
+  const previousPageRef = useRef(1);
   const itemsPerPage = 12;
 
   // Available locations
@@ -124,14 +131,31 @@ export default function JournalListingClient({
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredJournals.length / itemsPerPage);
+  const { currentPage, resetPage, setPage } = useUrlPagination(totalPages);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedJournals = filteredJournals.slice(startIndex, endIndex);
 
-  // Reset to page 1 when filter changes
   useEffect(() => {
-    setCurrentPage(1);
-  }, [activeLocation]);
+    if (previousPageRef.current === currentPage) return;
+    previousPageRef.current = currentPage;
+
+    requestAnimationFrame(() => {
+      const section = listSectionRef.current;
+      if (!section) return;
+
+      const headerHeight =
+        document.querySelector('header')?.getBoundingClientRect().height || 0;
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({
+        top: Math.max(0, sectionTop - headerHeight),
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth',
+      });
+    });
+  }, [currentPage]);
 
   return (
     <div className="bg-background-base">
@@ -206,7 +230,10 @@ export default function JournalListingClient({
             {locations.map((location) => (
               <button
                 key={location.value}
-                onClick={() => setActiveLocation(location?.value ?? 'All')}
+                onClick={() => {
+                  setActiveLocation(location?.value ?? 'All');
+                  resetPage();
+                }}
                 className={`text-body-sm whitespace-nowrap px-3 py-2 transition-colors md:px-4 ${activeLocation === location.value
                     ? 'text-text-primary bg-background-2'
                     : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
@@ -220,17 +247,20 @@ export default function JournalListingClient({
       </section>
 
       {/* Journal Grid */}
-      <section className="pb-10">
+      <section ref={listSectionRef} className="pb-10">
         <div className="mx-auto mt-8 max-w-7xl px-4 md:mt-20 md:px-6 lg:px-8">
           {paginatedJournals.length > 0 ? (
-            <div className="grid grid-cols-1 gap-y-10 md:grid-cols-2 md:gap-x-8 md:gap-y-16 lg:grid-cols-3">
+            <div
+              key={`journal-page-${currentPage}`}
+              className="grid grid-cols-1 gap-y-10 md:grid-cols-2 md:gap-x-8 md:gap-y-16 lg:grid-cols-3"
+            >
               {paginatedJournals.map((journal, index: number) => {
                 // Apply translate-y to every 2nd item in each row on desktop only (index 1, 4, 7, etc.)
                 const shouldTranslate = index % 3 === 1;
 
                 return (
                   <div
-                    key={index}
+                    key={getJournalId(journal)}
                     className={`group ${shouldTranslate ? 'lg:-translate-y-16' : ''
                       }`}
                   >
@@ -306,7 +336,7 @@ export default function JournalListingClient({
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage}
+        onPageChange={setPage}
       />
 
       {/* Let's Connect Section */}

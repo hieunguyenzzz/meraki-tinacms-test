@@ -4,10 +4,12 @@
 import {
   type CSSProperties,
   type TransitionEvent,
+  useEffect,
   useRef,
   useState,
 } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
+import { useUrlPagination } from '../lib/useUrlPagination';
 import LoveNoteLightbox from './LoveNoteLightbox';
 import styles from './LoveNotesClient.module.css';
 import Pagination from './Pagination';
@@ -34,6 +36,13 @@ const splitCoupleNames = (names?: string | null): [string, string] => {
   return [left.trim(), right];
 };
 
+const getLoveNoteId = (note: any, index: number) =>
+  [
+    note?.couple_names_en || note?.couple_names_vi || 'love-note',
+    note?.wedding_location_en || note?.wedding_location_vi || 'unknown',
+    index,
+  ].join('-');
+
 export default function LoveNotesClient({
   data,
   query,
@@ -44,8 +53,8 @@ export default function LoveNotesClient({
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(
     null
   );
-  const [currentPage, setCurrentPage] = useState(1);
   const notesSectionRef = useRef<HTMLElement | null>(null);
+  const previousPageRef = useRef(1);
   const noteImageRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const pendingScrollIndex = useRef<number | null>(null);
   const { data: tinaData } = useTina({ data, query, variables });
@@ -65,7 +74,7 @@ export default function LoveNotesClient({
 
   const notes = listing?.love_notes || [];
   const totalPages = Math.ceil(notes.length / NOTES_PER_PAGE);
-  const visiblePage = Math.min(currentPage, Math.max(totalPages, 1));
+  const { currentPage: visiblePage, setPage } = useUrlPagination(totalPages);
   const firstNoteIndex = (visiblePage - 1) * NOTES_PER_PAGE;
   const paginatedNotes = notes.slice(
     firstNoteIndex,
@@ -138,11 +147,13 @@ export default function LoveNotesClient({
     scrollToNoteImage(index);
   };
 
-  const handlePageChange = (page: number) => {
+  useEffect(() => {
+    if (previousPageRef.current === visiblePage) return;
+    previousPageRef.current = visiblePage;
+
     pendingScrollIndex.current = null;
     setOpenNotes({});
     setActiveLightboxIndex(null);
-    setCurrentPage(page);
 
     requestAnimationFrame(() => {
       const section = notesSectionRef.current;
@@ -159,7 +170,7 @@ export default function LoveNotesClient({
           : 'smooth',
       });
     });
-  };
+  }, [visiblePage]);
 
   return (
     <div className="bg-background-base">
@@ -227,7 +238,10 @@ export default function LoveNotesClient({
 
       <section ref={notesSectionRef}>
         <div className="mx-auto mb-12 max-w-[1728px] px-4 md:px-10">
-          <div className="mt-12 space-y-0 md:mt-16 md:space-y-16">
+          <div
+            key={`love-notes-page-${visiblePage}`}
+            className="mt-12 space-y-0 md:mt-16 md:space-y-16"
+          >
             {paginatedNotes.map((note: any, pageIndex: number) => {
               const index = firstNoteIndex + pageIndex;
               const coupleNames = t(
@@ -269,7 +283,7 @@ export default function LoveNotesClient({
 
               return (
                 <article
-                  key={`${coupleNames || 'note'}-${index}`}
+                  key={getLoveNoteId(note, index)}
                   className={`flex flex-col items-center border-b border-text-primary/35 py-6 first:pt-0 md:border-0 md:py-0 lg:flex-row ${
                     isRightAligned ? 'lg:flex-row-reverse' : ''
                   }`}
@@ -547,7 +561,7 @@ export default function LoveNotesClient({
       <Pagination
         currentPage={visiblePage}
         totalPages={totalPages}
-        onPageChange={handlePageChange}
+        onPageChange={setPage}
       />
 
       {galleryImages.length > 0 && (

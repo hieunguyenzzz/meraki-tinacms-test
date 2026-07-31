@@ -2,14 +2,16 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type { BlogListingQuery } from '../../tina/__generated__/types';
+import { useUrlPagination } from '../lib/useUrlPagination';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
 
 interface BlogNode {
-  _sys: { filename: string; createdAt: string };
+  id?: string;
+  _sys: { filename: string; relativePath?: string; createdAt: string };
   slug: string;
   slug_vi?: string;
   title_en: string;
@@ -32,6 +34,9 @@ interface Props {
 const t = (text: { en: string; vi: string }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
+const getBlogId = (blog: BlogNode) =>
+  blog.id || blog._sys.relativePath || blog.slug || blog._sys.filename;
+
 export default function BlogListingClient({
   data,
   query,
@@ -43,7 +48,8 @@ export default function BlogListingClient({
   const listing = tinaData.blogListing;
 
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const listSectionRef = useRef<HTMLElement | null>(null);
+  const previousPageRef = useRef(1);
   const itemsPerPage = 12;
 
   // Derive unique categories from all blog posts
@@ -76,6 +82,7 @@ export default function BlogListingClient({
   }, [activeCategory, blogs]);
 
   const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
+  const { currentPage, resetPage, setPage } = useUrlPagination(totalPages);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedBlogs = filteredBlogs.slice(
     startIndex,
@@ -83,8 +90,25 @@ export default function BlogListingClient({
   );
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [activeCategory]);
+    if (previousPageRef.current === currentPage) return;
+    previousPageRef.current = currentPage;
+
+    requestAnimationFrame(() => {
+      const section = listSectionRef.current;
+      if (!section) return;
+
+      const headerHeight =
+        document.querySelector('header')?.getBoundingClientRect().height || 0;
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({
+        top: Math.max(0, sectionTop - headerHeight),
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth',
+      });
+    });
+  }, [currentPage]);
 
   const getSlug = (blog: BlogNode) => {
     const englishSlug =
@@ -187,7 +211,10 @@ export default function BlogListingClient({
             {categories.map((cat) => (
               <button
                 key={cat.value}
-                onClick={() => setActiveCategory(cat.value)}
+                onClick={() => {
+                  setActiveCategory(cat.value);
+                  resetPage();
+                }}
                 className={`text-body-sm whitespace-nowrap px-3 py-2 transition-colors md:px-4 ${activeCategory === cat.value
                     ? 'text-text-primary bg-background-2'
                     : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
@@ -201,17 +228,20 @@ export default function BlogListingClient({
       </section>
 
       {/* Blog Grid */}
-      <section className="pb-10">
+      <section ref={listSectionRef} className="pb-10">
         <div className="mx-auto mt-8 max-w-7xl px-4 md:mt-20 md:px-6 lg:px-8">
           {paginatedBlogs.length > 0 ? (
-            <div className="grid grid-cols-1 gap-y-10 md:grid-cols-2 md:gap-x-8 md:gap-y-16">
+            <div
+              key={`blog-page-${currentPage}`}
+              className="grid grid-cols-1 gap-y-10 md:grid-cols-2 md:gap-x-8 md:gap-y-16"
+            >
               {paginatedBlogs.map((blog) => {
                 const slug = getSlug(blog);
                 const title = getTitle(blog);
                 const excerpt = getExcerpt(blog);
 
                 return (
-                  <div key={slug} className="group">
+                  <div key={getBlogId(blog)} className="group">
                     <Link href={`/${lang}/blog/${slug}`}>
                       {/* Image */}
                       <div className="relative aspect-[3/2] overflow-hidden mb-6">
@@ -289,7 +319,7 @@ export default function BlogListingClient({
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage}
+        onPageChange={setPage}
       />
 
       {/* Let's Connect Section */}

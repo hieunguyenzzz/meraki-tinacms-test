@@ -225,10 +225,10 @@ export default function Header({ lang }: HeaderProps) {
     <>
       <header
         className={`${mobileHeaderState === 'visible'
-            ? 'sticky motion-safe:animate-header-slide-down md:animate-none'
-            : mobileHeaderState === 'hiding'
-              ? 'sticky motion-safe:animate-header-slide-up md:animate-none'
-              : 'relative'
+          ? 'sticky motion-safe:animate-header-slide-down md:animate-none'
+          : mobileHeaderState === 'hiding'
+            ? 'sticky motion-safe:animate-header-slide-up md:animate-none'
+            : 'relative'
           } top-0 z-50 flex h-14 items-center justify-between bg-background-base px-5 shadow-sm md:sticky md:h-16 md:px-6`}
         onAnimationEnd={handleHeaderAnimationEnd}
       >
@@ -252,8 +252,8 @@ export default function Header({ lang }: HeaderProps) {
                   key={item.key}
                   href={`/${lang}${item.path}`}
                   className={`px-3 py-2 text-body-sm transition-all underline-offset-4 decoration-2 ${active
-                      ? 'text-text-primary underline'
-                      : 'text-text-secondary hover:-translate-y-[2px] hover:underline'
+                    ? 'text-text-primary underline'
+                    : 'text-text-secondary hover:-translate-y-[2px] hover:underline'
                     }`}
                 >
                   {t({ en: item.en, vi: item.vi }, lang)}
@@ -269,8 +269,8 @@ export default function Header({ lang }: HeaderProps) {
               key={language}
               href={getLanguageSwitchUrl(language)}
               className={`rounded px-2 py-1 text-sm transition-colors ${lang === language
-                  ? 'bg-background-brand text-background-base'
-                  : 'text-text-secondary hover:bg-background-1 hover:text-text-primary'
+                ? 'bg-background-brand text-background-base'
+                : 'text-text-secondary hover:bg-background-1 hover:text-text-primary'
                 }`}
             >
               {language.toUpperCase()}
@@ -349,7 +349,7 @@ export default function Header({ lang }: HeaderProps) {
           </div>
 
           <nav
-            className="px-[35px] pb-12 pt-[120px]"
+            className="px-[35px] pb-12 pt-[80px]"
             aria-label="Mobile navigation"
           >
             <div className="flex flex-col gap-6">
@@ -358,8 +358,8 @@ export default function Header({ lang }: HeaderProps) {
                   key={item.key}
                   href={`/${lang}${item.path}`}
                   className={`flex w-fit items-center gap-3 border-b pb-1 font-vocago text-[32px] leading-10 text-text-primary transition-colors focus-visible:outline-none ${isActive(item.path)
-                      ? 'border-text-primary'
-                      : 'border-transparent hover:border-text-primary focus-visible:border-text-primary'
+                    ? 'border-text-primary'
+                    : 'border-transparent hover:border-text-primary focus-visible:border-text-primary'
                     }`}
                   aria-current={isActive(item.path) ? 'page' : undefined}
                   onClick={() => setIsMenuOpen(false)}
@@ -379,8 +379,8 @@ export default function Header({ lang }: HeaderProps) {
                   key={language}
                   href={getLanguageSwitchUrl(language)}
                   className={`flex h-7 w-[54px] items-center justify-center border border-line-secondary font-bt-beau-sans text-sm transition-colors ${lang === language
-                      ? 'border-background-brand bg-background-brand text-background-base'
-                      : 'bg-background-base text-text-secondary hover:bg-background-1 hover:text-text-primary'
+                    ? 'border-background-brand bg-background-brand text-background-base'
+                    : 'bg-background-base text-text-secondary hover:bg-background-1 hover:text-text-primary'
                     } ${language === 'vi' ? '-ml-px' : ''}`}
                   aria-current={lang === language ? 'page' : undefined}
                   onClick={() => setIsMenuOpen(false)}
