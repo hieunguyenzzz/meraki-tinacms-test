@@ -14,7 +14,7 @@ const navItems = [
   { path: '/journal', key: 'journal', en: 'Journals', vi: 'Nhật ký' },
   { path: '/service', key: 'service', en: 'Service', vi: 'Dịch vụ' },
   { path: '/about', key: 'about', en: 'About Us', vi: 'Gặp gỡ' },
-  { path: '/blog', key: 'blog', en: 'Blogs', vi: 'Blog' },
+  { path: '/blog', key: 'blog', en: 'Blog', vi: 'Blog' },
   {
     path: '/love-notes',
     key: 'loveNotes',
@@ -224,13 +224,12 @@ export default function Header({ lang }: HeaderProps) {
   return (
     <>
       <header
-        className={`${
-          mobileHeaderState === 'visible'
+        className={`${mobileHeaderState === 'visible'
             ? 'sticky motion-safe:animate-header-slide-down md:animate-none'
             : mobileHeaderState === 'hiding'
-            ? 'sticky motion-safe:animate-header-slide-up md:animate-none'
-            : 'relative'
-        } top-0 z-50 flex h-14 items-center justify-between bg-background-base px-5 shadow-sm md:sticky md:h-16 md:px-6`}
+              ? 'sticky motion-safe:animate-header-slide-up md:animate-none'
+              : 'relative'
+          } top-0 z-50 flex h-14 items-center justify-between bg-background-base px-5 shadow-sm md:sticky md:h-16 md:px-6`}
         onAnimationEnd={handleHeaderAnimationEnd}
       >
         <div className="flex-shrink-0">
@@ -252,11 +251,10 @@ export default function Header({ lang }: HeaderProps) {
                 <a
                   key={item.key}
                   href={`/${lang}${item.path}`}
-                  className={`px-3 py-2 text-body-sm transition-all underline-offset-4 decoration-2 ${
-                    active
+                  className={`px-3 py-2 text-body-sm transition-all underline-offset-4 decoration-2 ${active
                       ? 'text-text-primary underline'
                       : 'text-text-secondary hover:-translate-y-[2px] hover:underline'
-                  }`}
+                    }`}
                 >
                   {t({ en: item.en, vi: item.vi }, lang)}
                 </a>
@@ -270,11 +268,10 @@ export default function Header({ lang }: HeaderProps) {
             <a
               key={language}
               href={getLanguageSwitchUrl(language)}
-              className={`rounded px-2 py-1 text-sm transition-colors ${
-                lang === language
+              className={`rounded px-2 py-1 text-sm transition-colors ${lang === language
                   ? 'bg-background-brand text-background-base'
                   : 'text-text-secondary hover:bg-background-1 hover:text-text-primary'
-              }`}
+                }`}
             >
               {language.toUpperCase()}
             </a>
@@ -360,11 +357,10 @@ export default function Header({ lang }: HeaderProps) {
                 <a
                   key={item.key}
                   href={`/${lang}${item.path}`}
-                  className={`flex w-fit items-center gap-3 border-b pb-1 font-vocago text-[32px] leading-10 text-text-primary transition-colors focus-visible:outline-none ${
-                    isActive(item.path)
+                  className={`flex w-fit items-center gap-3 border-b pb-1 font-vocago text-[32px] leading-10 text-text-primary transition-colors focus-visible:outline-none ${isActive(item.path)
                       ? 'border-text-primary'
                       : 'border-transparent hover:border-text-primary focus-visible:border-text-primary'
-                  }`}
+                    }`}
                   aria-current={isActive(item.path) ? 'page' : undefined}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -382,11 +378,10 @@ export default function Header({ lang }: HeaderProps) {
                 <a
                   key={language}
                   href={getLanguageSwitchUrl(language)}
-                  className={`flex h-7 w-[54px] items-center justify-center border border-line-secondary font-bt-beau-sans text-sm transition-colors ${
-                    lang === language
+                  className={`flex h-7 w-[54px] items-center justify-center border border-line-secondary font-bt-beau-sans text-sm transition-colors ${lang === language
                       ? 'border-background-brand bg-background-brand text-background-base'
                       : 'bg-background-base text-text-secondary hover:bg-background-1 hover:text-text-primary'
-                  } ${language === 'vi' ? '-ml-px' : ''}`}
+                    } ${language === 'vi' ? '-ml-px' : ''}`}
                   aria-current={lang === language ? 'page' : undefined}
                   onClick={() => setIsMenuOpen(false)}
                 >
