@@ -10,10 +10,6 @@ const COPY = {
     en: 'Thank you for sharing with Meraki ~ We’ve received your story 💚',
     vi: (name: string) => `Cảm ơn ${name} ~ Meraki đã nhận được chia sẻ của bạn 💚`,
   },
-  title: {
-    en: 'Thank you for reaching out — Meraki Wedding Planner',
-    vi: 'Cảm ơn hai bạn đã gửi thông tin — Meraki Wedding Planner',
-  },
   preheader: {
     en: 'We have safely received your submission — our team will reply within 2 working days.',
     vi: 'Meraki đã nhận được thông tin của hai bạn — tụi mình sẽ phản hồi trong vòng 2 ngày làm việc.',
@@ -73,7 +69,7 @@ export function buildLetsConnectThankYouEmail(submission: LetsConnectSubmission)
     )
     .join('\n\n');
 
-  const html = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"><title>${COPY.title[lang]}</title>
+  const html = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"><title>${subject}</title>
 <!--[if mso]><style>body,table,td,a{font-family:Arial,sans-serif !important}</style><![endif]-->
 <style>@media only screen and (max-width:620px){.wrap{width:100% !important}.pad{padding-left:24px !important;padding-right:24px !important}.lgo{width:140px !important}}</style>
 </head>
