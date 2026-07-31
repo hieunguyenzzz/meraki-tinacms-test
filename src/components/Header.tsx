@@ -28,43 +28,6 @@ const navItems = [
 const t = (text: { en: string; vi: string }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
-interface MobileLanguageSwitcherProps {
-  lang: string;
-  getLanguageSwitchUrl: (targetLang: string) => string;
-  onNavigate?: () => void;
-}
-
-function MobileLanguageSwitcher({
-  lang,
-  getLanguageSwitchUrl,
-  onNavigate,
-}: MobileLanguageSwitcherProps) {
-  return (
-    <nav
-      className="flex flex-col overflow-hidden rounded-sm border border-line-secondary"
-      aria-label="Choose language"
-    >
-      {['en', 'vi'].map((language, index) => (
-        <a
-          key={language}
-          href={getLanguageSwitchUrl(language)}
-          className={`flex h-[17px] w-7 items-center justify-center font-bt-beau-sans text-[8px] leading-none transition-colors ${
-            index > 0 ? 'border-t border-line-secondary' : ''
-          } ${
-            lang === language
-              ? 'bg-background-brand text-background-base'
-              : 'bg-background-base text-text-secondary hover:bg-background-1 hover:text-text-primary'
-          }`}
-          aria-current={lang === language ? 'page' : undefined}
-          onClick={onNavigate}
-        >
-          {language === 'en' ? 'ENG' : 'VIE'}
-        </a>
-      ))}
-    </nav>
-  );
-}
-
 export default function Header({ lang }: HeaderProps) {
   const pathname = usePathname();
   const { localizedPaths } = useLanguageNavigation();
@@ -221,34 +184,28 @@ export default function Header({ lang }: HeaderProps) {
           ))}
         </div>
 
-        <div className="flex items-center gap-3 md:hidden">
-          <MobileLanguageSwitcher
-            lang={lang}
-            getLanguageSwitchUrl={getLanguageSwitchUrl}
-          />
-          <button
-            ref={menuButtonRef}
-            type="button"
-            className="flex h-8 w-8 items-center justify-end text-shape-primary transition-colors hover:text-shape-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-line-accent"
-            aria-label="Open navigation menu"
-            aria-controls="mobile-navigation"
-            aria-expanded={isMenuOpen}
-            onClick={() => setIsMenuOpen(true)}
+        <button
+          ref={menuButtonRef}
+          type="button"
+          className="flex h-8 w-8 items-center justify-end text-shape-primary transition-colors hover:text-shape-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-line-accent md:hidden"
+          aria-label="Open navigation menu"
+          aria-controls="mobile-navigation"
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen(true)}
+        >
+          <svg
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 20 20"
-              aria-hidden="true"
-            >
-              <path
-                d="M1 4.5h18M1 10h18M1 15.5h18"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
-            </svg>
-          </button>
-        </div>
+            <path
+              d="M1 4.5h18M1 10h18M1 15.5h18"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+        </button>
       </header>
 
       {isMenuOpen && (
@@ -276,32 +233,25 @@ export default function Header({ lang }: HeaderProps) {
               />
             </a>
 
-            <div className="flex items-center gap-3">
-              <MobileLanguageSwitcher
-                lang={lang}
-                getLanguageSwitchUrl={getLanguageSwitchUrl}
-                onNavigate={() => setIsMenuOpen(false)}
-              />
-              <button
-                type="button"
-                className="flex h-8 w-8 items-center justify-end text-shape-primary transition-colors hover:text-shape-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-line-accent"
-                aria-label="Close navigation menu"
-                onClick={() => setIsMenuOpen(false)}
+            <button
+              type="button"
+              className="flex h-8 w-8 items-center justify-end text-shape-primary transition-colors hover:text-shape-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-line-accent"
+              aria-label="Close navigation menu"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 16 16"
+                aria-hidden="true"
               >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 16 16"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M2 2l12 12M14 2 2 14"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </button>
-            </div>
+                <path
+                  d="M2 2l12 12M14 2 2 14"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+              </svg>
+            </button>
           </div>
 
           <nav
@@ -322,6 +272,28 @@ export default function Header({ lang }: HeaderProps) {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t({ en: item.en, vi: item.vi }, lang)}
+                </a>
+              ))}
+            </div>
+
+            <div
+              className="mt-[72px] flex justify-center"
+              role="group"
+              aria-label="Choose language"
+            >
+              {['en', 'vi'].map((language) => (
+                <a
+                  key={language}
+                  href={getLanguageSwitchUrl(language)}
+                  className={`flex h-7 w-[54px] items-center justify-center border border-line-secondary font-bt-beau-sans text-sm transition-colors ${
+                    lang === language
+                      ? 'border-background-brand bg-background-brand text-background-base'
+                      : 'bg-background-base text-text-secondary hover:bg-background-1 hover:text-text-primary'
+                  } ${language === 'vi' ? '-ml-px' : ''}`}
+                  aria-current={lang === language ? 'page' : undefined}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {language === 'en' ? 'ENG' : 'VIE'}
                 </a>
               ))}
             </div>
