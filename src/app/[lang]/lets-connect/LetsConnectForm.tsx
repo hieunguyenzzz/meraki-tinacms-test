@@ -447,7 +447,7 @@ export default function LetsConnectForm({
             <textarea
               id="otherNotes"
               name="otherNotes"
-              rows={4}
+              rows={1}
               className="mt-1 w-full resize-y border-0 border-b border-line-primary bg-transparent px-0 py-2 text-body-sm text-text-primary outline-none transition-colors focus:border-text-primary focus:ring-0"
             />
             <p
@@ -486,10 +486,10 @@ export default function LetsConnectForm({
           >
             {status === 'submitting'
               ? localized(
-                  content.sending_label_en,
-                  content.sending_label_vi,
-                  lang
-                )
+                content.sending_label_en,
+                content.sending_label_vi,
+                lang
+              )
               : localized(content.send_label_en, content.send_label_vi, lang)}
           </button>
         </div>

@@ -457,9 +457,12 @@ function WeddingPanel({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setIsMobileRevealed(true);
-          observer.disconnect();
+        const entry = entries[0];
+
+        if (entry) {
+          setIsMobileRevealed(
+            entry.isIntersecting && entry.intersectionRatio >= 0.2
+          );
         }
       },
       {

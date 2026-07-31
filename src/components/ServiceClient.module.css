@@ -218,44 +218,55 @@
   }
 
   .typePanel {
-    display: flex;
+    --mobile-media-lift: clamp(6rem, 28vw, 8rem);
+    --mobile-pocket-depth: clamp(3.5rem, 16vw, 4.5rem);
+
+    display: block;
     min-height: 0;
-    flex-direction: column;
-    overflow: hidden;
-    padding-bottom: 2rem;
+    overflow: visible;
+    padding: var(--mobile-media-lift) 0 2rem;
   }
 
   .panelMedia {
-    position: relative;
-    min-height: 280px;
+    position: absolute;
+    inset: var(--mobile-media-lift) 1rem auto;
+    height: clamp(250px, 78vw, 320px);
+    transform-origin: 50% 85%;
+    transition: box-shadow 650ms ease,
+      transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
   }
 
   .panelSurface {
     z-index: 2;
     min-height: 0;
     width: calc(100% - 2rem);
-    padding: 3rem 1.5rem;
-    opacity: 0;
-    transform: translateY(4rem);
-    transition: opacity 650ms ease,
-      transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: opacity, transform;
   }
 
   .destinationPanel .panelSurface,
   .cityPanel .panelSurface {
-    margin: -2.5rem 1rem 0;
-    -webkit-mask-image: none;
-    mask-image: none;
+    margin: var(--mobile-pocket-depth) 1rem 0;
+    padding: 3rem 1.5rem;
+    -webkit-mask-image: radial-gradient(
+      circle 34px at 50% 0,
+      transparent 0 32px,
+      #000 33px
+    );
+    mask-image: radial-gradient(
+      circle 34px at 50% 0,
+      transparent 0 32px,
+      #000 33px
+    );
   }
 
-  .mobilePanelRevealed .panelSurface {
-    opacity: 1;
-    transform: translateY(0);
+  .destinationPanel.mobilePanelRevealed .panelMedia {
+    box-shadow: 0 18px 35px rgb(55 66 32 / 20%);
+    transform: translateY(calc(-1 * var(--mobile-media-lift))) rotate(-4deg);
   }
 
-  .panelMedia {
-    will-change: auto;
+  .cityPanel.mobilePanelRevealed .panelMedia {
+    box-shadow: 0 18px 35px rgb(55 66 32 / 20%);
+    transform: translateY(calc(-1 * var(--mobile-media-lift))) rotate(4deg);
   }
 }
 
