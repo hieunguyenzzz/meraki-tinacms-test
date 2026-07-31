@@ -123,21 +123,6 @@ export default function BlogListingClient({
   const getExcerpt = (blog: BlogNode) =>
     lang === 'en' ? blog.excerpt_en : blog.excerpt_vi;
 
-  const formatDate = (blog: BlogNode) => {
-    const raw = blog.published_date || blog._sys.createdAt;
-    return new Date(raw).toLocaleDateString(lang === 'en' ? 'en-US' : 'vi-VN', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const getDateIso = (blog: BlogNode) =>
-    new Date(blog.published_date || blog._sys.createdAt).toISOString();
-
-  // const authorLabel = t({ en: 'Meraki Team', vi: 'Team Meraki' }, lang);
-
   return (
     <div className="bg-background-base">
       {/* Hero Section */}
@@ -216,8 +201,8 @@ export default function BlogListingClient({
                   resetPage();
                 }}
                 className={`text-body-sm whitespace-nowrap px-3 py-2 transition-colors md:px-4 ${activeCategory === cat.value
-                    ? 'text-text-primary bg-background-2'
-                    : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
+                  ? 'text-text-primary bg-background-2'
+                  : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
                   }`}
               >
                 {cat.label}
