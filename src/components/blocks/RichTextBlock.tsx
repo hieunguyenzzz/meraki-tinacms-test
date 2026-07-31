@@ -3,6 +3,7 @@
 
 import { tinaField } from 'tinacms/dist/react';
 import { TinaMarkdown, TinaMarkdownContent } from 'tinacms/dist/rich-text';
+import MerakiImage from '../ui/MerakiImage';
 
 interface RichTextBlockData extends Record<string, unknown> {
   content_en?: any;
@@ -57,7 +58,13 @@ export const renderRichTextBlock = (
         />
       ),
       img: ({ alt, url }: any) => (
-        <img src={url} alt={alt} className="my-4 max-w-full h-auto" />
+        <MerakiImage
+          src={url}
+          alt={alt || ''}
+          className="my-4 h-auto max-w-full"
+          thumborWidth={968}
+          sizes="(min-width: 968px) 968px, calc(100vw - 32px)"
+        />
       ),
       bold: (props: any) => <strong className="font-bold" {...props} />,
       italic: (props: any) => <em className="italic" {...props} />,

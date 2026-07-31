@@ -84,6 +84,7 @@ export default function AboutClient({ data, query, variables, lang }: Props) {
                     alt="Meraki wedding planners"
                     width={224}
                     height={280}
+                    sizes="(min-width: 744px) 224px, 140px"
                     className="h-auto w-full object-cover"
                   />
                 </div>

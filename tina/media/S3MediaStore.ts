@@ -30,7 +30,8 @@ export function getThumborUrl(
   // Normalize encoding: decode first (handles already-encoded URLs), then
   // re-encode with encodeURI so spaces/non-ASCII chars become valid %XX sequences.
   const normalizedUrl = encodeURI(decodeURIComponent(urlWithoutProtocol));
-  return `${THUMBOR_BASE}/${fitMode}/${size}/${normalizedUrl}`;
+  const resizePath = fitMode ? `${fitMode}/${size}` : size;
+  return `${THUMBOR_BASE}/${resizePath}/${normalizedUrl}`;
 }
 
 export class S3MediaStore implements MediaStore {

@@ -49,6 +49,7 @@ export default function TwoImagesAsymmetryBlock({
               className="w-full h-auto object-cover"
               data-tina-field={tinaField(data, 'image_left')}
               width={400}
+              sizes="(min-width: 968px) 448px, (min-width: 744px) calc(50vw - 36px), calc(100vw - 32px)"
             />
           </button>
         </div>
@@ -65,6 +66,7 @@ export default function TwoImagesAsymmetryBlock({
               className="w-full h-auto object-cover"
               data-tina-field={tinaField(data, 'image_right')}
               width={480}
+              sizes="(min-width: 968px) 448px, (min-width: 744px) calc(50vw - 36px), calc(100vw - 32px)"
             />
           </button>
         </div>

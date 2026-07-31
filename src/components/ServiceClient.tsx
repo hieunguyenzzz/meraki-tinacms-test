@@ -151,6 +151,7 @@ export default function ServiceClient({
                       alt="Meraki wedding detail"
                       width={184}
                       height={252}
+                      sizes="(min-width: 375px) 184px, 156px"
                       className="h-auto w-full object-cover"
                     />
                   </div>

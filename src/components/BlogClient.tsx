@@ -81,6 +81,7 @@ export default function BlogClient({
                 src={blog.featured_image}
                 alt={title}
                 fill
+                sizes="(min-width: 1280px) 50vw, 100vw"
                 className="object-cover object-center"
                 priority
               />

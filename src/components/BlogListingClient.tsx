@@ -160,6 +160,7 @@ export default function BlogListingClient({
                   className="h-auto w-[140px] object-cover md:w-[260px]"
                   width={260}
                   height={260}
+                  sizes="(min-width: 744px) 260px, 140px"
                 />
               </div>
             )}
@@ -219,6 +220,7 @@ export default function BlogListingClient({
                             src={blog.featured_image}
                             alt={title}
                             fill
+                            sizes="(min-width: 1280px) 592px, (min-width: 744px) calc(50vw - 40px), calc(100vw - 32px)"
                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (

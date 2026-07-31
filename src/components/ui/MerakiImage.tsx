@@ -8,7 +8,11 @@ import {
 
 const THUMBOR_HOST = 'thumbor.merakiweddingplanner.com';
 const MAX_THUMBOR_WIDTH = 2000;
-const FILL_WIDTHS = [400, 800, 1200, 1600];
+// Include small candidates so card, carousel, and overlay thumbnails do not
+// fall back to a 400px image when they are rendered at roughly 100–300px.
+const RESPONSIVE_WIDTHS = [
+  96, 160, 240, 320, 480, 640, 800, 960, 1200, 1600, 2000,
+];
 
 function isThumborUrl(url: string): boolean {
   return url.includes(THUMBOR_HOST);
@@ -51,6 +55,23 @@ function buildSrcSet(
         )} ${w}w`
     )
     .join(', ');
+}
+
+function getResponsiveWidths(targetWidth?: number): number[] {
+  const maximumWidth = targetWidth
+    ? Math.min(MAX_THUMBOR_WIDTH, targetWidth * 2)
+    : MAX_THUMBOR_WIDTH;
+  const exactWidths = targetWidth
+    ? [targetWidth, Math.round(targetWidth * 1.5), targetWidth * 2]
+    : [];
+
+  return Array.from(
+    new Set(
+      [...RESPONSIVE_WIDTHS, ...exactWidths].filter(
+        (width) => width <= maximumWidth
+      )
+    )
+  ).sort((a, b) => a - b);
 }
 
 interface MerakiImageProps
@@ -99,12 +120,9 @@ export default function MerakiImage({
 
   if (!alreadyThumbor && !isSvg) {
     if (effectiveWidth) {
-      // Fixed-width image: generate srcSet at 1x, 1.5x, 2x
-      const widths = [
-        effectiveWidth,
-        Math.round(effectiveWidth * 1.5),
-        effectiveWidth * 2,
-      ].filter((w) => w <= MAX_THUMBOR_WIDTH);
+      // Include smaller responsive candidates because many nominally fixed
+      // images become fluid at narrower breakpoints.
+      const widths = getResponsiveWidths(effectiveWidth);
       displaySrc = getThumborUrl(
         getThumborSize(effectiveWidth, width, height),
         resolvedSrc,
@@ -118,15 +136,15 @@ export default function MerakiImage({
         height
       );
     } else if (fill) {
-      // Fill mode: generate srcSet at standard breakpoints
+      // Fill mode covers everything from small cards to full-width heroes.
       displaySrc = getThumborUrl(
-        getThumborSize(FILL_WIDTHS[2], width, height),
+        getThumborSize(800, width, height),
         resolvedSrc,
         thumborFitMode
       );
       srcSet = buildSrcSet(
         resolvedSrc,
-        FILL_WIDTHS,
+        RESPONSIVE_WIDTHS,
         thumborFitMode,
         width,
         height

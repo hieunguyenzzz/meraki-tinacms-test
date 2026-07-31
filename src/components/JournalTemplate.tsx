@@ -144,6 +144,7 @@ export default function JournalTemplate({
                       alt="Ceremony"
                       width={464}
                       height={300}
+                      sizes="(min-width: 744px) 464px, calc(100vw - 32px)"
                       className="object-cover"
                     />
                   </div>
@@ -168,6 +169,7 @@ export default function JournalTemplate({
                   alt={journal.couple_names}
                   width={587}
                   height={880}
+                  sizes="(min-width: 1280px) 587px, 100vw"
                   className="object-cover"
                   style={{
                     width: '100%',

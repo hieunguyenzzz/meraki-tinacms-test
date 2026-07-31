@@ -176,6 +176,7 @@ export default function LoveNotesClient({
               }
               alt="Love Notes hero background"
               fill
+              sizes="(min-width: 1280px) 50vw, 100vw"
               className="object-cover object-center"
               priority
             />
@@ -204,6 +205,7 @@ export default function LoveNotesClient({
                 alt="Love Notes featured"
                 width={260}
                 height={340}
+                sizes="(min-width: 1280px) 260px, (min-width: 744px) 220px, 140px"
                 className="w-full h-auto object-cover"
               />
             </div>
@@ -380,6 +382,7 @@ export default function LoveNotesClient({
                             alt={coupleNames || 'Couple note image'}
                             width={558}
                             height={592}
+                            sizes="(min-width: 744px) 558px, calc(100vw - 32px)"
                             className="h-auto w-full object-cover"
                           />
                         </div>
@@ -588,6 +591,7 @@ export default function LoveNotesClient({
                       src={image}
                       alt={`Friendship memory ${index + 1}`}
                       fill
+                      sizes="(min-width: 1280px) 300px, (min-width: 744px) 32vw, calc(100vw - 32px)"
                       className="object-cover"
                     />
                   </div>
@@ -607,6 +611,7 @@ export default function LoveNotesClient({
                       src={image}
                       alt=""
                       fill
+                      sizes="(min-width: 1280px) 300px, (min-width: 744px) 32vw, calc(100vw - 32px)"
                       className="object-cover"
                     />
                   </div>
