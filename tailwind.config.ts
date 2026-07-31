@@ -1,10 +1,7 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 export default {
-  content: [
-    './src/**/*.{js,jsx,ts,tsx}',
-    './content/**/*.{md,mdx}',
-  ],
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './content/**/*.{md,mdx}'],
   darkMode: 'class',
   theme: {
     screens: {
@@ -108,6 +105,14 @@ export default {
         'body-sm-mobile': ['12px', { lineHeight: '16px', fontWeight: '300' }],
       },
       keyframes: {
+        'header-slide-down': {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        'header-slide-up': {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(-100%)' },
+        },
         wave: {
           '0%': { transform: 'translateX(-100%)' },
           '45%': { transform: 'translateX(100%)' },
@@ -116,6 +121,10 @@ export default {
         },
       },
       animation: {
+        'header-slide-down':
+          'header-slide-down 400ms cubic-bezier(0.22, 1, 0.36, 1)',
+        'header-slide-up':
+          'header-slide-up 400ms cubic-bezier(0.4, 0, 1, 1) forwards',
         wave: 'wave 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite',
       },
       backgroundImage: {

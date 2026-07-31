@@ -112,7 +112,7 @@ export default function BlogListingClient({
   const getDateIso = (blog: BlogNode) =>
     new Date(blog.published_date || blog._sys.createdAt).toISOString();
 
-  const authorLabel = t({ en: 'Meraki Team', vi: 'Team Meraki' }, lang);
+  // const authorLabel = t({ en: 'Meraki Team', vi: 'Team Meraki' }, lang);
 
   return (
     <div className="bg-background-base">
@@ -187,11 +187,10 @@ export default function BlogListingClient({
               <button
                 key={cat.value}
                 onClick={() => setActiveCategory(cat.value)}
-                className={`text-body-sm whitespace-nowrap px-3 py-2 transition-colors md:px-4 ${
-                  activeCategory === cat.value
+                className={`text-body-sm whitespace-nowrap px-3 py-2 transition-colors md:px-4 ${activeCategory === cat.value
                     ? 'text-text-primary bg-background-2'
                     : 'text-text-secondary hover:bg-background-1 border-b-[1px] border-text-primary'
-                }`}
+                  }`}
               >
                 {cat.label}
               </button>
@@ -242,12 +241,12 @@ export default function BlogListingClient({
                       </h2>
 
                       {/* Author + Date */}
-                      <div className="flex items-center justify-between text-body-sm text-text-secondary uppercase tracking-wider mb-4">
+                      {/* <div className="flex items-center justify-between text-body-sm text-text-secondary uppercase tracking-wider mb-4">
                         <span>{authorLabel}</span>
                         <time dateTime={getDateIso(blog)}>
                           {formatDate(blog)}
                         </time>
-                      </div>
+                      </div> */}
 
                       {/* Excerpt */}
                       {excerpt && (
@@ -265,19 +264,19 @@ export default function BlogListingClient({
               <p className="text-body-md text-text-secondary">
                 {activeCategory === 'All'
                   ? t(
-                      {
-                        en: 'No blog posts available yet. Check back soon!',
-                        vi: 'Chưa có bài viết nào. Hãy quay lại sau!',
-                      },
-                      lang
-                    )
+                    {
+                      en: 'No blog posts available yet. Check back soon!',
+                      vi: 'Chưa có bài viết nào. Hãy quay lại sau!',
+                    },
+                    lang
+                  )
                   : t(
-                      {
-                        en: `No blog posts found for "${activeCategory}".`,
-                        vi: `Không tìm thấy bài viết nào cho "${activeCategory}".`,
-                      },
-                      lang
-                    )}
+                    {
+                      en: `No blog posts found for "${activeCategory}".`,
+                      vi: `Không tìm thấy bài viết nào cho "${activeCategory}".`,
+                    },
+                    lang
+                  )}
               </p>
             </div>
           )}
@@ -330,9 +329,8 @@ export default function BlogListingClient({
             </p>
 
             <a
-              href={`/${lang}${
-                listing.lets_connect.button_link || '/lets-connect'
-              }`}
+              href={`/${lang}${listing.lets_connect.button_link || '/lets-connect'
+                }`}
               className="inline-block text-body-md text-text-primary hover:text-text-accent transition-colors border-b border-text-primary hover:border-text-accent"
               data-tina-field={tinaField(
                 listing.lets_connect,

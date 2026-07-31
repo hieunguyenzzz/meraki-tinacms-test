@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { type AnimationEvent, useEffect, useRef, useState } from 'react';
 import { useLanguageNavigation } from './LanguageNavigationContext';
 
 interface HeaderProps {
@@ -28,13 +28,20 @@ const navItems = [
 const t = (text: { en: string; vi: string }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
+const MOBILE_HEADER_HEIGHT = 56;
+const SCROLL_DIRECTION_THRESHOLD = 4;
+type MobileHeaderState = 'default' | 'visible' | 'hiding';
+
 export default function Header({ lang }: HeaderProps) {
   const pathname = usePathname();
   const { localizedPaths } = useLanguageNavigation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mobileHeaderState, setMobileHeaderState] =
+    useState<MobileHeaderState>('default');
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuPanelRef = useRef<HTMLDivElement>(null);
   const menuWasOpenRef = useRef(false);
+  const mobileHeaderStateRef = useRef<MobileHeaderState>('default');
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -100,7 +107,88 @@ export default function Header({ lang }: HeaderProps) {
 
   useEffect(() => {
     setIsMenuOpen(false);
+    mobileHeaderStateRef.current = 'default';
+    setMobileHeaderState('default');
   }, [pathname]);
+
+  useEffect(() => {
+    const mobileMediaQuery = window.matchMedia('(max-width: 743px)');
+    const reducedMotionMediaQuery = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
+    let lastScrollY = Math.max(0, window.scrollY);
+
+    const updateMobileHeaderState = (state: MobileHeaderState) => {
+      mobileHeaderStateRef.current = state;
+      setMobileHeaderState(state);
+    };
+
+    const resetMobileHeader = () => updateMobileHeaderState('default');
+
+    const showMobileHeader = () => updateMobileHeaderState('visible');
+
+    const hideMobileHeader = () => {
+      if (mobileHeaderStateRef.current === 'default') {
+        return;
+      }
+
+      updateMobileHeaderState(
+        reducedMotionMediaQuery.matches ? 'default' : 'hiding'
+      );
+    };
+
+    const handleScroll = () => {
+      const currentScrollY = Math.max(0, window.scrollY);
+
+      if (!mobileMediaQuery.matches) {
+        resetMobileHeader();
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      if (currentScrollY <= MOBILE_HEADER_HEIGHT) {
+        resetMobileHeader();
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      const scrollDelta = currentScrollY - lastScrollY;
+      if (Math.abs(scrollDelta) < SCROLL_DIRECTION_THRESHOLD) {
+        return;
+      }
+
+      if (scrollDelta < 0) {
+        showMobileHeader();
+      } else {
+        hideMobileHeader();
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    const handleViewportChange = () => {
+      lastScrollY = Math.max(0, window.scrollY);
+      resetMobileHeader();
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    mobileMediaQuery.addEventListener('change', handleViewportChange);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      mobileMediaQuery.removeEventListener('change', handleViewportChange);
+    };
+  }, []);
+
+  const handleHeaderAnimationEnd = (event: AnimationEvent<HTMLElement>) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
+    if (mobileHeaderStateRef.current === 'hiding') {
+      mobileHeaderStateRef.current = 'default';
+      setMobileHeaderState('default');
+    }
+  };
 
   // Function to check if a nav item is active
   const isActive = (itemPath: string) => {
@@ -135,7 +223,16 @@ export default function Header({ lang }: HeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-14 items-center justify-between bg-background-base px-5 shadow-sm md:h-16 md:px-6">
+      <header
+        className={`${
+          mobileHeaderState === 'visible'
+            ? 'sticky motion-safe:animate-header-slide-down md:animate-none'
+            : mobileHeaderState === 'hiding'
+            ? 'sticky motion-safe:animate-header-slide-up md:animate-none'
+            : 'relative'
+        } top-0 z-50 flex h-14 items-center justify-between bg-background-base px-5 shadow-sm md:sticky md:h-16 md:px-6`}
+        onAnimationEnd={handleHeaderAnimationEnd}
+      >
         <div className="flex-shrink-0">
           <a href={`/${lang}`} className="block" aria-label="Meraki home">
             <img

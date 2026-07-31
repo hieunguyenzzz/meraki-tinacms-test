@@ -275,33 +275,49 @@ export default function ServiceClient({
                   lang === 'vi' ? 'Nhật ký nổi bật' : 'Featured journals'
                 }
               >
-                {journals.map((journal) => (
-                  <a
-                    key={journal.id}
-                    href={`/${lang}/journal/${journal.slug}`}
-                    className={`${styles.journalItem} block text-center`}
-                  >
-                    <div className="relative aspect-[3/4] overflow-hidden">
-                      <MerakiImage
-                        src={journal.featured_image}
-                        alt={journal.couple_names}
-                        fill
-                        sizes="(min-width: 744px) 30vw, 100vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <h2 className="mt-5 text-h4 font-vocago uppercase text-text-accent">
-                      {localized(
-                        journal.template_layout?.main_headline_en,
-                        journal.template_layout?.main_headline_vi,
-                        lang
-                      ) || journal.couple_names}
-                    </h2>
-                    <p className="mt-1 text-body-sm text-text-secondary">
-                      {journal.couple_names}
-                    </p>
-                  </a>
-                ))}
+                <div
+                  className={`${styles.journalTrack} ${
+                    journals.length === 2 ? styles.journalTrackTwoItems : ''
+                  }`}
+                >
+                  {[...journals, ...journals].map((journal, index) => {
+                    const isDuplicate = index >= journals.length;
+
+                    return (
+                      <a
+                        key={`${journal.id}-${
+                          isDuplicate ? 'duplicate' : 'original'
+                        }`}
+                        href={`/${lang}/journal/${journal.slug}`}
+                        className={`${styles.journalItem} ${
+                          isDuplicate ? styles.journalItemDuplicate : ''
+                        } block text-center`}
+                        aria-hidden={isDuplicate || undefined}
+                        tabIndex={isDuplicate ? -1 : undefined}
+                      >
+                        <div className="relative aspect-[3/4] overflow-hidden">
+                          <MerakiImage
+                            src={journal.featured_image}
+                            alt={isDuplicate ? '' : journal.couple_names}
+                            fill
+                            sizes="(min-width: 744px) 30vw, 100vw"
+                            className="object-cover"
+                          />
+                        </div>
+                        <h2 className="mt-5 text-h4 font-vocago uppercase text-text-accent">
+                          {localized(
+                            journal.template_layout?.main_headline_en,
+                            journal.template_layout?.main_headline_vi,
+                            lang
+                          ) || journal.couple_names}
+                        </h2>
+                        <p className="mt-1 text-body-sm text-text-secondary">
+                          {journal.couple_names}
+                        </p>
+                      </a>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </section>

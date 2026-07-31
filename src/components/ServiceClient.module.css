@@ -6,54 +6,74 @@
 }
 
 .journalGrid {
+  overflow: hidden;
+  padding-bottom: 1.25rem;
+}
+
+.journalTrack {
   display: flex;
   align-items: start;
   gap: 1rem;
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  padding: 0 1rem 1.25rem;
-  scroll-behavior: smooth;
-  scroll-padding-inline: 1rem;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
+  width: max-content;
+  animation: journalCarousel 24s linear infinite;
+  will-change: transform;
 }
 
-.journalGrid::-webkit-scrollbar {
-  display: none;
+.journalGrid:focus-within .journalTrack {
+  animation-play-state: paused;
 }
 
 .journalItem {
   flex: 0 0 min(82vw, 320px);
   min-width: 0;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
+}
+
+.journalItemDuplicate {
+  pointer-events: none;
+}
+
+@keyframes journalCarousel {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
 }
 
 @media (min-width: 744px) {
   .journalGrid {
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .journalTrack {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.25rem;
-    overflow: visible;
-    padding: 0;
-    scroll-snap-type: none;
+    width: auto;
+    animation: none;
+    transform: none;
   }
 
   .journalItem {
     flex-basis: auto;
-    scroll-snap-align: none;
+  }
+
+  .journalItemDuplicate {
+    display: none;
   }
 }
 
 @media (min-width: 1280px) {
-  .journalGrid {
+  .journalTrack {
     gap: 2rem;
   }
 }
 
 @media (min-width: 744px) and (hover: hover) and (pointer: fine) {
-  .journalGrid {
+  .journalTrack {
     display: flex;
     align-items: flex-start;
   }
@@ -64,16 +84,15 @@
     transition: flex-grow 500ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .journalGrid:has(> .journalItem:hover) > .journalItem {
+  .journalTrack:has(> .journalItem:hover) > .journalItem {
     flex-grow: 0.8;
   }
 
-  .journalGrid:has(> .journalItem:hover) > .journalItem:hover {
+  .journalTrack:has(> .journalItem:hover) > .journalItem:hover {
     flex-grow: 1.3;
   }
 
-  .journalGrid:has(> .journalItem:nth-child(2):last-child)
-    > .journalItem:not(:hover) {
+  .journalTrackTwoItems:has(> .journalItem:hover) > .journalItem:not(:hover) {
     flex-grow: 0.6;
   }
 }
@@ -276,6 +295,11 @@
   .journalItem {
     transition: none;
     animation: none;
+  }
+
+  .journalTrack {
+    animation: none;
+    transform: none;
   }
 
   .panelSurface {

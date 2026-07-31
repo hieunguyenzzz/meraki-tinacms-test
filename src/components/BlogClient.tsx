@@ -119,7 +119,7 @@ export default function BlogClient({
 
               {excerpt && (
                 <p
-                  className="mt-12 text-body-lg text-text-secondary leading-relaxed mx-auto text-justify"
+                  className="mt-12 text-body-md text-text-secondary leading-relaxed mx-auto text-justify"
                   data-tina-field={tinaField(
                     blog,
                     lang === 'en' ? 'excerpt_en' : 'excerpt_vi'

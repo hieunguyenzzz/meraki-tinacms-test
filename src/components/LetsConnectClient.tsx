@@ -102,7 +102,7 @@ export default function LetsConnectClient({
                         )
                     )}
                   </div>
-                  <div className="mt-5 grid gap-5 text-body-sm uppercase text-text-secondary sm:grid-cols-2">
+                  <div className="mt-5 grid gap-5 text-body-sm uppercase text-text-secondary md:grid-cols-2">
                     {(introduction.contacts || []).map(
                       (contact, index) =>
                         contact && (
