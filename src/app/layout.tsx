@@ -6,11 +6,12 @@ import {
   SHARE_IMAGE_HEIGHT,
   SHARE_IMAGE_WIDTH,
 } from '../lib/shareImage';
+import { SITE_URL } from '../lib/siteUrl';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || 'https://merakiweddingplanner.com'
-  ),
+  // Canonicals, hreflang and OG URLs all resolve against this. It must agree
+  // with the host in robots.txt and sitemap.xml — see src/lib/siteUrl.ts.
+  metadataBase: new URL(SITE_URL),
   title: 'Meraki Wedding Planner',
   description: 'Wedding planning services',
   // Default link-preview image for every route. Pages that declare their own
