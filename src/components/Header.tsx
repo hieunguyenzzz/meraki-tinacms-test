@@ -349,10 +349,10 @@ export default function Header({ lang }: HeaderProps) {
           </div>
 
           <nav
-            className="px-[35px] pb-12 pt-[80px]"
+            className="px-[35px] pb-6 pt-10"
             aria-label="Mobile navigation"
           >
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               {navItems.map((item) => (
                 <a
                   key={item.key}
@@ -370,7 +370,7 @@ export default function Header({ lang }: HeaderProps) {
             </div>
 
             <div
-              className="mt-[72px] flex justify-center"
+              className="mt-10 flex justify-center"
               role="group"
               aria-label="Choose language"
             >
