@@ -1,6 +1,7 @@
 import { client } from '../../../../../tina/__generated__/client';
 import JournalClient from '../../../../components/JournalClient';
 import JsonLd from '../../../../components/JsonLd';
+import { localeAlternates } from '../../../../lib/alternates';
 import { displayHeadline } from '../../../../lib/headlineCase';
 import { getThumborUrl } from '../../../../lib/image';
 import { buildDetailBreadcrumbSchema } from '../../../../lib/schema/breadcrumbList';
@@ -88,6 +89,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title,
       description,
+      // The journal route resolves by filename, so both locales share the slug.
+      alternates: localeAlternates(params.lang, `/journal/${params.slug}`),
       openGraph: {
         title,
         description,

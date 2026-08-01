@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { client } from '../../../../tina/__generated__/client';
 import JsonLd from '../../../components/JsonLd';
 import ServiceClient from '../../../components/ServiceClient';
+import { localeAlternates } from '../../../lib/alternates';
 import { buildServiceSchema } from '../../../lib/schema/service';
 import { absoluteUrl } from '../../../lib/schema/siteUrl';
 import { buildWebPageSchema } from '../../../lib/schema/webPage';
@@ -19,6 +20,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const variables = { relativePath: 'index.mdx' };
+  const alternates = localeAlternates(params.lang, '/service');
 
   try {
     const { data } = await client.queries.service(variables);
@@ -32,6 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           ? 'Dịch vụ - Meraki Wedding Planner'
           : 'Our Services - Meraki Wedding Planner'),
       description: seo?.description,
+      alternates,
     };
   } catch {
     return {
@@ -39,6 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         params.lang === 'vi'
           ? 'Dịch vụ - Meraki Wedding Planner'
           : 'Our Services - Meraki Wedding Planner',
+      alternates,
     };
   }
 }

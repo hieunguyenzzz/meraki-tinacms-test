@@ -2,6 +2,7 @@ import { client } from '../../../tina/__generated__/client';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import HomeClient from '../../components/HomeClient';
+import { localeAlternates } from '../../lib/alternates';
 import {
   DEFAULT_SHARE_IMAGE,
   SHARE_IMAGE_HEIGHT,
@@ -55,6 +56,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { robots: 'noindex, nofollow' };
   }
 
+  const alternates = localeAlternates(lang);
+
   try {
     const pageData = await client.queries.page({ relativePath: 'index.mdx' });
     const page = pageData.data.page;
@@ -84,6 +87,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         images: [DEFAULT_SHARE_IMAGE],
       },
       robots: 'index, follow',
+      alternates,
     };
   } catch (error) {
     return {
@@ -98,6 +102,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           },
         ],
       },
+      alternates,
     };
   }
 }
