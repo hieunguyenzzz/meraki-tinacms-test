@@ -168,6 +168,7 @@ export default function ContentBlocksRenderer({
               indexMap={indexMap}
               onImageClick={onImageClick}
               centerTitle={isJournalContent}
+              altFallback={altFallback}
             />
           );
         }
