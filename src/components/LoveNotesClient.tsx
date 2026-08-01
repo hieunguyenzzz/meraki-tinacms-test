@@ -406,8 +406,8 @@ export default function LoveNotesClient({
                                   : 'animate__fadeInRight'
                                 : ''
                                 } z-10 relative -mt-11 w-[calc(100%-3rem)] bg-background-1 bg-paper p-6 text-center md:-mt-[450px] md:w-[446px] md:p-8 ${!isRightAligned
-                                  ? 'right-0 md:right-auto md:left-[440px]'
-                                  : 'left-0 md:right-[340px] md:left-auto'
+                                  ? 'ml-auto right-0 md:ml-0 md:right-auto md:left-[440px]'
+                                  : 'mr-auto left-0 md:mr-0 md:right-[340px] md:left-auto'
                                 }`}
                             >
                               {/* Couple Names */}
