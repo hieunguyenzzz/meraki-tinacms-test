@@ -8,6 +8,11 @@ import { absoluteUrl } from '../../../../lib/schema/siteUrl';
 import { buildWebPageSchema } from '../../../../lib/schema/webPage';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import {
+  getShareImage,
+  SHARE_IMAGE_HEIGHT,
+  SHARE_IMAGE_WIDTH,
+} from '../../../../lib/shareImage';
 
 interface Props {
   params: { lang: string; slug: string };
@@ -104,9 +109,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const description = lang === 'en' ? post.excerpt_en : post.excerpt_vi;
     const seo = lang === 'en' ? post.seo_en : post.seo_vi;
 
+    const metaTitle = seo?.title || `${title} - Meraki Wedding Planner`;
+    const metaDescription = seo?.description || description || '';
+    // Each post shares its own featured image, cropped to the share ratio.
+    const shareImage = getShareImage(post.featured_image);
+
     return {
-      title: seo?.title || `${title} - Meraki Wedding Planner`,
-      description: seo?.description || description || '',
+      title: metaTitle,
+      description: metaDescription,
       alternates: {
         canonical: `/${lang}/blog/${
           lang === 'vi' ? resolvedBlog.slugVi : resolvedBlog.slugEn
@@ -115,6 +125,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           en: `/en/blog/${resolvedBlog.slugEn}`,
           vi: `/vi/blog/${resolvedBlog.slugVi}`,
         },
+      },
+      openGraph: {
+        title: metaTitle,
+        description: metaDescription,
+        type: 'article',
+        siteName: 'Meraki Wedding Planner',
+        locale: lang === 'en' ? 'en_US' : 'vi_VN',
+        images: [
+          {
+            url: shareImage,
+            width: SHARE_IMAGE_WIDTH,
+            height: SHARE_IMAGE_HEIGHT,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: metaTitle,
+        description: metaDescription,
+        images: [shareImage],
       },
     };
   } catch {

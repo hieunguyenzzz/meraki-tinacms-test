@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { client } from "../../../../tina/__generated__/client";
 import JournalListingClient from '../../../components/JournalListingClient';
+import { truncate } from '../../../lib/richText';
 import {
   listingPageUrl,
   parsePageParam,
@@ -24,21 +25,46 @@ export function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'vi' }];
 }
 
-// Each ?page=N is its own indexable URL, so it self-canonicalises rather than
-// looking like a duplicate of page 1.
-export function generateMetadata({ params, searchParams }: Props): Metadata {
+// Title and description come from the listing's hero copy; each ?page=N is its
+// own indexable URL, so it self-canonicalises rather than looking like a
+// duplicate of page 1.
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
   const { lang } = params;
+  const isVi = lang === 'vi';
   const page = parsePageParam(searchParams?.page);
 
-  return {
-    alternates: {
-      canonical: listingPageUrl(`/${lang}/journal`, page),
-      languages: {
-        en: listingPageUrl('/en/journal', page),
-        vi: listingPageUrl('/vi/journal', page),
-      },
+  const alternates = {
+    canonical: listingPageUrl(`/${lang}/journal`, page),
+    languages: {
+      en: listingPageUrl('/en/journal', page),
+      vi: listingPageUrl('/vi/journal', page),
     },
   };
+
+  try {
+    const { data } = await client.queries.journalListing({
+      relativePath: 'index.mdx',
+    });
+    const hero = data.journalListing.hero;
+    const title = (isVi ? hero?.title_vi : hero?.title_en) || 'Journals';
+    const description = isVi ? hero?.description_vi : hero?.description_en;
+
+    return {
+      title: `${title} - Meraki Wedding Planner`,
+      description: truncate(description || '', 300) || undefined,
+      alternates,
+    };
+  } catch {
+    return {
+      title: isVi
+        ? 'Nhật ký - Meraki Wedding Planner'
+        : 'Journals - Meraki Wedding Planner',
+      alternates,
+    };
+  }
 }
 
 export default async function JournalPage({ params, searchParams }: Props) {
