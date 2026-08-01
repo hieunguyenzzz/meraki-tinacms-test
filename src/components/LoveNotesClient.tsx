@@ -356,7 +356,7 @@ export default function LoveNotesClient({
                       handleNotePanelTransitionEnd(index, event)
                     }
                     className={`w-full max-w-[558px] shrink-0 transition-[max-height,margin,opacity,transform] duration-700 ease-in-out motion-reduce:transition-none ${isOpen
-                      ? `visible mt-8 max-h-[1200px] opacity-100 md:mb-[20rem] ${isRightAligned
+                      ? `visible mt-8 max-h-[1200px] opacity-100 ${isRightAligned
                         ? 'lg:translate-x-1/3'
                         : 'lg:-translate-x-1/3'
                       }`
@@ -405,9 +405,9 @@ export default function LoveNotesClient({
                                   ? 'animate__fadeInLeft'
                                   : 'animate__fadeInRight'
                                 : ''
-                                } z-10 relative -mt-11 w-[calc(100%-3rem)] bg-background-1 bg-paper p-6 text-center md:absolute md:top-[40%] md:mt-0 md:w-[446px] md:p-8 ${!isRightAligned
-                                  ? 'right-0 md:right-auto md:left-[420px]'
-                                  : 'left-0 md:right-[420px] md:left-auto'
+                                } z-10 relative -mt-11 w-[calc(100%-3rem)] bg-background-1 bg-paper p-6 text-center md:-mt-[450px] md:w-[446px] md:p-8 ${!isRightAligned
+                                  ? 'right-0 md:right-auto md:left-[440px]'
+                                  : 'left-0 md:right-[340px] md:left-auto'
                                 }`}
                             >
                               {/* Couple Names */}
