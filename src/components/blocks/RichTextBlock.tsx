@@ -57,6 +57,19 @@ export const renderRichTextBlock = (
           {...props}
         />
       ),
+      ul: (props: any) => (
+        <ul
+          className="my-4 list-outside list-disc space-y-2 pl-6 text-body-md leading-relaxed text-text-secondary"
+          {...props}
+        />
+      ),
+      ol: (props: any) => (
+        <ol
+          className="my-4 list-outside list-decimal space-y-2 pl-6 text-body-md leading-relaxed text-text-secondary"
+          {...props}
+        />
+      ),
+      li: (props: any) => <li className="pl-1" {...props} />,
       img: ({ alt, url }: any) => (
         <MerakiImage
           src={url}
