@@ -1,7 +1,13 @@
 import { client } from '../../../tina/__generated__/client';
 import type { Metadata } from 'next';
 import HomeClient from '../../components/HomeClient';
+import JsonLd from '../../components/JsonLd';
 import { resolveImageUrl } from '../../lib/image';
+import { extractFooterContact } from '../../lib/schema/footerContact';
+import { buildLocalBusinessSchema } from '../../lib/schema/localBusiness';
+import { buildOrganizationSchema } from '../../lib/schema/organization';
+import { absoluteUrl } from '../../lib/schema/siteUrl';
+import { buildWebPageSchema } from '../../lib/schema/webPage';
 
 interface Props {
   params: { lang: string };
@@ -184,9 +190,32 @@ export default async function LangHomePage({ params }: Props) {
 
   try {
     const { data } = await client.queries.page(variables);
+    const footer = await client.queries.footer(variables);
+    const contact = extractFooterContact(footer.data.footer);
+    const seo = lang === 'en' ? data.page?.seo_en : data.page?.seo_vi;
 
     return (
-      <HomeClient data={data} variables={variables} query={query} lang={lang} />
+      <>
+        <JsonLd
+          data={[
+            buildWebPageSchema({
+              lang,
+              url: absoluteUrl(`/${lang}`),
+              name: seo?.title || defaultContent.title,
+              description:
+                seo?.description || t(defaultContent.description, lang),
+            }),
+            buildOrganizationSchema({ lang, ...contact }),
+            buildLocalBusinessSchema({ lang, ...contact }),
+          ]}
+        />
+        <HomeClient
+          data={data}
+          variables={variables}
+          query={query}
+          lang={lang}
+        />
+      </>
     );
   } catch (error) {
     console.error('Error fetching page data:', error);

@@ -1,6 +1,10 @@
 import { client } from '../../../../../tina/__generated__/client';
 import JournalClient from '../../../../components/JournalClient';
+import JsonLd from '../../../../components/JsonLd';
 import { getThumborUrl } from '../../../../lib/image';
+import { buildDetailBreadcrumbSchema } from '../../../../lib/schema/breadcrumbList';
+import { absoluteUrl } from '../../../../lib/schema/siteUrl';
+import { buildWebPageSchema } from '../../../../lib/schema/webPage';
 import { richTextToPlainText, truncate } from '../../../../lib/richText';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -103,15 +107,41 @@ export default async function JournalPage({ params }: PageProps) {
 
   try {
     const result = await client.queries.journal(variables);
+    const journal = result.data.journal;
+    const isVi = params.lang === 'vi';
+
+    // Same title the share metadata uses: the album headline, not the names.
+    const headline = isVi
+      ? journal.template_layout?.main_headline_vi
+      : journal.template_layout?.main_headline_en;
+    const name = headline || journal.couple_names || '';
+    const journalUrl = absoluteUrl(`/${params.lang}/journal/${params.slug}`);
 
     return (
-      <JournalClient
-        data={result.data}
-        variables={variables}
-        query={result.query}  // Use the auto-generated query
-        lang={params.lang}
-        slug={params.slug}
-      />
+      <>
+        <JsonLd
+          data={[
+            buildWebPageSchema({
+              lang: params.lang,
+              url: journalUrl,
+              name,
+            }),
+            buildDetailBreadcrumbSchema({
+              lang: params.lang,
+              section: 'journal',
+              pageName: name,
+              pageSlug: params.slug,
+            }),
+          ]}
+        />
+        <JournalClient
+          data={result.data}
+          variables={variables}
+          query={result.query}  // Use the auto-generated query
+          lang={params.lang}
+          slug={params.slug}
+        />
+      </>
     );
   } catch (error) {
     console.error('Error fetching journal:', error);
