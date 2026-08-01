@@ -458,7 +458,7 @@ export default function HomeClient({
 
           <div className="pointer-events-none absolute inset-x-0 top-[7%] z-10 px-4 text-center text-background-base [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] md:top-[5%] md:px-6">
             <h1
-              className="font-vocago text-h1 uppercase leading-none tracking-[0.025em] md:text-[clamp(1.75rem,4.5vw,5rem)]"
+              className="font-vocago text-[52px] uppercase leading-[1.2] tracking-[0.025em] md:text-[clamp(1.75rem,4.5vw,5rem)] md:leading-none"
               data-tina-field={
                 hero
                   ? tinaField(hero, lang === 'en' ? 'title_en' : 'title_vi')
