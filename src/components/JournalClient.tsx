@@ -1,6 +1,7 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { journalAltFallback } from '@/lib/image-alt';
 import { useMemo, useState } from 'react';
 import { useTina } from 'tinacms/dist/react';
 import JournalTemplate from './JournalTemplate';
@@ -35,6 +36,8 @@ export default function JournalClient({
     );
   }, [journal.content_blocks]);
 
+  const altFallback = useMemo(() => journalAltFallback(journal), [journal]);
+
   const openLightbox = (index: number) => {
     setCurrentIndex(index);
     setLightboxOpen(true);
@@ -60,6 +63,7 @@ export default function JournalClient({
           typenamePrefix='JournalContent_blocks'
           indexMap={indexMap}
           onImageClick={openLightbox}
+          altFallback={altFallback}
         />
       )}
 
