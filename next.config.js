@@ -1,3 +1,4 @@
+import { legacyPageRedirects } from './config/legacy-page-redirects.mjs';
 import { legacyPostRedirects } from './config/legacy-post-redirects.mjs';
 
 /** @type {import('next').NextConfig} */
@@ -22,7 +23,7 @@ const nextConfig = {
   },
 
   async redirects() {
-    return legacyPostRedirects();
+    return [...legacyPostRedirects(), ...legacyPageRedirects()];
   },
   
   webpack: (config) => {
