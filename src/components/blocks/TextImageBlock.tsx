@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { type AltFallback, resolveImageAlt } from '@/lib/image-alt';
 import { cn } from '@/lib/utils';
 import { tinaField } from 'tinacms/dist/react';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
@@ -14,6 +15,8 @@ interface TextImageBlockData extends Record<string, unknown> {
   description_en?: any;
   description_vi?: any;
   image?: string;
+  image_alt_en?: string;
+  image_alt_vi?: string;
 }
 
 interface TextImageBlockProps {
@@ -23,6 +26,7 @@ interface TextImageBlockProps {
   indexMap?: Record<string, number>;
   onImageClick?: (index: number) => void;
   centerTitle?: boolean;
+  altFallback?: AltFallback;
 }
 
 export default function TextImageBlock({
@@ -32,6 +36,7 @@ export default function TextImageBlock({
   indexMap,
   onImageClick,
   centerTitle = false,
+  altFallback,
 }: TextImageBlockProps) {
   const isTextLeft = data.layout === 'text-left';
   const verticalAlignment = data.verticalAlignment || 'center';
@@ -39,6 +44,17 @@ export default function TextImageBlock({
   const description = lang === 'vi' ? data.description_vi : data.description_en;
   const textAlignmentClass =
     verticalAlignment === 'top' ? 'md:self-start' : 'md:self-center';
+
+  // The block's heading describes the prose beside the photo, not the photo, so
+  // it is not usable as alt text. Fall back to the page context the sibling
+  // image blocks already use.
+  const lightboxIndex = indexMap?.[`${blockIndex}-image`];
+  const imageAlt = resolveImageAlt(
+    lang === 'vi' ? data.image_alt_vi : data.image_alt_en,
+    altFallback,
+    lang,
+    typeof lightboxIndex === 'number' ? lightboxIndex + 1 : undefined
+  );
 
   const handleImageClick = () => {
     if (onImageClick && indexMap && blockIndex !== undefined) {
@@ -132,7 +148,7 @@ export default function TextImageBlock({
             >
               <MerakiImage
                 src={data.image}
-                alt={title || 'Image'}
+                alt={imageAlt}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
