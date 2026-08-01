@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { client } from '../../../../../tina/__generated__/client';
 import BlogClient from '../../../../components/BlogClient';
+import JsonLd from '../../../../components/JsonLd';
+import { buildArticleSchema } from '../../../../lib/schema/article';
+import { buildDetailBreadcrumbSchema } from '../../../../lib/schema/breadcrumbList';
+import { absoluteUrl } from '../../../../lib/schema/siteUrl';
+import { buildWebPageSchema } from '../../../../lib/schema/webPage';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -168,16 +173,52 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
+  const post = result.data.blog;
+  const isVi = lang === 'vi';
+  const canonicalSlug = isVi ? resolvedBlog.slugVi : resolvedBlog.slugEn;
+  const title = (isVi ? post.title_vi : post.title_en) || '';
+  const excerpt = isVi ? post.excerpt_vi : post.excerpt_en;
+  const seo = isVi ? post.seo_vi : post.seo_en;
+  const postUrl = absoluteUrl(`/${lang}/blog/${canonicalSlug}`);
+
   return (
-    <BlogClient
-      data={result.data}
-      query={result.query}
-      variables={variables}
-      lang={lang}
-      localizedSlugs={{
-        en: resolvedBlog.slugEn,
-        vi: resolvedBlog.slugVi,
-      }}
-    />
+    <>
+      <JsonLd
+        data={[
+          buildWebPageSchema({
+            lang,
+            url: postUrl,
+            name: seo?.title || title,
+            description: seo?.description || excerpt,
+          }),
+          buildArticleSchema({
+            lang,
+            url: postUrl,
+            headline: title,
+            description: seo?.description || excerpt,
+            image: post.featured_image,
+            datePublished: post.published_date,
+            categories: post.categories,
+            tags: post.tags,
+          }),
+          buildDetailBreadcrumbSchema({
+            lang,
+            section: 'blog',
+            pageName: title,
+            pageSlug: canonicalSlug,
+          }),
+        ]}
+      />
+      <BlogClient
+        data={result.data}
+        query={result.query}
+        variables={variables}
+        lang={lang}
+        localizedSlugs={{
+          en: resolvedBlog.slugEn,
+          vi: resolvedBlog.slugVi,
+        }}
+      />
+    </>
   );
 }
