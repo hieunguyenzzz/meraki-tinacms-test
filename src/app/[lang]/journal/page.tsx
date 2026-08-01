@@ -1,11 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import { client } from "../../../../tina/__generated__/client";
 import JournalListingClient from '../../../components/JournalListingClient';
+import {
+  listingPageUrl,
+  parsePageParam,
+  totalListingPages,
+} from '../../../lib/listingPagination';
 
 interface Props {
   params: { lang: string };
+  searchParams: { page?: string | string[] };
 }
 
 // Enable static generation with revalidation
@@ -16,8 +24,26 @@ export function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'vi' }];
 }
 
-export default async function JournalPage({ params }: Props) {
+// Each ?page=N is its own indexable URL, so it self-canonicalises rather than
+// looking like a duplicate of page 1.
+export function generateMetadata({ params, searchParams }: Props): Metadata {
   const { lang } = params;
+  const page = parsePageParam(searchParams?.page);
+
+  return {
+    alternates: {
+      canonical: listingPageUrl(`/${lang}/journal`, page),
+      languages: {
+        en: listingPageUrl('/en/journal', page),
+        vi: listingPageUrl('/vi/journal', page),
+      },
+    },
+  };
+}
+
+export default async function JournalPage({ params, searchParams }: Props) {
+  const { lang } = params;
+  const initialPage = parsePageParam(searchParams?.page);
 
   if (!['en', 'vi'].includes(lang)) {
     return <div>Not Found</div>;
@@ -84,6 +110,12 @@ export default async function JournalPage({ params }: Props) {
     // journals will remain empty array
   }
 
+  // Out-of-range pages would otherwise serve a clamped copy of the last page
+  // under their own canonical, i.e. duplicate content.
+  if (initialPage > 1 && initialPage > totalListingPages(journals.length)) {
+    notFound();
+  }
+
   return (
     <JournalListingClient
       data={journalListingResponse.data}
@@ -91,6 +123,7 @@ export default async function JournalPage({ params }: Props) {
       variables={{ relativePath }}
       lang={lang}
       journals={journals}
+      initialPage={initialPage}
     />
   );
 }

@@ -5,6 +5,10 @@ import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import type { BlogListingQuery } from '../../tina/__generated__/types';
+import {
+  LISTING_PAGE_SIZE,
+  listingPageUrl,
+} from '../lib/listingPagination';
 import { useUrlPagination } from '../lib/useUrlPagination';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
@@ -29,6 +33,7 @@ interface Props {
   variables: { relativePath: string };
   lang: string;
   blogs: BlogNode[];
+  initialPage: number;
 }
 
 const t = (text: { en: string; vi: string }, lang: string) =>
@@ -43,14 +48,15 @@ export default function BlogListingClient({
   variables,
   lang,
   blogs,
+  initialPage,
 }: Props) {
   const { data: tinaData } = useTina({ data, query, variables });
   const listing = tinaData.blogListing;
 
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const listSectionRef = useRef<HTMLElement | null>(null);
-  const previousPageRef = useRef(1);
-  const itemsPerPage = 12;
+  const previousPageRef = useRef(initialPage);
+  const itemsPerPage = LISTING_PAGE_SIZE;
 
   // Derive unique categories from all blog posts
   const categories = useMemo(() => {
@@ -82,7 +88,10 @@ export default function BlogListingClient({
   }, [activeCategory, blogs]);
 
   const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
-  const { currentPage, resetPage, setPage } = useUrlPagination(totalPages);
+  const { currentPage, resetPage, setPage } = useUrlPagination(
+    totalPages,
+    initialPage
+  );
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedBlogs = filteredBlogs.slice(
     startIndex,
@@ -305,6 +314,7 @@ export default function BlogListingClient({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setPage}
+        buildHref={(page) => listingPageUrl(`/${lang}/blog`, page)}
       />
 
       {/* Let's Connect Section */}

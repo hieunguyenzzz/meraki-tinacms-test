@@ -7,6 +7,10 @@ import type {
   JournalConnectionEdges,
   JournalListingQuery,
 } from '../../tina/__generated__/types';
+import {
+  LISTING_PAGE_SIZE,
+  listingPageUrl,
+} from '../lib/listingPagination';
 import { useUrlPagination } from '../lib/useUrlPagination';
 import Pagination from './Pagination';
 import MerakiImage from './ui/MerakiImage';
@@ -17,6 +21,7 @@ interface Props {
   variables: { relativePath: string };
   lang: string;
   journals: JournalConnectionEdges[];
+  initialPage: number;
 }
 
 // Helper function for translations
@@ -35,6 +40,7 @@ export default function JournalListingClient({
   variables,
   lang,
   journals,
+  initialPage,
 }: Props) {
   const { data: tinaData } = useTina({ data, query, variables });
   const listing = tinaData.journalListing;
@@ -43,8 +49,8 @@ export default function JournalListingClient({
   const [activeLocation, setActiveLocation] = useState<string>('All');
 
   const listSectionRef = useRef<HTMLElement | null>(null);
-  const previousPageRef = useRef(1);
-  const itemsPerPage = 12;
+  const previousPageRef = useRef(initialPage);
+  const itemsPerPage = LISTING_PAGE_SIZE;
 
   // Available locations
   const locations = useMemo(() => {
@@ -131,7 +137,10 @@ export default function JournalListingClient({
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredJournals.length / itemsPerPage);
-  const { currentPage, resetPage, setPage } = useUrlPagination(totalPages);
+  const { currentPage, resetPage, setPage } = useUrlPagination(
+    totalPages,
+    initialPage
+  );
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedJournals = filteredJournals.slice(startIndex, endIndex);
@@ -337,6 +346,7 @@ export default function JournalListingClient({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setPage}
+        buildHref={(page) => listingPageUrl(`/${lang}/journal`, page)}
       />
 
       {/* Let's Connect Section */}
