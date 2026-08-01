@@ -1,15 +1,15 @@
 /**
- * Absolute base URL for the site.
+ * Absolute URL helpers for the JSON-LD builders.
  *
  * JSON-LD consumers cannot resolve relative URLs, so every `url`/`@id` emitted
- * by the schema builders has to be fully qualified.
- *
- * NOTE: MWP-45 adds `src/lib/siteUrl.ts` for the same purpose. Once both
- * branches are merged, delete this module and import from there instead.
+ * by the schema builders has to be fully qualified. The origin itself comes
+ * from `src/lib/siteUrl.ts` — the single source shared with `metadataBase`,
+ * robots.txt and sitemap.xml, so canonicals and structured data can never
+ * disagree about which host the site is on.
  */
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://v2.merakiweddingplanner.com'
-).replace(/\/+$/, '');
+import { SITE_URL } from '../siteUrl';
+
+export { SITE_URL };
 
 /** Resolves a site-relative path to an absolute URL. Absolute input passes through. */
 export function absoluteUrl(path: string): string {
