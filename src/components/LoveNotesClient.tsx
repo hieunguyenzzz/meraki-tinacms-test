@@ -284,28 +284,24 @@ export default function LoveNotesClient({
               return (
                 <article
                   key={getLoveNoteId(note, index)}
-                  className={`flex flex-col items-center border-b border-text-primary/35 py-6 first:pt-0 md:border-0 md:py-0 lg:flex-row ${
-                    isRightAligned ? 'lg:flex-row-reverse' : ''
-                  }`}
+                  className={`flex flex-col items-center border-b border-text-primary/35 py-6 first:pt-0 md:border-0 md:py-0 lg:flex-row ${isRightAligned ? 'lg:flex-row-reverse' : ''
+                    }`}
                 >
                   <div
-                    className={`w-full ${
-                      isRightAligned ? 'lg:max-w-[1000px]' : 'lg:max-w-[980px]'
-                    }`}
+                    className={`w-full ${isRightAligned ? 'lg:max-w-[1000px]' : 'lg:max-w-[980px]'
+                      }`}
                     data-tina-field={tinaField(
                       note,
                       lang === 'en' ? 'couple_names_en' : 'couple_names_vi'
                     )}
                   >
                     <div
-                      className={`text-center md:text-left ${
-                        isRightAligned ? 'lg:text-right' : 'lg:text-left'
-                      }`}
+                      className={`text-center md:text-left ${isRightAligned ? 'lg:text-right' : 'lg:text-left'
+                        }`}
                     >
                       <h2
-                        className={`flex flex-wrap items-center justify-center gap-x-5 gap-y-3 font-vocago text-h2 md:justify-start md:text-display ${
-                          isRightAligned ? 'lg:justify-end' : 'lg:justify-start'
-                        }`}
+                        className={`flex flex-wrap items-center justify-center gap-x-5 gap-y-3 font-vocago text-h2 md:justify-start md:text-display ${isRightAligned ? 'lg:justify-end' : 'lg:justify-start'
+                          }`}
                       >
                         <span className="uppercase">{leftName}</span>
 
@@ -326,9 +322,8 @@ export default function LoveNotesClient({
                             width={isOpen ? 80 : 94}
                             height={62}
                             loading="lazy"
-                            className={`${
-                              isOpen ? 'w-[80px]' : 'w-[94px]'
-                            } h-auto`}
+                            className={`${isOpen ? 'w-[80px]' : 'w-[94px]'
+                              } h-auto`}
                           />
                         </button>
 
@@ -339,9 +334,8 @@ export default function LoveNotesClient({
 
                       <div className="mt-8 hidden md:mt-10 md:block">
                         <p
-                          className={`text-body-lg uppercase text-text-secondary lg:whitespace-nowrap ${
-                            isRightAligned ? 'lg:text-right' : 'lg:text-left'
-                          }`}
+                          className={`text-body-lg uppercase text-text-secondary lg:whitespace-nowrap ${isRightAligned ? 'lg:text-right' : 'lg:text-left'
+                            }`}
                           data-tina-field={tinaField(
                             note,
                             lang === 'en'
@@ -361,15 +355,13 @@ export default function LoveNotesClient({
                     onTransitionEnd={(event) =>
                       handleNotePanelTransitionEnd(index, event)
                     }
-                    className={`w-full max-w-[558px] shrink-0 transition-[max-height,margin,opacity,transform] duration-700 ease-in-out motion-reduce:transition-none ${
-                      isOpen
-                        ? `visible mt-8 mb-[28rem] max-h-[900px] opacity-100 md:mb-[20rem] ${
-                            isRightAligned
-                              ? 'lg:translate-x-1/3'
-                              : 'lg:-translate-x-1/3'
-                          }`
-                        : 'invisible my-0 max-h-0 overflow-hidden opacity-0'
-                    }`}
+                    className={`w-full max-w-[558px] shrink-0 transition-[max-height,margin,opacity,transform] duration-700 ease-in-out motion-reduce:transition-none ${isOpen
+                      ? `visible mt-8 max-h-[1200px] opacity-100 md:mb-[20rem] ${isRightAligned
+                        ? 'lg:translate-x-1/3'
+                        : 'lg:-translate-x-1/3'
+                      }`
+                      : 'invisible my-0 max-h-0 overflow-hidden opacity-0'
+                      }`}
                   >
                     <div className="relative">
                       {/* Image base layer */}
@@ -380,13 +372,12 @@ export default function LoveNotesClient({
                         data-tina-field={tinaField(note, 'image')}
                       >
                         <div
-                          className={`relative overflow-visible animate__animated animate__faster ${
-                            isOpen
-                              ? isRightAligned
-                                ? 'animate__fadeInRight'
-                                : 'animate__fadeInLeft'
-                              : ''
-                          }`}
+                          className={`relative overflow-visible animate__animated animate__faster ${isOpen
+                            ? isRightAligned
+                              ? 'animate__fadeInRight'
+                              : 'animate__fadeInLeft'
+                            : ''
+                            }`}
                         >
                           <MerakiImage
                             src={
@@ -409,17 +400,15 @@ export default function LoveNotesClient({
 
                           return (
                             <div
-                              className={`absolute animate__animated animate__faster ${
-                                isOpen
-                                  ? isRightAligned
-                                    ? 'animate__fadeInLeft'
-                                    : 'animate__fadeInRight'
-                                  : ''
-                              } z-10 top-[50%] w-[calc(100%-3rem)] bg-background-1 bg-paper p-6 text-center md:w-[446px] md:p-8 ${
-                                !isRightAligned
-                                  ? 'right-0 md:right-auto md:left-[50%]'
-                                  : 'left-0 md:right-[50%] md:left-auto'
-                              }`}
+                              className={`animate__animated animate__faster ${isOpen
+                                ? isRightAligned
+                                  ? 'animate__fadeInLeft'
+                                  : 'animate__fadeInRight'
+                                : ''
+                                } z-10 relative -mt-11 w-[calc(100%-3rem)] bg-background-1 bg-paper p-6 text-center md:absolute md:top-[40%] md:mt-0 md:w-[446px] md:p-8 ${!isRightAligned
+                                  ? 'right-0 md:right-auto md:left-[420px]'
+                                  : 'left-0 md:right-[420px] md:left-auto'
+                                }`}
                             >
                               {/* Couple Names */}
                               <h3
@@ -535,9 +524,8 @@ export default function LoveNotesClient({
                     <svg
                       viewBox="0 0 24 24"
                       aria-hidden="true"
-                      className={`h-4 w-4 transition-transform duration-300 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`}
+                      className={`h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''
+                        }`}
                     >
                       <path
                         d="m7 10 5 5 5-5"
