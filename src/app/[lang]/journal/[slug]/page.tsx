@@ -1,5 +1,8 @@
 import { client } from '../../../../../tina/__generated__/client';
 import JournalClient from '../../../../components/JournalClient';
+import { getThumborUrl } from '../../../../lib/image';
+import { richTextToPlainText, truncate } from '../../../../lib/richText';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
@@ -31,20 +34,62 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: PageProps) {
+// Thumbor serves WebP by default, which Facebook/Messenger won't render in a
+// link preview — force JPEG for the share image only.
+const OG_IMAGE_SIZE = '1174x1760/filters:format(jpeg)';
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
     const { data } = await client.queries.journal({
       relativePath: `${params.slug}.mdx`,
     });
 
-    const title = data.journal.couple_names || 'Journal Entry';
-    const subtitle = params.lang === 'vi'
-      ? data.journal.template_layout?.main_headline_vi
-      : data.journal.template_layout?.main_headline_en;
+    const journal = data.journal;
+    const isVi = params.lang === 'vi';
+
+    // The album name (headline) is the share title, not the couple names.
+    const headline = isVi
+      ? journal.template_layout?.main_headline_vi
+      : journal.template_layout?.main_headline_en;
+    const title = headline || journal.couple_names || 'Journal Entry';
+
+    // Description comes from the first story block ("What we loved"), which
+    // journals author as either a text block or a text + image block.
+    const STORY_BLOCKS = [
+      'JournalContent_blocksTextBlock',
+      'JournalContent_blocksTextImageBlock',
+    ];
+    const storyBlock = journal.content_blocks?.find(
+      (block) => block && STORY_BLOCKS.includes(block.__typename)
+    ) as { description_en?: unknown; description_vi?: unknown } | undefined;
+    const story = richTextToPlainText(
+      isVi ? storyBlock?.description_vi : storyBlock?.description_en
+    );
+    const description = story
+      ? truncate(story, 300)
+      : 'A beautiful wedding story';
+
+    const image = journal.featured_image
+      ? getThumborUrl(OG_IMAGE_SIZE, journal.featured_image)
+      : undefined;
 
     return {
       title,
-      description: subtitle || 'A beautiful wedding story',
+      description,
+      openGraph: {
+        title,
+        description,
+        type: 'article',
+        siteName: 'Meraki Wedding Planner',
+        locale: isVi ? 'vi_VN' : 'en_US',
+        images: image ? [image] : undefined,
+      },
+      twitter: {
+        card: image ? 'summary_large_image' : 'summary',
+        title,
+        description,
+        images: image ? [image] : undefined,
+      },
     };
   } catch {
     return {
