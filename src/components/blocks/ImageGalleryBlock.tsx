@@ -1,5 +1,6 @@
 'use client';
 
+import { type AltFallback, resolveImageAlt } from '@/lib/image-alt';
 import type Masonry from 'masonry-layout';
 import { useEffect, useRef } from 'react';
 import { tinaField } from 'tinacms/dist/react';
@@ -26,6 +27,8 @@ interface ImageGalleryBlockProps {
   blockIndex: number;
   indexMap: Record<string, number>;
   onImageClick: (index: number) => void;
+  /** Page context used when an image's alt_en/alt_vi is blank. */
+  altFallback?: AltFallback;
 }
 
 export default function ImageGalleryBlock({
@@ -34,6 +37,7 @@ export default function ImageGalleryBlock({
   blockIndex,
   indexMap,
   onImageClick,
+  altFallback,
 }: ImageGalleryBlockProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const masonryRef = useRef<Masonry | null>(null);
@@ -194,8 +198,13 @@ export default function ImageGalleryBlock({
         <div className={`grid-sizer ${itemWidthClass} absolute invisible`} />
 
         {data.images?.map((img, imgIndex: number) => {
-          const altText = lang === 'vi' ? img.alt_vi : img.alt_en;
           const globalIndex = indexMap[`${blockIndex}-${imgIndex}`];
+          const altText = resolveImageAlt(
+            lang === 'vi' ? img.alt_vi : img.alt_en,
+            altFallback,
+            lang,
+            Number.isFinite(globalIndex) ? globalIndex + 1 : undefined
+          );
           return (
             <button
               key={`${img.src}-${imgIndex}`}
@@ -207,7 +216,7 @@ export default function ImageGalleryBlock({
             >
               <MerakiImage
                 src={img.src}
-                alt={altText || ''}
+                alt={altText}
                 className="w-full h-auto block"
                 data-tina-field={tinaField(img, 'src')}
                 thumborWidth={480}

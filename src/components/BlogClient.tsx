@@ -1,6 +1,7 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { blogAltFallback } from '@/lib/image-alt';
 import { useEffect, useMemo } from 'react';
 import { tinaField, useTina } from 'tinacms/dist/react';
 import ContentBlocksRenderer, {
@@ -49,6 +50,8 @@ export default function BlogClient({
       'BlogContent_blocks'
     );
   }, [blog.content_blocks]);
+
+  const altFallback = useMemo(() => blogAltFallback(blog), [blog]);
 
   const title = lang === 'en' ? blog.title_en : blog.title_vi;
   const excerpt = lang === 'en' ? blog.excerpt_en : blog.excerpt_vi;
@@ -143,6 +146,7 @@ export default function BlogClient({
           indexMap={indexMap}
           onImageClick={() => {}}
           wrapperClassName="py-16 space-y-4 text-justify"
+          altFallback={altFallback}
         />
       )}
     </div>

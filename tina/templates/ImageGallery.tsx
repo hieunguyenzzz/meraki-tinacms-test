@@ -39,11 +39,38 @@ interface SortableImageItemProps {
   widthClass: string;
 }
 
+// Inputs live inside the drag-listener wrapper, so their pointer and key events
+// must not bubble or dnd-kit starts a drag while the editor is typing.
+const stopDragEvents = {
+  onPointerDown: (e: React.PointerEvent) => e.stopPropagation(),
+  onKeyDown: (e: React.KeyboardEvent) => e.stopPropagation(),
+  onClick: (e: React.MouseEvent) => e.stopPropagation(),
+};
+
+const altInputStyle: React.CSSProperties = {
+  display: 'block',
+  width: '100%',
+  boxSizing: 'border-box',
+  padding: '4px 6px',
+  border: '1px solid #ddd',
+  borderRadius: '3px',
+  fontSize: '12px',
+  cursor: 'text',
+};
+
+const altInputsWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+  marginTop: '4px',
+};
+
 const SortableImageItem = ({
   image,
   index,
   onRemove,
   onReplace,
+  onAltChange,
   widthClass,
 }: SortableImageItemProps) => {
   // Use a safe ID that handles whitespaces and special characters
@@ -104,6 +131,27 @@ const SortableImageItem = ({
       >
         ✕
       </button>
+
+      {/* Alt text — the schema has always had these fields but no UI, which is
+          why nearly every gallery image in content/ ships with a blank alt. */}
+      <div style={altInputsWrapperStyle}>
+        <input
+          type="text"
+          value={image.alt_en || ''}
+          placeholder="Alt text (English)"
+          onChange={(e) => onAltChange(index, 'en', e.target.value)}
+          style={altInputStyle}
+          {...stopDragEvents}
+        />
+        <input
+          type="text"
+          value={image.alt_vi || ''}
+          placeholder="Alt text (Vietnamese)"
+          onChange={(e) => onAltChange(index, 'vi', e.target.value)}
+          style={altInputStyle}
+          {...stopDragEvents}
+        />
+      </div>
     </div>
   );
 };
@@ -283,8 +331,32 @@ const GalleryField = wrapFieldsWithMeta(({ input, tinaForm }: any) => {
     }
   };
 
+  const missingAltCount = images.filter(
+    (img: ImageData) => !(img.alt_en || '').trim()
+  ).length;
+
   return (
     <div className="gallery-field">
+      {missingAltCount > 0 && (
+        <p
+          style={{
+            marginBottom: '0.75rem',
+            padding: '8px 10px',
+            backgroundColor: '#fff7e6',
+            border: '1px solid #f0d9a0',
+            borderRadius: '4px',
+            fontSize: '13px',
+            lineHeight: 1.4,
+            whiteSpace: 'normal',
+            overflowWrap: 'anywhere',
+          }}
+        >
+          {missingAltCount} of {images.length} images have no English alt text.
+          Google Images and screen readers need it. Until it is filled in, the
+          site falls back to the couple, venue and location.
+        </p>
+      )}
+
       <div className="actions" style={{ marginBottom: '1rem', display: 'flex', gap: '10px' }}>
         <button
           type="button"
@@ -404,14 +476,20 @@ export const imageGalleryBlock: Template = {
           }
         },
         {
+          // Not `required: true` — 2,774 existing alt fields are blank, so
+          // required-ness would block editors from saving any existing journal.
           type: "string",
           name: "alt_en",
           label: "Alt Text (English)",
+          description:
+            "Describe the photo for Google Images and screen readers, e.g. 'Bride and groom exchanging vows in the courtyard at Lan Viên Cố Tích'. Leave blank only for purely decorative images.",
         },
         {
           type: "string",
           name: "alt_vi",
           label: "Alt Text (Vietnamese)",
+          description:
+            "Vietnamese description of the photo, shown on /vi pages.",
         },
       ],
     },
