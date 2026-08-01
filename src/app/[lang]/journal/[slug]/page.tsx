@@ -1,6 +1,7 @@
 import { client } from '../../../../../tina/__generated__/client';
 import JournalClient from '../../../../components/JournalClient';
 import JsonLd from '../../../../components/JsonLd';
+import { displayHeadline } from '../../../../lib/headlineCase';
 import { getThumborUrl } from '../../../../lib/image';
 import { buildDetailBreadcrumbSchema } from '../../../../lib/schema/breadcrumbList';
 import { absoluteUrl } from '../../../../lib/schema/siteUrl';
@@ -52,10 +53,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const isVi = params.lang === 'vi';
 
     // The album name (headline) is the share title, not the couple names.
-    const headline = isVi
-      ? journal.template_layout?.main_headline_vi
-      : journal.template_layout?.main_headline_en;
-    const title = headline || journal.couple_names || 'Journal Entry';
+    // Most are stored in caps for the hero, which already uppercases in CSS —
+    // see lib/headlineCase.ts.
+    const headline = displayHeadline(
+      isVi
+        ? journal.template_layout?.main_headline_vi
+        : journal.template_layout?.main_headline_en
+    );
+    const name = headline || journal.couple_names || 'Journal Entry';
+    // Journal detail was the only template emitting a bare page title; blog
+    // detail has always carried the brand.
+    const title = `${name} - Meraki Wedding Planner`;
 
     // Description comes from the first story block ("What we loved"), which
     // journals author as either a text block or a text + image block.
@@ -111,9 +119,11 @@ export default async function JournalPage({ params }: PageProps) {
     const isVi = params.lang === 'vi';
 
     // Same title the share metadata uses: the album headline, not the names.
-    const headline = isVi
-      ? journal.template_layout?.main_headline_vi
-      : journal.template_layout?.main_headline_en;
+    const headline = displayHeadline(
+      isVi
+        ? journal.template_layout?.main_headline_vi
+        : journal.template_layout?.main_headline_en
+    );
     const name = headline || journal.couple_names || '';
     const journalUrl = absoluteUrl(`/${params.lang}/journal/${params.slug}`);
 
