@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { client } from '../../../../tina/__generated__/client';
 import LetsConnectClient from '../../../components/LetsConnectClient';
+import { localeAlternates } from '../../../lib/alternates';
 
 interface Props {
   params: { lang: string };
@@ -14,6 +15,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
+  const alternates = localeAlternates(lang, '/lets-connect');
 
   try {
     const response = await client.queries.letsConnect({
@@ -27,6 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: seo?.title || "Let's Connect - Meraki Wedding Planner",
       description: seo?.description || '',
+      alternates,
     };
   } catch {
     return {
@@ -38,6 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         lang === 'en'
           ? 'Tell Meraki about your wedding and begin planning a meaningful celebration.'
           : 'Chia sẻ câu chuyện đám cưới của bạn và bắt đầu hành trình planning cùng Meraki.',
+      alternates,
     };
   }
 }

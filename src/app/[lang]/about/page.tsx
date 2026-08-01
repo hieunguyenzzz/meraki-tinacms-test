@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { client } from '../../../../tina/__generated__/client';
 import AboutClient from '../../../components/AboutClient';
+import { localeAlternates } from '../../../lib/alternates';
 
 interface Props {
   params: { lang: string };
@@ -14,6 +15,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
+  const alternates = localeAlternates(lang, '/about');
 
   try {
     const response = await client.queries.about({ relativePath: 'index.mdx' });
@@ -23,6 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: seo?.title || 'About Meraki Wedding Planner',
       description: seo?.description || '',
+      alternates,
     };
   } catch {
     return {
@@ -34,6 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         lang === 'en'
           ? 'Meet the team behind Meraki Wedding Planner.'
           : 'Gặp gỡ đội ngũ Meraki Wedding Planner.',
+      alternates,
     };
   }
 }

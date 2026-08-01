@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { client } from '../../../../tina/__generated__/client';
 import LoveNotesClient from '../../../components/LoveNotesClient';
+import { localeAlternates } from '../../../lib/alternates';
 
 interface Props {
   params: { lang: string };
@@ -19,6 +20,8 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
+  const alternates = localeAlternates(lang, '/love-notes');
+
   try {
     const listingResponse = await client.queries.loveNotesListing({
       relativePath: 'index.mdx',
@@ -30,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: seo?.title || `${title} - Meraki Wedding Planner`,
       description: seo?.description || '',
+      alternates,
     };
   } catch {
     return {
@@ -41,6 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         lang === 'en'
           ? 'Kind words and testimonials from our beautiful couples'
           : 'Nhung loi cam on va nhan xet tu cac cap doi cua Meraki',
+      alternates,
     };
   }
 }

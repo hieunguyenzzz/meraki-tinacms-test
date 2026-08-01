@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { localeAlternates } from '../../../lib/alternates';
 
 interface Props {
   params: { lang: string };
@@ -6,12 +7,13 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
-  
+
   return {
     title: lang === 'en' ? 'Social Media - Meraki Wedding Planner' : 'Mạng xã hội - Meraki Wedding Planner',
-    description: lang === 'en' 
+    description: lang === 'en'
       ? 'Follow Meraki Wedding Planner on social media for wedding inspiration and behind-the-scenes content'
       : 'Theo dõi Meraki Wedding Planner trên mạng xã hội để có cảm hứng cưới và nội dung hậu trường',
+    alternates: localeAlternates(lang, '/social-media'),
   };
 }
 
