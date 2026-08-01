@@ -1,5 +1,6 @@
 import { client } from '../../../tina/__generated__/client';
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import HomeClient from '../../components/HomeClient';
 import { resolveImageUrl } from '../../lib/image';
 
@@ -42,6 +43,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
 
+  // generateMetadata still runs for an unsupported locale, and without this the
+  // 404 response would carry this page's `index, follow` alongside Next's
+  // `noindex`.
+  if (!['en', 'vi'].includes(lang)) {
+    return { robots: 'noindex, nofollow' };
+  }
+
   try {
     const pageData = await client.queries.page({ relativePath: 'index.mdx' });
     const page = pageData.data.page;
@@ -81,7 +89,7 @@ export default async function LangHomePage({ params }: Props) {
   const { lang } = params;
 
   if (!['en', 'vi'].includes(lang)) {
-    return <div>Not Found</div>;
+    notFound();
   }
 
   const variables = { relativePath: 'index.mdx' };
