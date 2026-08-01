@@ -355,10 +355,10 @@ export default function LoveNotesClient({
                     onTransitionEnd={(event) =>
                       handleNotePanelTransitionEnd(index, event)
                     }
-                    className={`w-full max-w-[558px] shrink-0 transition-[max-height,margin,opacity,transform] duration-700 ease-in-out motion-reduce:transition-none ${isOpen
+                    className={`w-full max-w-[400px] shrink-0 transition-[max-height,margin,opacity,transform] duration-700 ease-in-out motion-reduce:transition-none ${isOpen
                       ? `visible mt-8 max-h-[1200px] opacity-100 ${isRightAligned
-                        ? 'lg:translate-x-1/3'
-                        : 'lg:-translate-x-1/3'
+                        ? 'lg:translate-x-[75%] xl:translate-x-[60%]'
+                        : 'lg:-translate-x-[75%] xl:-translate-x-[60%]'
                       }`
                       : 'invisible my-0 max-h-0 overflow-hidden opacity-0'
                       }`}
@@ -385,9 +385,9 @@ export default function LoveNotesClient({
                               '/images/bg/love-notes-featured.jpg'
                             }
                             alt={coupleNames || 'Couple note image'}
-                            width={558}
+                            width={400}
                             height={592}
-                            sizes="(min-width: 744px) 558px, calc(100vw - 32px)"
+                            sizes="(min-width: 744px) 400px, calc(100vw - 32px)"
                             className="h-auto w-full object-cover"
                           />
                         </div>
@@ -405,8 +405,8 @@ export default function LoveNotesClient({
                                   ? 'animate__fadeInLeft'
                                   : 'animate__fadeInRight'
                                 : ''
-                                } z-10 relative -mt-11 w-[calc(100%-3rem)] bg-background-1 bg-paper p-6 text-center md:-mt-[450px] md:w-[446px] md:p-8 ${!isRightAligned
-                                  ? 'ml-auto right-0 md:ml-0 md:right-auto md:left-[440px]'
+                                } z-10 relative -mt-11 w-[calc(100%-3rem)] bg-background-1 bg-paper p-6 text-center md:-mt-[300px] md:w-[446px] md:p-8 ${!isRightAligned
+                                  ? 'ml-auto right-0 md:ml-0 md:right-auto md:left-[290px]'
                                   : 'mr-auto left-0 md:mr-0 md:right-[340px] md:left-auto'
                                 }`}
                             >
