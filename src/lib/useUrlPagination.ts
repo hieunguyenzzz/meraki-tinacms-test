@@ -23,8 +23,8 @@ const writePageToUrl = (page: number, mode: 'push' | 'replace') => {
   );
 };
 
-export function useUrlPagination(totalPages: number) {
-  const [requestedPage, setRequestedPage] = useState(1);
+export function useUrlPagination(totalPages: number, initialPage = 1) {
+  const [requestedPage, setRequestedPage] = useState(initialPage);
   const lastPage = Math.max(totalPages, 1);
   const currentPage = Math.min(requestedPage, lastPage);
 
