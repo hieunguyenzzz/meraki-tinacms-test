@@ -1,6 +1,11 @@
 import './globals.css';
 import 'animate.css';
 import type { Metadata } from 'next';
+import {
+  DEFAULT_SHARE_IMAGE,
+  SHARE_IMAGE_HEIGHT,
+  SHARE_IMAGE_WIDTH,
+} from '../lib/shareImage';
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -8,6 +13,21 @@ export const metadata: Metadata = {
   ),
   title: 'Meraki Wedding Planner',
   description: 'Wedding planning services',
+  // Default link-preview image for every route. Pages that declare their own
+  // openGraph replace this wholesale, so journal and blog detail set their own.
+  openGraph: {
+    images: [
+      {
+        url: DEFAULT_SHARE_IMAGE,
+        width: SHARE_IMAGE_WIDTH,
+        height: SHARE_IMAGE_HEIGHT,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: [DEFAULT_SHARE_IMAGE],
+  },
   // Google reads the 48x48 entry inside favicon.ico for the search result icon;
   // the PNGs cover browser tabs, Android and iOS home screens.
   icons: {

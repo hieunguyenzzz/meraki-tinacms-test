@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import { client } from "../../../../tina/__generated__/client";
 import JournalListingClient from '../../../components/JournalListingClient';
+import { truncate } from '../../../lib/richText';
+import type { Metadata } from 'next';
 
 interface Props {
   params: { lang: string };
@@ -14,6 +16,30 @@ export const revalidate = 3600; // Revalidate every hour (ISR)
 // Pre-generate both language versions
 export function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'vi' }];
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const isVi = params.lang === 'vi';
+
+  try {
+    const { data } = await client.queries.journalListing({
+      relativePath: 'index.mdx',
+    });
+    const hero = data.journalListing.hero;
+    const title = (isVi ? hero?.title_vi : hero?.title_en) || 'Journals';
+    const description = isVi ? hero?.description_vi : hero?.description_en;
+
+    return {
+      title: `${title} - Meraki Wedding Planner`,
+      description: truncate(description || '', 300) || undefined,
+    };
+  } catch {
+    return {
+      title: isVi
+        ? 'Nhật ký - Meraki Wedding Planner'
+        : 'Journals - Meraki Wedding Planner',
+    };
+  }
 }
 
 export default async function JournalPage({ params }: Props) {
