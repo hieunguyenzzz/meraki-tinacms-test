@@ -45,7 +45,7 @@ export default function TestimonialBlock({
         {/* Testimonial Heading */}
         <div className="text-h3 mb-3">
           {/* {data.heading} */}
-          {lang === 'vi' ? 'Lời nhắn gửi' : 'Testimonial'}
+          {lang === 'vi' ? 'Lời nhắn gửi' : 'Testimonial'}
         </div>
 
         {/* Decorative Script Text */}

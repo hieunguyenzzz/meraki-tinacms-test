@@ -147,6 +147,10 @@
     color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;
   }
+
+  h3 {
+    word-spacing: -2px;
+  }
 }
 
 @layer components {
