@@ -17,12 +17,7 @@ export function getThumborUrl(
   if (!src) return '';
   // If it's not an absolute URL, resolve it first
   const resolvedSrc = resolveImageUrl(src);
-  // An empty fitMode leaves an empty path segment ("/unsafe//1200x630/"), which
-  // Thumbor tolerates but crawlers and caches key on literally. Collapse it.
-  return getThumborUrlRaw(size, resolvedSrc, fitMode).replace(
-    '/unsafe//',
-    '/unsafe/'
-  );
+  return getThumborUrlRaw(size, resolvedSrc, fitMode);
 }
 
 export function resolveImageUrl(src: string | null | undefined): string {

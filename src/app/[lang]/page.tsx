@@ -1,7 +1,7 @@
 import { client } from '../../../tina/__generated__/client';
 import type { Metadata } from 'next';
 import HomeClient from '../../components/HomeClient';
-import { getThumborUrl } from '../../lib/image';
+import { resolveImageUrl } from '../../lib/image';
 
 interface Props {
   params: { lang: string };
@@ -26,14 +26,10 @@ const defaultContent = {
 const t = (text: { en: string; vi: string }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
-// Share image for the homepage link preview: cropped to Facebook's 1200x630 and
-// forced to JPEG, since Thumbor serves WebP by default and Messenger won't
-// render a WebP og:image.
-const OG_IMAGE = getThumborUrl(
-  '1200x630/filters:format(jpeg)',
-  '/images/og/home.jpg',
-  ''
-);
+// Share image for the homepage link preview. Stored in S3 pre-cropped to
+// Facebook's 1200x630 and already JPEG, so it is served straight from the
+// bucket — no Thumbor hop, and no risk of a WebP that Messenger won't render.
+const OG_IMAGE = resolveImageUrl('/images/og/home.jpg');
 
 // Enable static generation with revalidation
 export const revalidate = 3600; // Revalidate every hour (ISR)
