@@ -111,9 +111,9 @@ export default function ServiceClient({
       <main>
         {hero && (
           <section className="relative">
-            <div className="grid lg:grid-cols-2 lg:min-h-[720px]">
+            <div className="grid grid-cols-1 items-stretch lg:min-h-[720px] lg:grid-cols-2">
               <div
-                className="relative min-h-[460px] overflow-hidden lg:min-h-0 animate__animated animate__fadeInLeft"
+                className="animate__animated animate__fadeInLeft relative aspect-[375/368] overflow-hidden md:h-[500px] md:aspect-auto lg:h-full"
                 data-tina-field={tinaField(hero, 'background_image')}
               >
                 {hero.background_image ? (
@@ -130,7 +130,7 @@ export default function ServiceClient({
                 )}
               </div>
 
-              <div className="bg-background-1 bg-paper relative flex flex-col items-center justify-center gap-10 px-6 py-16 text-center md:px-16 lg:gap-16 lg:px-20">
+              <div className="bg-paper mx-3 -mb-20 flex -translate-y-20 flex-col items-center justify-between gap-8 bg-background-1 px-4 py-8 text-center md:mx-auto md:w-[540px] md:-translate-y-20 md:gap-20 md:p-20 lg:mx-0 lg:mb-0 lg:w-full lg:translate-y-0 lg:justify-center lg:gap-16 lg:px-20">
                 <h1
                   className="text-display font-vocago uppercase tracking-wide"
                   data-tina-field={tinaField(
@@ -143,7 +143,7 @@ export default function ServiceClient({
 
                 {hero.featured_image && (
                   <div
-                    className="relative w-[156px] overflow-hidden sm:w-[184px] animate__animated animate__fadeInLeft"
+                    className="animate__animated animate__fadeInLeft relative w-[140px] overflow-hidden md:w-[260px] lg:w-[184px]"
                     data-tina-field={tinaField(hero, 'featured_image')}
                   >
                     <MerakiImage
@@ -151,14 +151,15 @@ export default function ServiceClient({
                       alt="Meraki wedding detail"
                       width={184}
                       height={252}
-                      sizes="(min-width: 375px) 184px, 156px"
+                      thumborWidth={260}
+                      sizes="(min-width: 744px) 260px, 140px"
                       className="h-auto w-full object-cover"
                     />
                   </div>
                 )}
 
                 <p
-                  className="max-w-sm text-body-md text-text-secondary"
+                  className="max-w-[500px] text-body-md leading-relaxed text-text-secondary lg:max-w-sm lg:leading-normal"
                   data-tina-field={tinaField(
                     hero,
                     lang === 'vi' ? 'description_vi' : 'description_en'
