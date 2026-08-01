@@ -1,11 +1,18 @@
 import { client } from '../../../tina/__generated__/client';
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import HomeClient from '../../components/HomeClient';
 import {
   DEFAULT_SHARE_IMAGE,
   SHARE_IMAGE_HEIGHT,
   SHARE_IMAGE_WIDTH,
 } from '../../lib/shareImage';
+import JsonLd from '../../components/JsonLd';
+import { extractFooterContact } from '../../lib/schema/footerContact';
+import { buildLocalBusinessSchema } from '../../lib/schema/localBusiness';
+import { buildOrganizationSchema } from '../../lib/schema/organization';
+import { absoluteUrl } from '../../lib/schema/siteUrl';
+import { buildWebPageSchema } from '../../lib/schema/webPage';
 
 interface Props {
   params: { lang: string };
@@ -40,6 +47,13 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = params;
+
+  // generateMetadata still runs for an unsupported locale, and without this the
+  // 404 response would carry this page's `index, follow` alongside Next's
+  // `noindex`.
+  if (!['en', 'vi'].includes(lang)) {
+    return { robots: 'noindex, nofollow' };
+  }
 
   try {
     const pageData = await client.queries.page({ relativePath: 'index.mdx' });
@@ -92,7 +106,7 @@ export default async function LangHomePage({ params }: Props) {
   const { lang } = params;
 
   if (!['en', 'vi'].includes(lang)) {
-    return <div>Not Found</div>;
+    notFound();
   }
 
   const variables = { relativePath: 'index.mdx' };
@@ -195,9 +209,32 @@ export default async function LangHomePage({ params }: Props) {
 
   try {
     const { data } = await client.queries.page(variables);
+    const footer = await client.queries.footer(variables);
+    const contact = extractFooterContact(footer.data.footer);
+    const seo = lang === 'en' ? data.page?.seo_en : data.page?.seo_vi;
 
     return (
-      <HomeClient data={data} variables={variables} query={query} lang={lang} />
+      <>
+        <JsonLd
+          data={[
+            buildWebPageSchema({
+              lang,
+              url: absoluteUrl(`/${lang}`),
+              name: seo?.title || defaultContent.title,
+              description:
+                seo?.description || t(defaultContent.description, lang),
+            }),
+            buildOrganizationSchema({ lang, ...contact }),
+            buildLocalBusinessSchema({ lang, ...contact }),
+          ]}
+        />
+        <HomeClient
+          data={data}
+          variables={variables}
+          query={query}
+          lang={lang}
+        />
+      </>
     );
   } catch (error) {
     console.error('Error fetching page data:', error);

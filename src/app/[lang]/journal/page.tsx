@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import { client } from "../../../../tina/__generated__/client";
 import JournalListingClient from '../../../components/JournalListingClient';
 import { truncate } from '../../../lib/richText';
-import type { Metadata } from 'next';
+import {
+  listingPageUrl,
+  parsePageParam,
+  totalListingPages,
+} from '../../../lib/listingPagination';
 
 interface Props {
   params: { lang: string };
+  searchParams: { page?: string | string[] };
 }
 
 // Enable static generation with revalidation
@@ -18,8 +25,24 @@ export function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'vi' }];
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const isVi = params.lang === 'vi';
+// Title and description come from the listing's hero copy; each ?page=N is its
+// own indexable URL, so it self-canonicalises rather than looking like a
+// duplicate of page 1.
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
+  const { lang } = params;
+  const isVi = lang === 'vi';
+  const page = parsePageParam(searchParams?.page);
+
+  const alternates = {
+    canonical: listingPageUrl(`/${lang}/journal`, page),
+    languages: {
+      en: listingPageUrl('/en/journal', page),
+      vi: listingPageUrl('/vi/journal', page),
+    },
+  };
 
   try {
     const { data } = await client.queries.journalListing({
@@ -32,18 +55,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: `${title} - Meraki Wedding Planner`,
       description: truncate(description || '', 300) || undefined,
+      alternates,
     };
   } catch {
     return {
       title: isVi
         ? 'Nhật ký - Meraki Wedding Planner'
         : 'Journals - Meraki Wedding Planner',
+      alternates,
     };
   }
 }
 
-export default async function JournalPage({ params }: Props) {
+export default async function JournalPage({ params, searchParams }: Props) {
   const { lang } = params;
+  const initialPage = parsePageParam(searchParams?.page);
 
   if (!['en', 'vi'].includes(lang)) {
     return <div>Not Found</div>;
@@ -110,6 +136,12 @@ export default async function JournalPage({ params }: Props) {
     // journals will remain empty array
   }
 
+  // Out-of-range pages would otherwise serve a clamped copy of the last page
+  // under their own canonical, i.e. duplicate content.
+  if (initialPage > 1 && initialPage > totalListingPages(journals.length)) {
+    notFound();
+  }
+
   return (
     <JournalListingClient
       data={journalListingResponse.data}
@@ -117,6 +149,7 @@ export default async function JournalPage({ params }: Props) {
       variables={{ relativePath }}
       lang={lang}
       journals={journals}
+      initialPage={initialPage}
     />
   );
 }

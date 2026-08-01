@@ -1,10 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { client } from '../../../../tina/__generated__/client';
 import BlogListingClient from '../../../components/BlogListingClient';
+import {
+  listingPageUrl,
+  parsePageParam,
+  totalListingPages,
+} from '../../../lib/listingPagination';
 
 interface Props {
   params: { lang: string };
+  searchParams: { page?: string | string[] };
 }
 
 // Enable static generation with revalidation
@@ -14,8 +21,22 @@ export function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'vi' }];
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
   const { lang } = params;
+  // Each ?page=N is its own indexable URL, so it self-canonicalises rather
+  // than looking like a duplicate of page 1.
+  const page = parsePageParam(searchParams?.page);
+  const alternates = {
+    canonical: listingPageUrl(`/${lang}/blog`, page),
+    languages: {
+      en: listingPageUrl('/en/blog', page),
+      vi: listingPageUrl('/vi/blog', page),
+    },
+  };
+
   try {
     const listingResponse = await client.queries.blogListing({
       relativePath: 'index.mdx',
@@ -26,13 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: seo?.title || `${title} - Meraki Wedding Planner`,
       description: seo?.description || '',
-      alternates: {
-        canonical: `/${lang}/blog`,
-        languages: {
-          en: '/en/blog',
-          vi: '/vi/blog',
-        },
-      },
+      alternates,
     };
   } catch {
     return {
@@ -44,19 +59,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         lang === 'en'
           ? 'Wedding tips, inspiration, and behind-the-scenes stories from Meraki Wedding Planner'
           : 'Mẹo cưới, cảm hứng và những câu chuyện hậu trường từ Meraki Wedding Planner',
-      alternates: {
-        canonical: `/${lang}/blog`,
-        languages: {
-          en: '/en/blog',
-          vi: '/vi/blog',
-        },
-      },
+      alternates,
     };
   }
 }
 
-export default async function BlogPage({ params }: Props) {
+export default async function BlogPage({ params, searchParams }: Props) {
   const { lang } = params;
+  const initialPage = parsePageParam(searchParams?.page);
 
   if (!['en', 'vi'].includes(lang)) {
     return <div>Not Found</div>;
@@ -77,6 +87,12 @@ export default async function BlogPage({ params }: Props) {
     console.error('Error fetching blogs:', error);
   }
 
+  // Out-of-range pages would otherwise serve a clamped copy of the last page
+  // under their own canonical, i.e. duplicate content.
+  if (initialPage > 1 && initialPage > totalListingPages(blogs.length)) {
+    notFound();
+  }
+
   return (
     <BlogListingClient
       data={listingResponse.data}
@@ -84,6 +100,7 @@ export default async function BlogPage({ params }: Props) {
       variables={{ relativePath }}
       lang={lang}
       blogs={blogs}
+      initialPage={initialPage}
     />
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { type AltFallback, resolveImageAlt } from '@/lib/image-alt';
 import { tinaField } from 'tinacms/dist/react';
 import MerakiImage from '../ui/MerakiImage';
 
@@ -17,6 +18,8 @@ interface TwoImagesAsymmetryBlockProps {
   blockIndex: number;
   indexMap: Record<string, number>;
   onImageClick: (index: number) => void;
+  /** Page context used to fill in the alt text — this block has no alt fields. */
+  altFallback?: AltFallback;
 }
 
 export default function TwoImagesAsymmetryBlock({
@@ -25,6 +28,7 @@ export default function TwoImagesAsymmetryBlock({
   blockIndex,
   indexMap,
   onImageClick,
+  altFallback,
 }: TwoImagesAsymmetryBlockProps) {
   const caption = lang === 'vi' ? data.caption_vi : data.caption_en;
   const offset = data.offset || 'up';
@@ -32,6 +36,16 @@ export default function TwoImagesAsymmetryBlock({
   const rightOffset = offset === 'up' ? 'md:mt-[90px]' : 'md:-mt-[90px]';
   const leftIndex = indexMap[`${blockIndex}-left`];
   const rightIndex = indexMap[`${blockIndex}-right`];
+
+  const altFor = (index: number) =>
+    resolveImageAlt(
+      null,
+      altFallback,
+      lang,
+      Number.isFinite(index) ? index + 1 : undefined
+    );
+  const leftAlt = altFor(leftIndex);
+  const rightAlt = altFor(rightIndex);
 
   return (
     <div className="max-w-[968px] mx-auto px-4 md:px-6">
@@ -41,11 +55,11 @@ export default function TwoImagesAsymmetryBlock({
             type="button"
             className="w-full cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             onClick={() => onImageClick(leftIndex)}
-            aria-label="View image in gallery"
+            aria-label={leftAlt || 'View image in gallery'}
           >
             <MerakiImage
               src={data.image_left}
-              alt=""
+              alt={leftAlt}
               className="w-full h-auto object-cover"
               data-tina-field={tinaField(data, 'image_left')}
               width={400}
@@ -58,11 +72,11 @@ export default function TwoImagesAsymmetryBlock({
             type="button"
             className="w-full cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             onClick={() => onImageClick(rightIndex)}
-            aria-label="View image in gallery"
+            aria-label={rightAlt || 'View image in gallery'}
           >
             <MerakiImage
               src={data.image_right}
-              alt=""
+              alt={rightAlt}
               className="w-full h-auto object-cover"
               data-tina-field={tinaField(data, 'image_right')}
               width={480}

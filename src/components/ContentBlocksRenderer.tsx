@@ -1,6 +1,7 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { AltFallback } from '@/lib/image-alt';
 import ImageGalleryBlock from './blocks/ImageGalleryBlock';
 import RichTextBlock from './blocks/RichTextBlock';
 import SpacingBlock from './blocks/SpacingBlock';
@@ -24,6 +25,8 @@ interface ContentBlocksRendererProps {
   indexMap: Record<string, number>;
   onImageClick: (index: number) => void;
   wrapperClassName?: string;
+  /** Page context used to fill in blank image alt text. */
+  altFallback?: AltFallback;
 }
 
 const getDefaultTextAlignment = (typenamePrefix: string): 'left' | 'center' => {
@@ -88,6 +91,7 @@ export default function ContentBlocksRenderer({
   indexMap,
   onImageClick,
   wrapperClassName = '',
+  altFallback,
 }: ContentBlocksRendererProps) {
   const defaultTextAlignment = getDefaultTextAlignment(typenamePrefix);
   const isJournalContent = typenamePrefix === 'JournalContent_blocks';
@@ -106,6 +110,7 @@ export default function ContentBlocksRenderer({
               blockIndex={blockIndex}
               indexMap={indexMap}
               onImageClick={onImageClick}
+              altFallback={altFallback}
             />
           );
         }
@@ -119,6 +124,7 @@ export default function ContentBlocksRenderer({
               blockIndex={blockIndex}
               indexMap={indexMap}
               onImageClick={onImageClick}
+              altFallback={altFallback}
             />
           );
         }
