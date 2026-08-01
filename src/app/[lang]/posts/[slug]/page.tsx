@@ -118,12 +118,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: metaTitle,
       description: metaDescription,
       alternates: {
-        canonical: `/${lang}/blog/${
+        canonical: `/${lang}/posts/${
           lang === 'vi' ? resolvedBlog.slugVi : resolvedBlog.slugEn
         }`,
         languages: {
-          en: `/en/blog/${resolvedBlog.slugEn}`,
-          vi: `/vi/blog/${resolvedBlog.slugVi}`,
+          en: `/en/posts/${resolvedBlog.slugEn}`,
+          vi: `/vi/posts/${resolvedBlog.slugVi}`,
         },
       },
       openGraph: {
@@ -209,7 +209,7 @@ export default async function BlogPostPage({ params }: Props) {
   const title = (isVi ? post.title_vi : post.title_en) || '';
   const excerpt = isVi ? post.excerpt_vi : post.excerpt_en;
   const seo = isVi ? post.seo_vi : post.seo_en;
-  const postUrl = absoluteUrl(`/${lang}/blog/${canonicalSlug}`);
+  const postUrl = absoluteUrl(`/${lang}/posts/${canonicalSlug}`);
 
   return (
     <>
@@ -234,6 +234,7 @@ export default async function BlogPostPage({ params }: Props) {
           buildDetailBreadcrumbSchema({
             lang,
             section: 'blog',
+            detailSegment: 'posts',
             pageName: title,
             pageSlug: canonicalSlug,
           }),

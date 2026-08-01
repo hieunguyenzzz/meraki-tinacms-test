@@ -37,8 +37,8 @@ export default function BlogClient({
 
   useEffect(() => {
     setLocalizedPaths({
-      en: `/en/blog/${localizedSlugs.en}`,
-      vi: `/vi/blog/${localizedSlugs.vi}`,
+      en: `/en/posts/${localizedSlugs.en}`,
+      vi: `/vi/posts/${localizedSlugs.vi}`,
     });
 
     return () => setLocalizedPaths(null);

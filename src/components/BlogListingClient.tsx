@@ -236,7 +236,7 @@ export default function BlogListingClient({
 
                 return (
                   <div key={getBlogId(blog)} className="group">
-                    <Link href={`/${lang}/blog/${slug}`}>
+                    <Link href={`/${lang}/posts/${slug}`}>
                       {/* Image */}
                       <div className="relative aspect-[3/2] overflow-hidden mb-6">
                         {blog.featured_image ? (

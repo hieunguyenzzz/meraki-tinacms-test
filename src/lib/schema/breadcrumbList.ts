@@ -35,15 +35,24 @@ const SECTION_LABELS = {
 
 export type BreadcrumbSection = 'blog' | 'journal';
 
-/** Home > Section > Page trail for a blog post or journal entry. */
+/**
+ * Home > Section > Page trail for a blog post or journal entry.
+ *
+ * `detailSegment` exists because blog detail does not live under the listing it
+ * belongs to: posts are served from /[lang]/posts/<slug> so the URLs the old site
+ * had indexed keep resolving, while the listing stays at /[lang]/blog. Journal
+ * needs no override, so it defaults to `section`.
+ */
 export function buildDetailBreadcrumbSchema({
   lang,
   section,
+  detailSegment = section,
   pageName,
   pageSlug,
 }: {
   lang: string;
   section: BreadcrumbSection;
+  detailSegment?: string;
   pageName: string;
   pageSlug: string;
 }) {
@@ -55,6 +64,9 @@ export function buildDetailBreadcrumbSchema({
       name: SECTION_LABELS[section][locale],
       url: absoluteUrl(`/${lang}/${section}`),
     },
-    { name: pageName, url: absoluteUrl(`/${lang}/${section}/${pageSlug}`) },
+    {
+      name: pageName,
+      url: absoluteUrl(`/${lang}/${detailSegment}/${pageSlug}`),
+    },
   ]);
 }
