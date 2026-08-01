@@ -1,6 +1,7 @@
 import { client } from '../../../tina/__generated__/client';
 import type { Metadata } from 'next';
 import HomeClient from '../../components/HomeClient';
+import { resolveImageUrl } from '../../lib/image';
 
 interface Props {
   params: { lang: string };
@@ -25,6 +26,11 @@ const defaultContent = {
 const t = (text: { en: string; vi: string }, lang: string) =>
   lang === 'en' ? text.en : text.vi;
 
+// Share image for the homepage link preview. Stored in S3 pre-cropped to
+// Facebook's 1200x630 and already JPEG, so it is served straight from the
+// bucket — no Thumbor hop, and no risk of a WebP that Messenger won't render.
+const OG_IMAGE = resolveImageUrl('/images/og/home.jpg');
+
 // Enable static generation with revalidation
 export const revalidate = 3600; // Revalidate every hour (ISR)
 
@@ -48,6 +54,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: seo?.title || defaultContent.title,
         description: seo?.description || t(defaultContent.description, lang),
         type: 'website',
+        siteName: 'Meraki Wedding Planner',
+        locale: lang === 'en' ? 'en_US' : 'vi_VN',
+        images: [{ url: OG_IMAGE, width: 1200, height: 630 }],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: seo?.title || defaultContent.title,
+        description: seo?.description || t(defaultContent.description, lang),
+        images: [OG_IMAGE],
       },
       robots: 'index, follow',
     };
@@ -55,6 +70,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: defaultContent.title,
       description: t(defaultContent.description, lang),
+      openGraph: {
+        images: [{ url: OG_IMAGE, width: 1200, height: 630 }],
+      },
     };
   }
 }
