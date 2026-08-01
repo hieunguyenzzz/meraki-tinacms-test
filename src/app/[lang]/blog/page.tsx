@@ -17,6 +17,25 @@ interface Props {
 // Enable static generation with revalidation
 export const revalidate = 3600;
 
+// Date gate: keeps the legacy posts off the blog listing.
+//
+// The 16 posts migrated from the old WordPress site are deliberately published —
+// Google has their /posts/ URLs indexed and they must keep resolving — but they are
+// not part of the current blog and should not appear here. `published` cannot express
+// that, since it is what makes them reachable in the first place, so the listing
+// filters on date instead: the migrated archive ends 2021-10-12 and the first post
+// authored in v2 is 2026-05-31, leaving an unambiguous gap.
+const LISTING_START_DATE = Date.parse('2022-01-01T00:00:00Z');
+
+// A post with no date is shown: `published_date` is optional in the collection
+// schema, so failing open keeps a newly created post from silently going missing.
+const isCurrentPost = (publishedDate?: string | null) => {
+  if (!publishedDate) return true;
+
+  const timestamp = Date.parse(publishedDate);
+  return Number.isNaN(timestamp) || timestamp >= LISTING_START_DATE;
+};
+
 export function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'vi' }];
 }
@@ -82,7 +101,8 @@ export default async function BlogPage({ params, searchParams }: Props) {
     });
     blogs = (blogList.data.blogConnection.edges || [])
       .filter((edge): edge is NonNullable<typeof edge> => edge?.node != null)
-      .map((edge) => edge.node);
+      .map((edge) => edge.node)
+      .filter((node) => isCurrentPost(node?.published_date));
   } catch (error) {
     console.error('Error fetching blogs:', error);
   }

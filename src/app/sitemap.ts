@@ -108,8 +108,9 @@ async function blogEntries(): Promise<MetadataRoute.Sitemap> {
       if (!slugEn) return [];
       const slugVi = node.slug_vi?.trim() || slugEn;
 
+      // Detail pages live under /posts, not under the /blog listing.
       return localisedEntries(
-        { en: `/en/blog/${slugEn}`, vi: `/vi/blog/${slugVi}` },
+        { en: `/en/posts/${slugEn}`, vi: `/vi/posts/${slugVi}` },
         node.published_date || undefined
       );
     });
