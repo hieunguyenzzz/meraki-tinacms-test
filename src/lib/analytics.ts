@@ -32,8 +32,21 @@ declare global {
  * overrides these.
  */
 const DEFAULT_GA_ID = 'G-152J4BFGVX';
-const DEFAULT_UMAMI_SRC = 'https://umami.soundboxstore.com/script.js';
-const DEFAULT_UMAMI_WEBSITE_ID = 'cb5bc549-bb67-4b05-8270-bdbca50ce5f2';
+
+/**
+ * Umami is off by default. The old site's website id
+ * (`cb5bc549-bb67-4b05-8270-bdbca50ce5f2`) no longer exists on
+ * umami.soundboxstore.com — its /api/send answers
+ * `{"error":{"message":"Website not found.","code":"bad-request","status":400}}`
+ * — so loading the script only bought a failed request on every pageview and
+ * never recorded anything.
+ *
+ * The integration itself is intact. Set NEXT_PUBLIC_UMAMI_SRC and
+ * NEXT_PUBLIC_UMAMI_WEBSITE_ID to a site that exists and it starts working
+ * again, no code change needed.
+ */
+const DEFAULT_UMAMI_SRC = '';
+const DEFAULT_UMAMI_WEBSITE_ID = '';
 
 // The defaults apply to real builds only. `next dev` gets nothing unless the env
 // vars are set explicitly, which keeps local traffic out of the live property.
