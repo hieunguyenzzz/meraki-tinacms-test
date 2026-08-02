@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { tinaField } from 'tinacms/dist/react';
+import { trackEvent } from '../../../lib/analytics';
 import type { LetsConnectForm as LetsConnectFormContent } from '../../../../tina/__generated__/types';
 
 const localized = (
@@ -140,10 +141,23 @@ export default function LetsConnectForm({
       if (!response.ok) throw new Error('Request failed');
 
       setStatus('success');
+      // Same event name the old site used, so the Umami history is continuous.
+      // Nothing from the payload is sent — enquiry details are lead data and do
+      // not belong in a third-party tool.
+      trackEvent('contact_us', {
+        form_type: 'lets_connect',
+        outcome: 'success',
+        lang,
+      });
       form.reset();
     } catch (error) {
       console.error("Failed to submit Let's Connect form:", error);
       setStatus('error');
+      trackEvent('contact_us', {
+        form_type: 'lets_connect',
+        outcome: 'error',
+        lang,
+      });
     }
   }
 

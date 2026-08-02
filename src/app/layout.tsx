@@ -1,6 +1,7 @@
 import './globals.css';
 import 'animate.css';
 import type { Metadata } from 'next';
+import Analytics from '../components/Analytics';
 import {
   DEFAULT_SHARE_IMAGE,
   SHARE_IMAGE_HEIGHT,
@@ -60,7 +61,10 @@ export default function RootLayout({
           href='https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'
         />
       </head>
-      <body className='bg-background-1'>{children}</body>
+      <body className='bg-background-1'>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
