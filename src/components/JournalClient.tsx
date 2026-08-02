@@ -1,6 +1,7 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { trackEvent } from '@/lib/analytics';
 import { journalAltFallback } from '@/lib/image-alt';
 import { useMemo, useState } from 'react';
 import { useTina } from 'tinacms/dist/react';
@@ -21,6 +22,7 @@ export default function JournalClient({
   variables,
   query,
   lang,
+  slug,
 }: JournalClientProps) {
   const { data: tinaData } = useTina({ data, variables, query });
   const journal = tinaData.journal;
@@ -41,6 +43,12 @@ export default function JournalClient({
   const openLightbox = (index: number) => {
     setCurrentIndex(index);
     setLightboxOpen(true);
+    // Only on open — paging through the gallery would drown out the signal.
+    trackEvent('lightbox_open', {
+      content_type: 'journal',
+      slug,
+      position: index + 1,
+    });
   };
 
   const handleNext = () => {
