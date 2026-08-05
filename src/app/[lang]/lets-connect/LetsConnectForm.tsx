@@ -62,6 +62,10 @@ function CheckboxList({
   options: Array<{ label_en: string; label_vi: string } | null>;
   lang: string;
 }) {
+  // At least one option must be picked. HTML `required` on a checkbox only
+  // demands that single box, so mark every box required until one is checked.
+  const [selected, setSelected] = useState<string[]>([]);
+
   return (
     <div className="mt-3 space-y-3">
       {options.map(
@@ -75,6 +79,16 @@ function CheckboxList({
                 type="checkbox"
                 name={name}
                 value={option.label_en}
+                required={selected.length === 0}
+                checked={selected.includes(option.label_en)}
+                onChange={(event) => {
+                  const { value, checked } = event.currentTarget;
+                  setSelected((previous) =>
+                    checked
+                      ? [...previous, value]
+                      : previous.filter((entry) => entry !== value)
+                  );
+                }}
                 className="mt-0.5 h-4 w-4 shrink-0 appearance-none border border-line-primary bg-transparent checked:bg-shape-primary checked:shadow-[inset_0_0_0_3px_var(--color-bg-1)] focus:outline-none focus:ring-1 focus:ring-line-accent"
               />
               <span
@@ -251,6 +265,7 @@ export default function LetsConnectForm({
                 content,
                 lang === 'en' ? 'role_label_en' : 'role_label_vi'
               )}
+              required
             />
             <Field
               id="partnerName"
@@ -265,6 +280,7 @@ export default function LetsConnectForm({
                   ? 'partner_name_label_en'
                   : 'partner_name_label_vi'
               )}
+              required
             />
             <Field
               id="email"
@@ -298,6 +314,7 @@ export default function LetsConnectForm({
                 content,
                 lang === 'en' ? 'phone_label_en' : 'phone_label_vi'
               )}
+              required
             />
             <Field
               id="location"
@@ -310,6 +327,7 @@ export default function LetsConnectForm({
                 content,
                 lang === 'en' ? 'location_label_en' : 'location_label_vi'
               )}
+              required
             />
           </div>
         </fieldset>
@@ -343,6 +361,7 @@ export default function LetsConnectForm({
                   ? 'wedding_date_label_en'
                   : 'wedding_date_label_vi'
               )}
+              required
             />
             <Field
               id="venue"
@@ -355,6 +374,7 @@ export default function LetsConnectForm({
                 content,
                 lang === 'en' ? 'venue_label_en' : 'venue_label_vi'
               )}
+              required
             />
             <Field
               id="guestCount"
@@ -368,6 +388,7 @@ export default function LetsConnectForm({
                 lang === 'en' ? 'guest_count_label_en' : 'guest_count_label_vi'
               )}
               type="number"
+              required
               className="sm:col-span-2"
             />
             <Field
@@ -386,6 +407,7 @@ export default function LetsConnectForm({
                 content,
                 lang === 'en' ? 'budget_label_en' : 'budget_label_vi'
               )}
+              required
               className="sm:col-span-2"
             />
           </div>
@@ -462,6 +484,7 @@ export default function LetsConnectForm({
               id="otherNotes"
               name="otherNotes"
               rows={1}
+              required
               className="mt-1 w-full resize-y border-0 border-b border-line-primary bg-transparent px-0 py-2 text-body-sm text-text-primary outline-none transition-colors focus:border-text-primary focus:ring-0"
             />
             <p
