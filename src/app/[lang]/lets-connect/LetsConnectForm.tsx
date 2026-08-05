@@ -63,13 +63,16 @@ function CheckboxList({
   name,
   options,
   lang,
+  required = false,
 }: {
   name: string;
   options: Array<{ label_en: string; label_vi: string } | null>;
   lang: string;
+  required?: boolean;
 }) {
-  // At least one option must be picked. HTML `required` on a checkbox only
-  // demands that single box, so mark every box required until one is checked.
+  // When the group is mandatory, at least one option must be picked. HTML
+  // `required` on a checkbox only demands that single box, so mark every box
+  // required until one is checked.
   const [selected, setSelected] = useState<string[]>([]);
 
   return (
@@ -85,7 +88,7 @@ function CheckboxList({
                 type="checkbox"
                 name={name}
                 value={option.label_en}
-                required={selected.length === 0}
+                required={required && selected.length === 0}
                 checked={selected.includes(option.label_en)}
                 onChange={(event) => {
                   const { value, checked } = event.currentTarget;
@@ -430,7 +433,6 @@ export default function LetsConnectForm({
                 lang
               )}
             </span>
-            <RequiredMark />
           </p>
           <CheckboxList
             name="extraEvents"
@@ -474,6 +476,7 @@ export default function LetsConnectForm({
             name="referralSource"
             options={content.referral_options || []}
             lang={lang}
+            required
           />
           <div className="mt-7">
             <label
@@ -492,13 +495,11 @@ export default function LetsConnectForm({
                   lang
                 )}
               </span>
-              <RequiredMark />
             </label>
             <textarea
               id="otherNotes"
               name="otherNotes"
               rows={1}
-              required
               className="mt-1 w-full resize-y border-0 border-b border-line-primary bg-transparent px-0 py-2 text-body-sm text-text-primary outline-none transition-colors focus:border-text-primary focus:ring-0"
             />
             <p

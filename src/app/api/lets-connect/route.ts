@@ -43,8 +43,9 @@ export async function POST(request: NextRequest) {
   const referralSource = Array.isArray(body.referralSource) ? body.referralSource.map(String) : [];
   const guestCountRaw = body.guestCount != null ? Number(body.guestCount) : NaN;
 
-  // Every field on the form is mandatory, so mirror the browser-side `required`
-  // attributes here — a client that skips them must not create a partial lead.
+  // Mirror the browser-side `required` attributes so a client that skips them
+  // can't create a partial lead. The extra-event picks and the free-text notes
+  // are the only optional fields.
   const missing = Object.entries({
     firstName,
     lastName,
@@ -55,14 +56,12 @@ export async function POST(request: NextRequest) {
     weddingDate,
     venue,
     budget,
-    otherNotes,
   })
     .filter(([, value]) => !value)
     .map(([field]) => field);
 
   if (!EMAIL_RE.test(email)) missing.push('email');
   if (!Number.isFinite(guestCountRaw)) missing.push('guestCount');
-  if (extraEvents.length === 0) missing.push('extraEvents');
   if (referralSource.length === 0) missing.push('referralSource');
 
   if (missing.length > 0) {
@@ -70,7 +69,7 @@ export async function POST(request: NextRequest) {
       `[lets-connect:${correlationId}] rejected submission, missing fields: ${missing.join(', ')}`
     );
     return NextResponse.json(
-      { error: 'All fields are required', missing },
+      { error: 'Required fields are missing', missing },
       { status: 400 }
     );
   }
