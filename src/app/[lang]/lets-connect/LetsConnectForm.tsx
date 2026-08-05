@@ -11,6 +11,15 @@ const localized = (
   lang = 'en'
 ) => (lang === 'en' ? english : vietnamese) || '';
 
+// Marks a mandatory field. Rendered outside the Tina-editable label text so an
+// editor never has to type or keep the asterisk themselves. Hidden from
+// assistive tech, which already announces the input's own `required`.
+const RequiredMark = () => (
+  <span aria-hidden="true" className="ml-1 text-text-accent">
+    *
+  </span>
+);
+
 function Field({
   id,
   label,
@@ -30,12 +39,9 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label
-        htmlFor={id}
-        className="block text-body-sm text-text-secondary"
-        data-tina-field={cmsField}
-      >
-        {label}
+      <label htmlFor={id} className="block text-body-sm text-text-secondary">
+        <span data-tina-field={cmsField}>{label}</span>
+        {required && <RequiredMark />}
       </label>
       <input
         id={id}
@@ -411,18 +417,20 @@ export default function LetsConnectForm({
               className="sm:col-span-2"
             />
           </div>
-          <p
-            className="mt-6 text-body-sm text-text-secondary"
-            data-tina-field={tinaField(
-              content,
-              lang === 'en' ? 'extra_events_label_en' : 'extra_events_label_vi'
-            )}
-          >
-            {localized(
-              content.extra_events_label_en,
-              content.extra_events_label_vi,
-              lang
-            )}
+          <p className="mt-6 text-body-sm text-text-secondary">
+            <span
+              data-tina-field={tinaField(
+                content,
+                lang === 'en' ? 'extra_events_label_en' : 'extra_events_label_vi'
+              )}
+            >
+              {localized(
+                content.extra_events_label_en,
+                content.extra_events_label_vi,
+                lang
+              )}
+            </span>
+            <RequiredMark />
           </p>
           <CheckboxList
             name="extraEvents"
@@ -447,18 +455,20 @@ export default function LetsConnectForm({
               lang
             )}
           </legend>
-          <p
-            className="mt-5 border-b border-line-primary pb-2 text-body-sm text-text-secondary"
-            data-tina-field={tinaField(
-              content,
-              lang === 'en' ? 'referral_label_en' : 'referral_label_vi'
-            )}
-          >
-            {localized(
-              content.referral_label_en,
-              content.referral_label_vi,
-              lang
-            )}
+          <p className="mt-5 border-b border-line-primary pb-2 text-body-sm text-text-secondary">
+            <span
+              data-tina-field={tinaField(
+                content,
+                lang === 'en' ? 'referral_label_en' : 'referral_label_vi'
+              )}
+            >
+              {localized(
+                content.referral_label_en,
+                content.referral_label_vi,
+                lang
+              )}
+            </span>
+            <RequiredMark />
           </p>
           <CheckboxList
             name="referralSource"
@@ -469,16 +479,20 @@ export default function LetsConnectForm({
             <label
               htmlFor="otherNotes"
               className="block text-body-sm text-text-secondary"
-              data-tina-field={tinaField(
-                content,
-                lang === 'en' ? 'other_notes_label_en' : 'other_notes_label_vi'
-              )}
             >
-              {localized(
-                content.other_notes_label_en,
-                content.other_notes_label_vi,
-                lang
-              )}
+              <span
+                data-tina-field={tinaField(
+                  content,
+                  lang === 'en' ? 'other_notes_label_en' : 'other_notes_label_vi'
+                )}
+              >
+                {localized(
+                  content.other_notes_label_en,
+                  content.other_notes_label_vi,
+                  lang
+                )}
+              </span>
+              <RequiredMark />
             </label>
             <textarea
               id="otherNotes"
