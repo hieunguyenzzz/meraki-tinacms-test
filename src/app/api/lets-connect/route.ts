@@ -26,35 +26,71 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  const firstName = String(body.firstName || '').trim();
-  const lastName = String(body.lastName || '').trim();
-  const email = String(body.email || '').trim();
+  const text = (value: unknown) => String(value ?? '').trim();
 
-  if (!firstName || !lastName || !EMAIL_RE.test(email)) {
+  const firstName = text(body.firstName);
+  const lastName = text(body.lastName);
+  const email = text(body.email);
+  const role = text(body.role);
+  const partnerName = text(body.partnerName);
+  const phone = text(body.phone);
+  const location = text(body.location);
+  const weddingDate = text(body.weddingDate);
+  const venue = text(body.venue);
+  const budget = text(body.budget);
+  const otherNotes = text(body.otherNotes);
+  const extraEvents = Array.isArray(body.extraEvents) ? body.extraEvents.map(String) : [];
+  const referralSource = Array.isArray(body.referralSource) ? body.referralSource.map(String) : [];
+  const guestCountRaw = body.guestCount != null ? Number(body.guestCount) : NaN;
+
+  // Every field on the form is mandatory, so mirror the browser-side `required`
+  // attributes here — a client that skips them must not create a partial lead.
+  const missing = Object.entries({
+    firstName,
+    lastName,
+    role,
+    partnerName,
+    phone,
+    location,
+    weddingDate,
+    venue,
+    budget,
+    otherNotes,
+  })
+    .filter(([, value]) => !value)
+    .map(([field]) => field);
+
+  if (!EMAIL_RE.test(email)) missing.push('email');
+  if (!Number.isFinite(guestCountRaw)) missing.push('guestCount');
+  if (extraEvents.length === 0) missing.push('extraEvents');
+  if (referralSource.length === 0) missing.push('referralSource');
+
+  if (missing.length > 0) {
+    console.warn(
+      `[lets-connect:${correlationId}] rejected submission, missing fields: ${missing.join(', ')}`
+    );
     return NextResponse.json(
-      { error: 'First name, last name, and a valid email are required' },
+      { error: 'All fields are required', missing },
       { status: 400 }
     );
   }
-
-  const guestCountRaw = body.guestCount != null ? Number(body.guestCount) : NaN;
 
   const submission: LetsConnectSubmission = {
     lang: body.lang === 'vi' ? 'vi' : 'en',
     firstName,
     lastName,
-    role: body.role ? String(body.role).trim() : undefined,
-    partnerName: body.partnerName ? String(body.partnerName).trim() : undefined,
+    role,
+    partnerName,
     email,
-    phone: body.phone ? String(body.phone).trim() : undefined,
-    location: body.location ? String(body.location).trim() : undefined,
-    weddingDate: body.weddingDate ? String(body.weddingDate) : undefined,
-    venue: body.venue ? String(body.venue).trim() : undefined,
-    guestCount: Number.isFinite(guestCountRaw) ? guestCountRaw : undefined,
-    budget: body.budget ? String(body.budget).trim() : undefined,
-    extraEvents: Array.isArray(body.extraEvents) ? body.extraEvents.map(String) : [],
-    referralSource: Array.isArray(body.referralSource) ? body.referralSource.map(String) : [],
-    otherNotes: body.otherNotes ? String(body.otherNotes).trim() : undefined,
+    phone,
+    location,
+    weddingDate,
+    venue,
+    guestCount: guestCountRaw,
+    budget,
+    extraEvents,
+    referralSource,
+    otherNotes,
   };
 
   // Best-effort audit row. A missing or unreachable database must not cost us the
