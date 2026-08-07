@@ -7,7 +7,7 @@ const PREHEADER_SPACER = '&#847;&zwnj;&nbsp;'.repeat(4);
 
 const COPY = {
   subject: {
-    en: 'Thank you for sharing with Meraki ~ We’ve received your story 💚',
+    en: (name: string) => `Thank you, ${name} ~ We’ve received your story 💚`,
     vi: (name: string) => `Cảm ơn ${name} ~ Meraki đã nhận được chia sẻ của bạn 💚`,
   },
   preheader: {
@@ -58,9 +58,8 @@ const FOOTER_LINKS = [
 
 export function buildLetsConnectThankYouEmail(submission: LetsConnectSubmission) {
   const lang = submission.lang === 'vi' ? 'vi' : 'en';
-  // Only the Vietnamese subject is personalised; the English one greets the couple.
-  const subject =
-    lang === 'vi' ? COPY.subject.vi(submission.firstName || 'bạn') : COPY.subject.en;
+  const name = submission.firstName || (lang === 'vi' ? 'bạn' : 'lovely couple');
+  const subject = COPY.subject[lang](name);
 
   const paragraphRows = COPY.body[lang]
     .map(
