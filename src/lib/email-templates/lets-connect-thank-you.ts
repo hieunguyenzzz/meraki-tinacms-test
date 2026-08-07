@@ -1,6 +1,5 @@
 import type { LetsConnectSubmission } from '../db';
-
-const LOGO_URL = 'https://minio-api.hieunguyen.dev/media/8a8abfb3-8654-4896-95c9-2d22b6853aea.png';
+import { LOGO_URL } from './logo';
 
 // Pads the preheader so clients don't pull body copy into the inbox preview.
 const PREHEADER_SPACER = '&#847;&zwnj;&nbsp;'.repeat(4);
