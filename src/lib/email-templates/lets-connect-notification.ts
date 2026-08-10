@@ -63,7 +63,7 @@ const SECTION_DIVIDER = (topPadding: number) =>
 
 const SECTION_HEADING = (title: string, topPadding: number) =>
   `<tr><td style="padding:${topPadding}px 48px 0 48px" class="pad">
-<div style="font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:26px;mso-line-height-rule:exactly;color:#324020">${title}</div>
+<div class="sec" style="font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:26px;mso-line-height-rule:exactly;color:#324020">${title}</div>
 </td></tr>`;
 
 // Values arrive pre-escaped because a few of them are anchors, not plain text.
@@ -121,7 +121,7 @@ export function buildLetsConnectNotificationEmail(
 
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"><title>New enquiry — Meraki Wedding Planner</title>
 <!--[if mso]><style>body,table,td,a{font-family:Arial,sans-serif !important}</style><![endif]-->
-<style>@media only screen and (max-width:620px){.wrap{width:100% !important}.pad{padding-left:24px !important;padding-right:24px !important}.lgo{width:130px !important}.lbl,.val{display:block !important;width:100% !important;padding-left:0 !important;padding-right:0 !important}.lbl{padding-bottom:2px !important}}</style>
+<style>@media only screen and (max-width:620px){.wrap{width:100% !important}.pad{padding-left:24px !important;padding-right:24px !important}.lgo{width:130px !important}.lbl,.val{display:block !important;width:100% !important;padding-left:0 !important;padding-right:0 !important}.lbl{padding-bottom:2px !important;font-size:13px !important;line-height:21px !important}.val{font-size:17px !important;line-height:26px !important}.sec{font-size:20px !important;line-height:28px !important}.note{font-size:17px !important;line-height:28px !important}.meta{font-size:14px !important;line-height:23px !important}}</style>
 </head>
 <body style="margin:0;padding:0;background-color:#EFE6CE;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%">
 <span style="display:none;font-size:1px;color:#EFE6CE;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">${preheader}${PREHEADER_SPACER}</span>
@@ -138,7 +138,7 @@ export function buildLetsConnectNotificationEmail(
 
 <tr><td align="center" style="padding:26px 48px 0 48px" class="pad">
 <div style="font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:34px;mso-line-height-rule:exactly;color:#324020">${escapeHtml(couple)}</div>
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:22px;mso-line-height-rule:exactly;color:#63684A;padding-top:6px">Submitted ${formatSubmittedAt(now)} · ${lang.toUpperCase()} form</div>
+<div class="meta" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:22px;mso-line-height-rule:exactly;color:#63684A;padding-top:6px">Submitted ${formatSubmittedAt(now)} · ${lang.toUpperCase()} form</div>
 </td></tr>
 
 ${SECTION_DIVIDER(32)}
@@ -153,11 +153,11 @@ ${SECTION_HEADING('A few more details', 34)}
 ${FIELD_TABLE([['Heard about us via', escapeHtml(referralSource)]])}
 
 <tr><td style="padding:20px 48px 0 48px" class="pad">
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:20px;letter-spacing:0.6px;text-transform:uppercase;color:#63684A">Anything else you would love us to know</div>
+<div class="lbl" style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:20px;letter-spacing:0.6px;text-transform:uppercase;color:#63684A">Anything else you would love us to know</div>
 </td></tr>
 <tr><td style="padding:10px 48px 0 48px" class="pad">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;background-color:#F7EBCB"><tr><td style="padding:18px 20px">
-<p style="margin:0;font-family:'BT Beau Sans',Arial,Helvetica,sans-serif;font-size:15px;line-height:26px;mso-line-height-rule:exactly;color:#3C4632;white-space:pre-line">${escapeHtml(submission.otherNotes ?? '')}</p>
+<p class="note" style="margin:0;font-family:'BT Beau Sans',Arial,Helvetica,sans-serif;font-size:15px;line-height:26px;mso-line-height-rule:exactly;color:#3C4632;white-space:pre-line">${escapeHtml(submission.otherNotes ?? '')}</p>
 </td></tr></table>
 </td></tr>
 
