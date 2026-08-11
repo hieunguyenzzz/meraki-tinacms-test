@@ -55,9 +55,14 @@ function localisedEntries(
   paths: LocalisedPaths,
   lastModified?: string
 ): MetadataRoute.Sitemap {
+  // The homepage pair is the one case with a locale-neutral URL to fall back to:
+  // `/` detects the browser language. Everywhere else English is the default.
+  const isHome = paths.en === '/en';
+
   const languages = {
     en: `${SITE_URL}${paths.en}`,
     vi: `${SITE_URL}${paths.vi}`,
+    'x-default': isHome ? `${SITE_URL}/` : `${SITE_URL}${paths.en}`,
   };
 
   return [

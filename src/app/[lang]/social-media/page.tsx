@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { localeAlternates } from '../../../lib/alternates';
+import { assertLocale } from '../../../lib/locale';
 
 interface Props {
   params: { lang: string };
@@ -20,9 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default function SocialMediaPage({ params }: Props) {
   const { lang } = params;
 
-  if (!['en', 'vi'].includes(lang)) {
-    return <div>Not Found</div>;
-  }
+  assertLocale(lang);
 
   const socialPlatforms = [
     {

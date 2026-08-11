@@ -1,7 +1,4 @@
-import './globals.css';
-import 'animate.css';
 import type { Metadata } from 'next';
-import Analytics from '../components/Analytics';
 import {
   DEFAULT_SHARE_IMAGE,
   SHARE_IMAGE_HEIGHT,
@@ -9,7 +6,10 @@ import {
 } from '../lib/shareImage';
 import { SITE_URL } from '../lib/siteUrl';
 
-export const metadata: Metadata = {
+// Shared by both root layouts. There are two of them because <html lang> has to
+// follow the [lang] segment, and only a root layout may render <html> — so the
+// locale tree and the bare routes (/ and the 404) each need their own.
+export const baseMetadata: Metadata = {
   // Canonicals, hreflang and OG URLs all resolve against this. It must agree
   // with the host in robots.txt and sitemap.xml — see src/lib/siteUrl.ts.
   metadataBase: new URL(SITE_URL),
@@ -41,30 +41,3 @@ export const metadata: Metadata = {
     apple: { url: '/apple-icon.png', sizes: '180x180' },
   },
 };
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang='en'>
-      <head>
-        <link rel='preconnect' href='https://fonts.googleapis.com' />
-        <link
-          rel='preconnect'
-          href='https://fonts.gstatic.com'
-          crossOrigin='anonymous'
-        />
-        <link
-          rel='stylesheet'
-          href='https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'
-        />
-      </head>
-      <body className='bg-background-1'>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  );
-}

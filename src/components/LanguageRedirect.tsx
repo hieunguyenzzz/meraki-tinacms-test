@@ -3,7 +3,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function HomePage() {
+// Split out of src/app/(bare)/page.tsx so that page can stay a server component
+// and export metadata — a 'use client' module cannot.
+export default function LanguageRedirect() {
   const router = useRouter();
 
   useEffect(() => {
