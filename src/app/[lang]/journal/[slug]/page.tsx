@@ -10,6 +10,7 @@ import { buildWebPageSchema } from '../../../../lib/schema/webPage';
 import { richTextToPlainText, truncate } from '../../../../lib/richText';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { assertLocale } from '../../../../lib/locale';
 
 interface PageProps {
   params: {
@@ -114,6 +115,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function JournalPage({ params }: PageProps) {
+  assertLocale(params.lang);
+
   const variables = { relativePath: `${params.slug}.mdx` };
 
   try {

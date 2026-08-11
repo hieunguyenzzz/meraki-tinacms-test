@@ -6,8 +6,8 @@
  * are translations rather than competing pages, so the two can cannibalise each
  * other in search results.
  *
- * Paths stay relative: `metadataBase` in src/app/layout.tsx resolves them, which
- * keeps the host in one place. The blog and journal listings build their own
+ * Paths stay relative: `metadataBase` in src/app/baseMetadata.ts resolves them,
+ * which keeps the host in one place. The blog and journal listings build their own
  * because they have to fold `?page=N` into the canonical — see
  * src/lib/listingPagination.ts.
  */
@@ -17,9 +17,22 @@ export function localeAlternates(lang: string, path = '') {
 
   return {
     canonical: `/${locale}${path}`,
-    languages: {
-      en: `/en${path}`,
-      vi: `/vi${path}`,
-    },
+    languages: xDefaultLanguages(path),
+  };
+}
+
+/**
+ * The hreflang pair plus the x-default that tells Google which URL to serve a
+ * searcher whose language matches neither locale.
+ *
+ * Only the homepage has a locale-neutral URL to point at: `/` detects the
+ * browser language and forwards. Every other path exists solely under a locale
+ * prefix, so English is the fallback.
+ */
+export function xDefaultLanguages(path = '') {
+  return {
+    en: `/en${path}`,
+    vi: `/vi${path}`,
+    'x-default': path === '' ? '/' : `/en${path}`,
   };
 }

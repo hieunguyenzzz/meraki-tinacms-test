@@ -8,6 +8,7 @@ import {
   parsePageParam,
   totalListingPages,
 } from '../../../lib/listingPagination';
+import { assertLocale } from '../../../lib/locale';
 
 interface Props {
   params: { lang: string };
@@ -87,9 +88,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const { lang } = params;
   const initialPage = parsePageParam(searchParams?.page);
 
-  if (!['en', 'vi'].includes(lang)) {
-    return <div>Not Found</div>;
-  }
+  assertLocale(lang);
 
   const relativePath = 'index.mdx';
   const listingResponse = await client.queries.blogListing({ relativePath });

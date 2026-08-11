@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { client } from '../../../../tina/__generated__/client';
 import AboutClient from '../../../components/AboutClient';
 import { localeAlternates } from '../../../lib/alternates';
+import { assertLocale } from '../../../lib/locale';
 
 interface Props {
   params: { lang: string };
@@ -45,9 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function AboutPage({ params }: Props) {
   const { lang } = params;
 
-  if (!['en', 'vi'].includes(lang)) {
-    return <div>Not Found</div>;
-  }
+  assertLocale(lang);
 
   const relativePath = 'index.mdx';
   const response = await client.queries.about({ relativePath });
