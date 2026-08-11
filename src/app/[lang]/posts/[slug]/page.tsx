@@ -13,6 +13,10 @@ import {
   SHARE_IMAGE_HEIGHT,
   SHARE_IMAGE_WIDTH,
 } from '../../../../lib/shareImage';
+import { truncate } from '../../../../lib/richText';
+
+// Roughly what Google renders before it clips a description.
+const META_DESCRIPTION_MAX = 155;
 
 interface Props {
   params: { lang: string; slug: string };
@@ -110,7 +114,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const seo = lang === 'en' ? post.seo_en : post.seo_vi;
 
     const metaTitle = seo?.title || `${title} - Meraki Wedding Planner`;
-    const metaDescription = seo?.description || description || '';
+    // Excerpts are authored as article intros — several run past 500 characters,
+    // which search results cut off mid-sentence. Clip the fallback at a word
+    // boundary instead. A hand-written seo.description always wins.
+    const metaDescription =
+      seo?.description || truncate(description || '', META_DESCRIPTION_MAX);
     // Each post shares its own featured image, cropped to the share ratio.
     const shareImage = getShareImage(post.featured_image);
 
